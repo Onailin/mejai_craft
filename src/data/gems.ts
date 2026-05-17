@@ -10,10 +10,9 @@ export type Gem = {
 };
 
 export const STORE = {
-  nameTh: "ร้านตัวอย่าง",
+  nameTh: "ติดต่อที่",
   tagline: "เครื่องประดับ & อัญมณีคัดพิเศษ",
-  phone: "02-000-0000",
-  lineUrl: "https://line.me/R/ti/p/@yourshop",
+  phone: "0888491111",
   mapsUrl: "https://maps.google.com",
 };
 
