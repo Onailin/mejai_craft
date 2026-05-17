@@ -29,6 +29,14 @@ export function WorkshopBanner({
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/80">{page.eyebrow}</p>
           <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{page.title}</h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/90 sm:text-base">{page.description}</p>
+          <a
+            href="https://www.facebook.com/mejaicrafts"
+            target="_blank"
+            rel="noreferrer"
+            className="pointer-events-auto mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-neutral-900 no-underline transition hover:bg-neutral-100"
+          >
+            จองเวิร์คชอป
+          </a>
         </div>
       </div>
 

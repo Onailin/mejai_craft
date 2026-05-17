@@ -14,7 +14,7 @@ export const pages: PageContent[] = [
         subtitle: "Gemstone & Jewelry",
         description:
           "เลือกชมอัญมณีและจิวเวลรี่ในหมวดที่ชัดเจน พร้อมภาพและคำอธิบายอ่านง่าย",
-        image: "/images/banner/banner.jpg",
+        image: "/images/banner/home.jpg",
         accent: "Mejai Craft",
       },
       {
@@ -91,21 +91,21 @@ export const pages: PageContent[] = [
         title: "ออกแบบชิ้นงาน",
         subtitle: "Design Session",
         description: "เริ่มจาก mood, โทนสี และรูปแบบที่อยากได้ เพื่อวางดีไซน์ให้เข้ากับผู้ใส่",
-        image: "/images/workshop/silverring/silver1.jpg",
+        image: "/images/workshop/workshop2.jpg",
         accent: "Custom idea",
       },
       {
         title: "เลือกพลอยและวัสดุ",
         subtitle: "Material Selection",
         description: "เรียนรู้ความต่างของพลอย สี ตัวเรือน และผิวงานก่อนเริ่มทำจริง",
-        image: "/images/workshop/silverring/silver2.jpg",
+        image: "/images/workshop/workshop3.jpg",
         accent: "Material table",
       },
       {
         title: "ทำชิ้นงานด้วยมือ",
         subtitle: "Craft Moment",
         description: "ได้สัมผัสขั้นตอนพื้นฐานของงานจิวเวลรี่ พร้อมคำแนะนำจากทีมงาน",
-        image: "/images/workshop/silverring/silver1.jpg",
+        image: "/images/banner/banner1.jpg",
         accent: "Workshop day",
       },
     ],

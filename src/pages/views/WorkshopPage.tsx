@@ -87,6 +87,14 @@ export function WorkshopPage({ page }: { page: PageContent }) {
             <p className="text-base leading-relaxed text-neutral-500">
               {workshopDetail.workshopSummary}
             </p>
+            <a
+              href="https://www.facebook.com/mejaicrafts"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-neutral-700"
+            >
+              จองเวิร์คชอป
+            </a>
 
             <div className="grid grid-cols-2 gap-4 pt-4">
               {workshopDetail.infoCards.map((card) => (
