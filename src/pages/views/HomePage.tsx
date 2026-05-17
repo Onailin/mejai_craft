@@ -20,7 +20,7 @@ const gemShowcase: GemProfile[] = [
     hardnessDisplay: "10 Mohs",
     color: "ใสบริสุทธิ์",
     detail: "มีประกายสูงและทนรอยขีดข่วน เหมาะกับเครื่องประดับที่ใส่ทุกวัน",
-    image: "/public/images/gem/diamond3.jpg",
+    image: "/images/gem/diamond3.jpg",
   },
   {
     name: "ทับทิม",
@@ -29,7 +29,7 @@ const gemShowcase: GemProfile[] = [
     hardnessDisplay: "9 Mohs",
     color: "แดงเข้ม",
     detail: "เป็นพลอยแห่งพลังและความมั่นใจ นิยมทำแหวนและจี้",
-    image: "/public/images/gem/tubtim.jpg",
+    image: "/images/gem/tubtim.jpg",
   },
   {
     name: "ไพลิน",
@@ -38,7 +38,7 @@ const gemShowcase: GemProfile[] = [
     hardnessDisplay: "9 Mohs",
     color: "น้ำเงินราชา",
     detail: "โทนสีสุขุมคลาสสิก เหมาะกับลุคหรูเรียบและใส่ง่าย",
-    image: "/public/images/gem/pailin.jpg",
+    image: "/images/gem/pailin.jpg",
   },
   {
     name: "มรกต",
@@ -47,7 +47,7 @@ const gemShowcase: GemProfile[] = [
     hardnessDisplay: "7.5-8 Mohs",
     color: "เขียวสด",
     detail: "เสน่ห์อยู่ที่เฉดเขียวธรรมชาติและลายภายในที่เป็นเอกลักษณ์",
-    image: "/public/images/gem/morakot.jpg",
+    image: "/images/gem/morakot.jpg",
   },
   {
     name: "บุษราคัม",
@@ -56,7 +56,7 @@ const gemShowcase: GemProfile[] = [
     hardnessDisplay: "9 Mohs",
     color: "เหลืองทอง",
     detail: "สื่อถึงความมั่งคั่งและความรุ่งเรือง เหมาะกับงานตัวเรือนทอง",
-    image: "/public/images/gem/busracam.jpg",
+    image: "/images/gem/busracam.jpg",
   },
   {
     name: "อเมทิสต์",
@@ -65,7 +65,7 @@ const gemShowcase: GemProfile[] = [
     hardnessDisplay: "7 Mohs",
     color: "ม่วงใส",
     detail: "โทนม่วงนุ่ม ช่วยให้ลุคดูอ่อนโยนและมีเอกลักษณ์",
-    image: "/public/images/gem/amethyst.jpg",
+    image: "/images/gem/amethyst.jpg",
   },
 ];
 
@@ -304,31 +304,31 @@ export function HomePage({ page }: { page: PageContent }) {
               name: "Onyx",
               meaning: "Protect",
               desc: "หินแห่งการปกป้อง ช่วยให้แคล้วคลาดจากอันตราย",
-              image: "/public/images/gem/onyx.jpg",
+              image: "/images/gem/onyx.jpg",
             },
             {
               name: "Rose Quartz",
               meaning: "Love",
               desc: "หินแห่งความรักและความอ่อนโยน",
-              image: "/public/images/gem/rosequarzt.jpg",
+              image: "/images/gem/rosequarzt.jpg",
             },
             {
               name: "Aventurine",
               meaning: "Success",
               desc: "หินแห่งโอกาสและความสำเร็จ",
-              image: "/public/images/gem/aventurine2.jpg",
+              image: "/images/gem/aventurine2.jpg",
             },
             {
               name: "Citrine",
               meaning: "Wealth",
               desc: "หินแห่งความมั่งคั่งและความเจริญรุ่งเรือง",
-              image: "/public/images/gem/citrine1.jpg",
+              image: "/images/gem/citrine1.jpg",
             },
             {
               name: "Garnet (โกเมน)",
               meaning: "Wealth",
               desc: "โกเมนเป็นอัญมณีที่เชื่อกันว่าช่วยเสริมสิริมงคล นำพาโชคลาภ ความมั่นคง และพลังใจให้กับผู้สวมใส่ ",
-              image: "/public/images/gem/garnet.jpg",
+              image: "/images/gem/garnet.jpg",
             },
 
           ].map((stone) => (
