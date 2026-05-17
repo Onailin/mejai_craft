@@ -255,11 +255,11 @@ export function HomePage({ page }: { page: PageContent }) {
           </h2>
         </header>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="-mx-2 flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
           {gemShowcase.map((gem) => (
             <article
               key={gem.name}
-              className="group cursor-pointer"
+              className="group w-[78%] shrink-0 snap-start cursor-pointer sm:w-auto sm:shrink"
             >
               <div className="aspect-[4/3] overflow-hidden bg-stone-100">
                 <img
