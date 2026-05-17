@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { WorkshopBanner } from "../../components/WorkshopBanner";
 import type { PageContent } from "../types";
 
@@ -14,42 +15,43 @@ type WorkshopDetail = {
   bookingTerms: string[];
 };
 
-const workshopDetail: WorkshopDetail = {
-  workshopTitle: "Workshop แหวนเงิน",
-  workshopSummary: "ใช้เวลาประมาณ 1-1.30 ชั่วโมง และได้รับผลงานกลับบ้านด้วยทุกท่าน",
-  featuredImages: [
-    "/images/workshop/silverring/silver2.jpg",
-    "/images/workshop/silverring/silver1.jpg",
-  ],
-  featuredSubtitle: "Silver Ring Workshop",
-  featuredTitle: "บรรยากาศเวิร์คชอปแหวนเงิน",
-  infoCards: [
-    { label: "ระยะเวลา", value: "ประมาณ 1-1.30 ชั่วโมง" },
-    { label: "ได้รับผลงาน", value: "นำแหวนกลับบ้านได้เลย" },
-    { label: "ราคา 2 มม.", value: "1,499 บาท/ท่าน" },
-    { label: "ราคา 3-4 มม.", value: "3 มม. 1,699 บาท · 4 มม. 1,899 บาท" },
-  ],
-  classSteps: [
-    { title: "เลือกดีไซน์", description: "เลือกแบบแหวนระหว่างแหวนเกลี้ยงและแหวนทุบ (texture)" },
-    { title: "เลือกวัสดุ", description: "เลือกขนาดหน้ากว้างแหวนมาตรฐาน 2, 3 หรือ 4 มม." },
-    { title: "ลงมือทำ", description: "ขึ้นรูปและตกแต่งแหวนเงินด้วยขั้นตอนเวิร์คชอปแบบ hands-on" },
-    { title: "รับผลงาน", description: "รับแหวนเงินที่ทำเสร็จกลับบ้านได้ภายในคลาส" },
-  ],
-  receivedItems: [
-    "เลือกแบบแหวนได้ 2 แบบ: แหวนเกลี้ยง หรือ แหวนทุบ (texture)",
-    "ขนาดหน้ากว้างมาตรฐาน 2, 3 และ 4 มม.",
-    "ได้รับแหวนเงินที่ทำเสร็จกลับบ้าน",
-  ],
-  bookingTerms: [
-    "หากต้องการหน้ากว้างพิเศษ 5 มม. กรุณาแจ้งแอดมินล่วงหน้าเท่านั้น",
-    "ขนาด 5 มม. มีค่าใช้จ่ายเพิ่มเติม",
-    "ราคาเวิร์คชอปคิดตามขนาดหน้ากว้างแหวนต่อท่าน",
-  ],
-};
-
 export function WorkshopPage({ page }: { page: PageContent }) {
+  const { t } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
   const [featuredIndex, setFeaturedIndex] = useState(0);
+  const workshopDetail: WorkshopDetail = {
+    workshopTitle: t("workshop.info_title"),
+    workshopSummary: t("workshop.info_summary"),
+    featuredImages: [
+      "/images/workshop/silverring/silver2.jpg",
+      "/images/workshop/silverring/silver1.jpg",
+    ],
+    featuredSubtitle: t("workshop.featured_subtitle"),
+    featuredTitle: t("workshop.featured_title"),
+    infoCards: [
+      { label: t("workshop.info.time_label"), value: t("workshop.info.time_value") },
+      { label: t("workshop.info.takehome_label"), value: t("workshop.info.takehome_value") },
+      { label: t("workshop.info.price2_label"), value: t("workshop.info.price2_value") },
+      { label: t("workshop.info.price3_label"), value: t("workshop.info.price3_value") },
+      { label: t("workshop.info.price4_label"), value: t("workshop.info.price4_value") },
+    ],
+    classSteps: [
+      { title: t("workshop.steps.design_title"), description: t("workshop.steps.design_desc") },
+      { title: t("workshop.steps.material_title"), description: t("workshop.steps.material_desc") },
+      { title: t("workshop.steps.craft_title"), description: t("workshop.steps.craft_desc") },
+      { title: t("workshop.steps.finish_title"), description: t("workshop.steps.finish_desc") },
+    ],
+    receivedItems: [
+      t("workshop.received.item1"),
+      t("workshop.received.item2"),
+      t("workshop.received.item3"),
+    ],
+    bookingTerms: [
+      t("workshop.terms.item1"),
+      t("workshop.terms.item2"),
+      t("workshop.terms.item3"),
+    ],
+  };
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -79,7 +81,7 @@ export function WorkshopPage({ page }: { page: PageContent }) {
           {/* Workshop Info */}
           <article className="space-y-6">
             <span className="text-[10px] font-medium uppercase tracking-[0.3em] text-neutral-400">
-              Workshop
+              {t("workshop.label")}
             </span>
             <h2 className="text-4xl font-light tracking-tight text-neutral-900">
               {workshopDetail.workshopTitle}
@@ -93,7 +95,7 @@ export function WorkshopPage({ page }: { page: PageContent }) {
               rel="noreferrer"
               className="inline-flex rounded-full bg-neutral-900 px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-neutral-700"
             >
-              จองเวิร์คชอป
+              {t("workshop.book_button")}
             </a>
 
             <div className="grid grid-cols-2 gap-4 pt-4">
@@ -114,7 +116,7 @@ export function WorkshopPage({ page }: { page: PageContent }) {
           {/* Class Steps */}
           <article className="space-y-6 pt-8">
             <h3 className="text-lg font-medium tracking-tight text-neutral-900">
-              ขั้นตอนในคลาส
+              {t("workshop.steps_title")}
             </h3>
             <div className="space-y-6">
               {workshopDetail.classSteps.map((step, index) => (
@@ -169,7 +171,7 @@ export function WorkshopPage({ page }: { page: PageContent }) {
                     className={`h-2 rounded-full transition ${
                       featuredIndex === index ? "w-8 bg-neutral-900" : "w-2 bg-neutral-300"
                     }`}
-                    aria-label={`ไปยังรูปเวิร์คชอป ${index + 1}`}
+                    aria-label={t("workshop.featured_slide_aria", { index: index + 1 })}
                   />
                 ))}
               </div>
@@ -179,7 +181,7 @@ export function WorkshopPage({ page }: { page: PageContent }) {
           {/* What You Get */}
           <article className="space-y-4 border-t border-neutral-100 pt-8">
             <h3 className="text-sm font-medium uppercase tracking-wider text-neutral-900">
-              สิ่งที่ได้รับ
+              {t("workshop.received_title")}
             </h3>
             <ul className="space-y-3">
               {workshopDetail.receivedItems.map((item) => (
@@ -197,7 +199,7 @@ export function WorkshopPage({ page }: { page: PageContent }) {
           {/* Booking Terms */}
           <article className="space-y-4 border-t border-neutral-100 pt-8">
             <h3 className="text-sm font-medium uppercase tracking-wider text-neutral-900">
-              เงื่อนไขการจอง
+              {t("workshop.terms_title")}
             </h3>
             <ul className="space-y-3">
               {workshopDetail.bookingTerms.map((term) => (

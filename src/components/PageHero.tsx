@@ -1,6 +1,9 @@
 import type { PageContent } from "../pages/types";
+import { useTranslation } from "react-i18next";
 
 export function PageHero({ page }: { page: PageContent }) {
+  const { t } = useTranslation();
+
   return (
     <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
       <div className="max-w-3xl">
@@ -18,13 +21,13 @@ export function PageHero({ page }: { page: PageContent }) {
             className="rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white no-underline shadow-[0_16px_40px_rgba(31,41,55,0.18)] hover:bg-gray-700"
             href="#workshop"
           >
-            ดูข้อมูลเวิร์คชอป
+            {t("page_hero.cta_workshop")}
           </a>
           <a
             className="rounded-full border border-gray-300 bg-white/70 px-6 py-3 text-sm font-semibold text-luxury-ink no-underline hover:border-gray-500 hover:bg-white"
             href="#jewelry"
           >
-            ชมจิวเวลรี่
+            {t("page_hero.cta_jewelry")}
           </a>
         </div>
       </div>

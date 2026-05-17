@@ -1,6 +1,8 @@
 import type { PageContent } from "../pages/types";
+import { useTranslation } from "react-i18next";
 
 export function HomeBanner({ page }: { page: PageContent }) {
+  const { t } = useTranslation();
   const heroCard = page.cards[0];
 
   return (
@@ -28,13 +30,13 @@ export function HomeBanner({ page }: { page: PageContent }) {
               className="rounded-full bg-gray-900 px-6 py-3 text-sm font-semibold text-white no-underline shadow-sm hover:bg-gray-700"
               href="#jewelry"
             >
-              ชมคอลเลกชัน
+              {t("home_banner.cta_collection")}
             </a>
             <a
               className="rounded-full border border-gray-300 bg-white/75 px-6 py-3 text-sm font-semibold text-luxury-ink no-underline backdrop-blur hover:bg-white"
               href="#workshop"
             >
-              ข้อมูลเวิร์คชอป
+              {t("home_banner.cta_workshop")}
             </a>
           </div>
         </div>

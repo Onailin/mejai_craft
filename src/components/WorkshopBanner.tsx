@@ -1,4 +1,5 @@
 import type { PageContent } from "../pages/types";
+import { useTranslation } from "react-i18next";
 
 export function WorkshopBanner({
   page,
@@ -9,6 +10,8 @@ export function WorkshopBanner({
   activeIndex: number;
   onSelectIndex: (index: number) => void;
 }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="relative overflow-hidden bg-gray-100">
@@ -35,7 +38,7 @@ export function WorkshopBanner({
             rel="noreferrer"
             className="pointer-events-auto mt-6 inline-flex rounded-full bg-white px-6 py-3 text-sm font-semibold text-neutral-900 no-underline transition hover:bg-neutral-100"
           >
-            จองเวิร์คชอป
+            {t("workshop.book_button")}
           </a>
         </div>
       </div>
@@ -49,7 +52,7 @@ export function WorkshopBanner({
             className={`h-2 rounded-full transition ${
               activeIndex === index ? "w-8 bg-gray-900" : "w-2 bg-gray-300"
             }`}
-            aria-label={`ไปยังสไลด์ ${index + 1}`}
+            aria-label={t("workshop.banner_slide_aria", { index: index + 1 })}
           />
         ))}
       </div>

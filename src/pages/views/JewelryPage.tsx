@@ -1,10 +1,12 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { PageHero } from "../../components/PageHero";
 import { ProductCard } from "../../components/ProductCard";
 import { jewelryCatalog, jewelryCategoryTabs, type JewelryCategoryKey } from "../../data/jewelryCatalog";
 import type { PageContent } from "../types";
 
 export function JewelryPage({ page }: { page: PageContent }) {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<JewelryCategoryKey>("ring");
 
   const selectedCards = jewelryCatalog[activeCategory];
@@ -31,7 +33,7 @@ export function JewelryPage({ page }: { page: PageContent }) {
                       : "border border-stone-300 bg-white text-stone-700 hover:bg-stone-50"
                   }`}
               >
-                {tab.label}
+                {t(`jewelry.tab.${tab.id}`, { defaultValue: tab.label })}
               </button>
             );
           })}
