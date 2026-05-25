@@ -71,6 +71,12 @@ export function App() {
       })),
     [t, i18n.resolvedLanguage]
   );
+  const navPages = useMemo(() => {
+    const orderedNavIds: PageKey[] = ["home", "jewelry", "workshop", "about", "contact"];
+    return orderedNavIds
+      .map((id) => localizedPages.find((page) => page.id === id))
+      .filter((page): page is PageContent => Boolean(page));
+  }, [localizedPages]);
 
   const activePage = useMemo(
     () => localizedPages.find((page) => page.id === activePageId) ?? localizedPages[0],
@@ -132,7 +138,7 @@ export function App() {
               className="flex gap-2 overflow-x-auto pb-1 text-sm lg:justify-end lg:overflow-visible lg:pb-0"
               aria-label="หมวดสินค้า"
             >
-              {localizedPages.map((page) => {
+              {navPages.map((page) => {
                 const isActive = page.id === activePage.id;
                 return (
                   <a
@@ -155,7 +161,9 @@ export function App() {
 
       <main
         className={
-          isHome || isAbout || isContact || isWorkshop
+          isAbout || isContact
+            ? "relative z-10 pb-14 pt-32"
+            : isHome || isWorkshop
             ? "relative z-10 pb-14 pt-24"
             : "relative z-10 mx-auto max-w-7xl px-4 pb-14 pt-24 sm:px-6 lg:px-8"
         }
