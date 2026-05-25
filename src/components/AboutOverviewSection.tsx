@@ -26,14 +26,14 @@ export function AboutOverviewSection({ page }: { page: PageContent }) {
         <h1 className="mt-3 font-serif text-4xl font-light text-stone-800 sm:text-5xl">
           {t("about.title", { defaultValue: page.title })}
         </h1>
-        <p className="mt-6 whitespace-pre-line text-base leading-8 text-stone-600 sm:text-lg">
+        <p className="mt-6 whitespace-pre-line text-sm leading-7 text-stone-600 sm:text-base">
           {t("about.intro", { defaultValue: page.description })}
         </p>
       </header>
 
       <div className="mx-auto mb-4 max-w-5xl px-2 text-center">
         <p className="text-[11px] uppercase tracking-[0.28em] text-stone-400">Photo Album</p>
-        <p className="mt-2 text-sm text-stone-500">{t("about.photo_caption")}</p>
+        <p className="mt-2 text-xs text-stone-500 sm:text-sm">{t("about.photo_caption")}</p>
       </div>
 
       <section className="mx-auto w-full max-w-5xl">
