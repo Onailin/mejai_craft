@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type MouseEvent as ReactMouseEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { defaultPageId, getHashPage, pages } from "./pages/content";
+import { defaultPageId, getCurrentPage, getPagePath, pages } from "./pages/content";
 import type { PageContent, PageKey } from "./pages/types";
 import { AboutPage } from "./pages/views/AboutPage";
 import { ContactPage } from "./pages/views/ContactPage";
@@ -25,9 +25,33 @@ function renderPage(page: PageContent) {
   }
 }
 
+const SITE_URL = "https://mejaicrafts.com";
+const DEFAULT_DESCRIPTION =
+  "Mejai Crafts ร้านจิวเวลรี่และเวิร์คช็อปในจันทบุรี รวมข้อมูลอัญมณี เครื่องประดับ และบริการสั่งทำ";
+
+function upsertMetaTag(attr: "name" | "property", key: string, content: string) {
+  let meta = document.head.querySelector(`meta[${attr}="${key}"]`) as HTMLMetaElement | null;
+  if (!meta) {
+    meta = document.createElement("meta");
+    meta.setAttribute(attr, key);
+    document.head.appendChild(meta);
+  }
+  meta.setAttribute("content", content);
+}
+
+function upsertCanonical(url: string) {
+  let canonical = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null;
+  if (!canonical) {
+    canonical = document.createElement("link");
+    canonical.setAttribute("rel", "canonical");
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute("href", url);
+}
+
 export function App() {
   const { i18n, t } = useTranslation();
-  const [activePageId, setActivePageId] = useState<PageKey>(() => getHashPage());
+  const [activePageId, setActivePageId] = useState<PageKey>(() => getCurrentPage());
   const getNavLabel = (pageId: PageKey, fallback: string) => {
     switch (pageId) {
       case "home":
@@ -46,9 +70,9 @@ export function App() {
   };
 
   useEffect(() => {
-    const syncHash = () => setActivePageId(getHashPage());
-    window.addEventListener("hashchange", syncHash);
-    return () => window.removeEventListener("hashchange", syncHash);
+    const syncPath = () => setActivePageId(getCurrentPage());
+    window.addEventListener("popstate", syncPath);
+    return () => window.removeEventListener("popstate", syncPath);
   }, []);
 
   useEffect(() => {
@@ -88,6 +112,33 @@ export function App() {
     () => localizedPages.find((page) => page.id === activePageId) ?? localizedPages[0],
     [activePageId, localizedPages]
   );
+
+  useEffect(() => {
+    const pageTitle = activePage.id === "home" ? "Mejai Crafts" : activePage.navLabel;
+    const title = `${pageTitle} | Mejai Crafts`;
+    const description = activePage.description || DEFAULT_DESCRIPTION;
+    const pageUrl = `${SITE_URL}${getPagePath(activePage.id)}`;
+    const firstImage = activePage.cards[0]?.image || "/images/banner/home.jpg";
+    const imageUrl = firstImage.startsWith("http") ? firstImage : `${SITE_URL}${firstImage}`;
+
+    document.title = title;
+    document.documentElement.lang = i18n.resolvedLanguage?.startsWith("th") ? "th" : "en";
+
+    upsertMetaTag("name", "description", description);
+    upsertMetaTag("name", "robots", "index, follow");
+    upsertMetaTag("property", "og:type", "website");
+    upsertMetaTag("property", "og:site_name", "Mejai Crafts");
+    upsertMetaTag("property", "og:title", title);
+    upsertMetaTag("property", "og:description", description);
+    upsertMetaTag("property", "og:url", pageUrl);
+    upsertMetaTag("property", "og:image", imageUrl);
+    upsertMetaTag("name", "twitter:card", "summary_large_image");
+    upsertMetaTag("name", "twitter:title", title);
+    upsertMetaTag("name", "twitter:description", description);
+    upsertMetaTag("name", "twitter:image", imageUrl);
+    upsertCanonical(pageUrl);
+  }, [activePage, i18n.resolvedLanguage]);
+
   const isHome = activePage.id === "home";
   const isAbout = activePage.id === "about";
   const isContact = activePage.id === "contact";
@@ -99,13 +150,37 @@ export function App() {
     { code: "ja", label: "JP" },
   ] as const;
 
+  function handleNavigate(event: ReactMouseEvent<HTMLAnchorElement>, pageId: PageKey) {
+    if (
+      event.defaultPrevented ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.button !== 0
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    const nextPath = getPagePath(pageId);
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, "", nextPath);
+    }
+    setActivePageId(pageId);
+  }
+
   return (
     <div className="min-h-dvh overflow-hidden bg-[#f7f7f5] font-sans text-luxury-ink">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,#ffffff_0,transparent_45%)]" />
 
       <header className="fixed inset-x-0 top-0 z-40 border-b border-gray-200 bg-white/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-          <a href={`#${defaultPageId}`} className="flex items-center gap-3 text-luxury-ink no-underline">
+          <a
+            href={getPagePath(defaultPageId)}
+            onClick={(event) => handleNavigate(event, defaultPageId)}
+            className="flex items-center gap-3 text-luxury-ink no-underline"
+          >
             <span className="grid h-10 w-10 place-items-center rounded-full border border-gray-200 bg-gray-50 font-sans text-base text-gray-700">
               M
             </span>
@@ -149,7 +224,8 @@ export function App() {
                 return (
                   <a
                     key={page.id}
-                    href={`#${page.id}`}
+                    href={getPagePath(page.id)}
+                    onClick={(event) => handleNavigate(event, page.id)}
                     className={`shrink-0 rounded-full border px-3 py-1.5 no-underline transition sm:px-4 sm:py-2 ${
                       isActive
                         ? "border-gray-900 bg-gray-900 text-white"

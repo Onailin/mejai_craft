@@ -158,7 +158,23 @@ export const pages: PageContent[] = [
 
 export const defaultPageId = pages[0].id;
 
-export function getHashPage(): PageKey {
-  const hash = window.location.hash.replace("#", "");
-  return pages.some((page) => page.id === hash) ? (hash as PageKey) : defaultPageId;
+export function getPagePath(pageId: PageKey): string {
+  return pageId === "home" ? "/" : `/${pageId}`;
+}
+
+export function getCurrentPage(): PageKey {
+  const normalizedPath = window.location.pathname.replace(/\/+$/, "") || "/";
+  const pathId = normalizedPath === "/" ? "home" : normalizedPath.slice(1);
+
+  if (pages.some((page) => page.id === pathId)) {
+    return pathId as PageKey;
+  }
+
+  // Backward compatibility: support old hash links.
+  const hashId = window.location.hash.replace("#", "");
+  if (pages.some((page) => page.id === hashId)) {
+    return hashId as PageKey;
+  }
+
+  return defaultPageId;
 }
