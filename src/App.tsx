@@ -51,6 +51,12 @@ export function App() {
     return () => window.removeEventListener("hashchange", syncHash);
   }, []);
 
+  useEffect(() => {
+    if (activePageId === "jewelry") {
+      window.scrollTo({ top: 0, behavior: "auto" });
+    }
+  }, [activePageId]);
+
   const localizedPages = useMemo(
     () =>
       pages.map((page) => ({
@@ -135,7 +141,7 @@ export function App() {
             </div>
 
             <nav
-              className="flex gap-2 overflow-x-auto pb-1 text-sm lg:justify-end lg:overflow-visible lg:pb-0"
+              className="flex gap-1.5 overflow-x-auto pb-1 text-xs lg:justify-end lg:gap-2 lg:overflow-visible lg:pb-0 lg:text-sm"
               aria-label="หมวดสินค้า"
             >
               {navPages.map((page) => {
@@ -144,7 +150,7 @@ export function App() {
                   <a
                     key={page.id}
                     href={`#${page.id}`}
-                    className={`shrink-0 rounded-full border px-4 py-2 no-underline transition ${
+                    className={`shrink-0 rounded-full border px-3 py-1.5 no-underline transition sm:px-4 sm:py-2 ${
                       isActive
                         ? "border-gray-900 bg-gray-900 text-white"
                         : "border-gray-200 bg-white text-luxury-ink hover:border-gray-300 hover:bg-gray-50"
