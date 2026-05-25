@@ -6,7 +6,8 @@ import type { PageContent } from "../types";
 type GemProfile = {
   name: string;
   origin: string;
-  hardness: number;
+  hardnessMin: number;
+  hardnessMax: number;
   hardnessDisplay: string;
   color: string;
   detail: string;
@@ -26,7 +27,8 @@ export function HomePage({ page }: { page: PageContent }) {
     {
       name: t("home.gems.diamond.name"),
       origin: t("home.gems.diamond.origin"),
-      hardness: 10,
+      hardnessMin: 10,
+      hardnessMax: 10,
       hardnessDisplay: t("home.gems.diamond.hardness"),
       color: t("home.gems.diamond.color"),
       detail: t("home.gems.diamond.detail"),
@@ -35,7 +37,8 @@ export function HomePage({ page }: { page: PageContent }) {
     {
       name: t("home.gems.ruby.name"),
       origin: t("home.gems.ruby.origin"),
-      hardness: 9,
+      hardnessMin: 9,
+      hardnessMax: 9,
       hardnessDisplay: t("home.gems.ruby.hardness"),
       color: t("home.gems.ruby.color"),
       detail: t("home.gems.ruby.detail"),
@@ -44,7 +47,8 @@ export function HomePage({ page }: { page: PageContent }) {
     {
       name: t("home.gems.sapphire.name"),
       origin: t("home.gems.sapphire.origin"),
-      hardness: 9,
+      hardnessMin: 9,
+      hardnessMax: 9,
       hardnessDisplay: t("home.gems.sapphire.hardness"),
       color: t("home.gems.sapphire.color"),
       detail: t("home.gems.sapphire.detail"),
@@ -53,7 +57,8 @@ export function HomePage({ page }: { page: PageContent }) {
     {
       name: t("home.gems.emerald.name"),
       origin: t("home.gems.emerald.origin"),
-      hardness: 8,
+      hardnessMin: 7.5,
+      hardnessMax: 8,
       hardnessDisplay: t("home.gems.emerald.hardness"),
       color: t("home.gems.emerald.color"),
       detail: t("home.gems.emerald.detail"),
@@ -62,7 +67,8 @@ export function HomePage({ page }: { page: PageContent }) {
     {
       name: t("home.gems.yellow_sapphire.name"),
       origin: t("home.gems.yellow_sapphire.origin"),
-      hardness: 9,
+      hardnessMin: 9,
+      hardnessMax: 9,
       hardnessDisplay: t("home.gems.yellow_sapphire.hardness"),
       color: t("home.gems.yellow_sapphire.color"),
       detail: t("home.gems.yellow_sapphire.detail"),
@@ -71,11 +77,62 @@ export function HomePage({ page }: { page: PageContent }) {
     {
       name: t("home.gems.amethyst.name"),
       origin: t("home.gems.amethyst.origin"),
-      hardness: 7,
+      hardnessMin: 7,
+      hardnessMax: 7,
       hardnessDisplay: t("home.gems.amethyst.hardness"),
       color: t("home.gems.amethyst.color"),
       detail: t("home.gems.amethyst.detail"),
       image: "/images/gem/amethyst.jpg",
+    },
+    {
+      name: t("home.birthstone_table.rows.august.gem_th"),
+      origin: t("home.birthstone_table.rows.august.origin"),
+      hardnessDisplay: t("home.birthstone_table.rows.august.hardness"),
+      hardnessMin: 6.5,
+      hardnessMax: 7,
+      color: t("home.birthstone_table.rows.august.color"),
+      detail: "",
+      image: "/images/gem/peridot.jpg",
+    },
+    {
+      name: t("home.birthstone_table.rows.october_opal.gem_th"),
+      origin: t("home.birthstone_table.rows.october_opal.origin"),
+      hardnessDisplay: t("home.birthstone_table.rows.october_opal.hardness"),
+      hardnessMin: 5.5,
+      hardnessMax: 6.5,
+      color: t("home.birthstone_table.rows.october_opal.color"),
+      detail: "",
+      image: "/images/gem/opal.png",
+    },
+    {
+      name: t("home.birthstone_table.rows.december.gem_th"),
+      origin: t("home.birthstone_table.rows.december.origin"),
+      hardnessDisplay: t("home.birthstone_table.rows.december.hardness"),
+      hardnessMin: 6.5,
+      hardnessMax: 7,
+      color: t("home.birthstone_table.rows.december.color"),
+      detail: "เป็นอัญมณีหายากที่มีแหล่งกำเนิดเพียงแห่งเดียวในโลกคือประเทศแทนซาเนีย โดดเด่นด้วยสีน้ำเงินแกมม่วง ",
+      image: "/images/gem/tanzanite.png",
+    },
+    {
+      name: t("home.birthstone_table.rows.june.gem_th"),
+      origin: t("home.birthstone_table.rows.june.origin"),
+      hardnessDisplay: t("home.birthstone_table.rows.june.hardness"),
+      hardnessMin: 6,
+      hardnessMax: 6.5,
+      color: t("home.birthstone_table.rows.june.color"),
+      detail: "",
+      image: "/images/gem/moonstone.jpg",
+    },
+    {
+      name: t("home.birthstone_table.rows.march.gem_th"),
+      origin: t("home.birthstone_table.rows.march.origin"),
+      hardnessDisplay: t("home.birthstone_table.rows.march.hardness"),
+      hardnessMin: 7.5,
+      hardnessMax: 8,
+      color: t("home.birthstone_table.rows.march.color"),
+      detail: "",
+      image: "/images/gem/aquamarine.jpg",
     },
   ];
   const luckyStones: LuckyStone[] = [
@@ -113,7 +170,9 @@ export function HomePage({ page }: { page: PageContent }) {
   // เริ่มต้น State ที่ระดับ 9 (ไพลิน)
   const [selectedHardness, setSelectedHardness] = useState<number>(9);
 
-  const activeGems = gemShowcase.filter((gem) => gem.hardness === selectedHardness);
+  const activeGems = gemShowcase.filter(
+    (gem) => selectedHardness >= gem.hardnessMin && selectedHardness <= gem.hardnessMax
+  );
 
   return (
     <>
@@ -301,7 +360,7 @@ export function HomePage({ page }: { page: PageContent }) {
         <div className="-mx-2 flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
           {gemShowcase.map((gem) => (
             <article
-              key={gem.name}
+              key={`${gem.name}-${gem.hardnessDisplay}`}
               className="group w-[78%] shrink-0 snap-start cursor-pointer sm:w-auto sm:shrink"
             >
               <div className="aspect-[4/3] overflow-hidden bg-stone-100">
@@ -321,9 +380,11 @@ export function HomePage({ page }: { page: PageContent }) {
                 <p className="text-xs text-stone-400">
                   {gem.origin} · {gem.color}
                 </p>
-                <p className="text-sm leading-relaxed text-stone-500">
-                  {gem.detail}
-                </p>
+                {gem.detail && (
+                  <p className="text-sm leading-relaxed text-stone-500">
+                    {gem.detail}
+                  </p>
+                )}
               </div>
             </article>
           ))}

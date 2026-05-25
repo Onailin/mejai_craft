@@ -2,96 +2,84 @@ import type { ProductCard } from "../pages/types";
 
 export type JewelryCategoryKey =
   | "ring"
-  | "earring"
-  | "bracelet"
-  | "necklace"
-  | "pendant"
-  | "perfume"
   | "souvenir-pen";
 
 export const jewelryCategoryTabs: Array<{ id: JewelryCategoryKey; label: string }> = [
   { id: "ring", label: "แหวน" },
-  { id: "earring", label: "ต่างหู" },
-  { id: "bracelet", label: "กำไล" },
-  { id: "necklace", label: "สร้อยคอ" },
-  { id: "pendant", label: "จี้" },
-  { id: "perfume", label: "น้ำหอม" },
   { id: "souvenir-pen", label: "ปากกาที่ระลึก" },
 ];
 
 export const jewelryCatalog: Record<JewelryCategoryKey, ProductCard[]> = {
   ring: [
     {
-      title: "แหวนพลอยกลาง",
-      subtitle: "Statement Ring",
-      description: "ชูพลอยเม็ดหลักด้วยตัวเรือนเรียบ ทำให้ชิ้นงานดูหรูโดยไม่รกสายตา",
-      image:
-        "/images/Jewelry/ring/ring1.jpg",
-      accent: "Center stone",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv1.jpg",
+      accent: "925 silver",
     },
     {
-      title: "แหวนมินิมอล",
-      subtitle: "Classic Ring",
-      description: "ดีไซน์เรียบ ใส่ได้ทุกวัน เหมาะกับทุกลุค",
-      image: "/images/Jewelry/ring/ring2.jpg",
-      accent: "Daily wear",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv2.jpg",
+      accent: "925 silver",
     },
     {
-      title: "แหวน",
-      subtitle: "Vintage Ruby Ring",
-      description: "ดีไซน์คลาสสิก โทนอบอุ่น ใส่ออกงานได้",
-      image: "/images/Jewelry/ring/ring3.jpg",
-      accent: "Vintage look",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv3.jpg",
+      accent: "925 silver",
     },
-  ],
-  earring: [
     {
-      title: "ต่างหูโทนเงิน",
-      subtitle: "Silver Earrings",
-      description: "รายละเอียดเรียบหรู โมเดิร์น",
-      image:
-        "/public",
-      accent: "Light shine",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv4.jpg",
+      accent: "925 silver",
     },
-  ],
-  bracelet: [
     {
-      title: "กำไลเลเยอร์",
-      subtitle: "Layer Bracelet",
-      description: "ออกแบบให้ซ้อนกับนาฬิกาหรือกำไลเส้นอื่นได้อย่างสมส่วน",
-      image:
-        "https://images.unsplash.com/photo-1511253819057-5408d4d70465?auto=format&fit=crop&w=900&q=80",
-      accent: "Layered look",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv5.jpg",
+      accent: "925 silver",
     },
-  ],
-  necklace: [
     {
-      title: "สร้อยคอเส้นบาง",
-      subtitle: "Fine Necklace",
-      description: "แมตช์ง่าย น้ำหนักเบา หรูแบบ understated",
-      image:
-        "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=80",
-      accent: "Layer ready",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv6.jpg",
+      accent: "925 silver",
     },
-  ],
-  pendant: [
     {
-      title: "เซ็ตสร้อยและจี้",
-      subtitle: "Pendant Set",
-      description: "เหมาะเป็นของขวัญหรือชิ้นประจำวัน โทนภาพรวมดูแพงและใส่ได้บ่อย",
-      image:
-        "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80",
-      accent: "Gift ready",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv7.jpg",
+      accent: "925 silver",
     },
-  ],
-  perfume: [
     {
-      title: "น้ำหอมคอลเลกชัน",
-      subtitle: "Signature Scent",
-      description: "กลิ่นพรีเมียม เสริมลุคจิวเวลรี่",
-      image:
-        "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?auto=format&fit=crop&w=900&q=80",
-      accent: "Premium scent",
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv8.jpg",
+      accent: "925 silver",
+    },
+    {
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv9.jpg",
+      accent: "925 silver",
+    },
+    {
+      title: "แหวนเงิน",
+      subtitle: "Silver Ring",
+      description: "แหวนเงินงานคราฟต์ ดีไซน์เรียบหรู ใส่ได้ทั้งวันทำงานและวันพิเศษ",
+      image: "/images/Jewelry/ring/silv10.jpg",
+      accent: "925 silver",
     },
   ],
   "souvenir-pen": [
@@ -99,9 +87,22 @@ export const jewelryCatalog: Record<JewelryCategoryKey, ProductCard[]> = {
       title: "ปากกาที่ระลึก",
       subtitle: "Souvenir Pen",
       description: "ของขวัญพรีเมียม เหมาะสำหรับโอกาสพิเศษ",
-      image:
-        "https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=900&q=80",
+      image: "/images/Jewelry/pen/pen1.jpg",
       accent: "Gift item",
+    },
+    {
+      title: "ปากกาที่ระลึก",
+      subtitle: "Souvenir Pen",
+      description: "ดีไซน์พรีเมียม เหมาะสำหรับเป็นของขวัญหรือของสะสม",
+      image: "/images/Jewelry/pen/prn2.jpg",
+      accent: "Collector piece",
+    },
+    {
+      title: "ปากกาที่ระลึก",
+      subtitle: "Souvenir Pen",
+      description: "ลุคเรียบหรู ใช้งานได้จริงในทุกวัน",
+      image: "/images/Jewelry/pen/pen3.jpg",
+      accent: "Daily premium",
     },
   ],
 };

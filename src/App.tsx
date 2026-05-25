@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { defaultPageId, getHashPage, pages } from "./pages/content";
 import type { PageContent, PageKey } from "./pages/types";
 import { AboutPage } from "./pages/views/AboutPage";
+import { ContactPage } from "./pages/views/ContactPage";
 import { HomePage } from "./pages/views/HomePage";
 import { JewelryPage } from "./pages/views/JewelryPage";
 import { WorkshopPage } from "./pages/views/WorkshopPage";
@@ -13,6 +14,8 @@ function renderPage(page: PageContent) {
       return <HomePage page={page} />;
     case "about":
       return <AboutPage page={page} />;
+    case "contact":
+      return <ContactPage page={page} />;
     case "workshop":
       return <WorkshopPage page={page} />;
     case "jewelry":
@@ -31,6 +34,8 @@ export function App() {
         return t("nav_home");
       case "about":
         return t("nav_about");
+      case "contact":
+        return t("nav_contact");
       case "jewelry":
         return t("nav_jewelry");
       case "workshop":
@@ -73,6 +78,7 @@ export function App() {
   );
   const isHome = activePage.id === "home";
   const isAbout = activePage.id === "about";
+  const isContact = activePage.id === "contact";
   const isWorkshop = activePage.id === "workshop";
   const languageButtons = [
     { code: "th", label: "TH" },
@@ -149,7 +155,7 @@ export function App() {
 
       <main
         className={
-          isHome || isAbout || isWorkshop
+          isHome || isAbout || isContact || isWorkshop
             ? "relative z-10 pb-14 pt-24"
             : "relative z-10 mx-auto max-w-7xl px-4 pb-14 pt-24 sm:px-6 lg:px-8"
         }

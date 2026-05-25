@@ -1,12 +1,13 @@
 const zh = {
   nav_home: "主页",
   nav_about: "关于我们",
+  nav_contact: "联系",
   nav_jewelry: "珠宝",
   nav_workshop: "工坊",
   app: {
-    brand_name: "Mejai Craft",
+    brand_name: "Mejai Crafts",
     brand_tagline: "珠宝设计与展览",
-    footer: "© Mejai Craft · 高级宝石与珠宝信息"
+    footer: "© Mejai Crafts · 高级宝石与珠宝信息"
   },
   home_banner: {
     cta_collection: "查看系列",
@@ -17,7 +18,7 @@ const zh = {
     cta_jewelry: "查看珠宝"
   },
   home: {
-    brand_title: "Mejai Craft",
+    brand_title: "Mejai Crafts",
     brand_desc: "专注细节的宝石工艺，将自然之美与永恒的现代设计融合。",
     tag_1: "Art",
     tag_2: "Design",
@@ -36,6 +37,74 @@ const zh = {
     no_gem_desc: "该硬度范围多为普通矿物，请滑到 7-10 Mohs 查看贵重宝石。",
     collection_label: "系列",
     collection_title: "宝石展示",
+    birthstone_table: {
+      label: "诞生石指南",
+      title: "每月宝石展示",
+      headers: {
+        month: "月份",
+        gem: "宝石",
+        color: "颜色",
+        origin: "主要产地"
+      },
+      rows: {
+        august: {
+          month: "8月",
+          gem_th: "橄榄石",
+          gem_en: "Peridot",
+          hardness: "6.5-7 Mohs",
+          color: "橄榄绿",
+          origin: "巴基斯坦、缅甸"
+        },
+        november: {
+          month: "11月",
+          gem_th: "托帕石",
+          gem_en: "Topaz",
+          hardness: "8 Mohs",
+          color: "蓝色/金色",
+          origin: "巴西、俄罗斯"
+        },
+        october_tourmaline: {
+          month: "10月",
+          gem_th: "碧玺",
+          gem_en: "Tourmaline",
+          hardness: "7-7.5 Mohs",
+          color: "多色",
+          origin: "阿富汗、巴西、莫桑比克"
+        },
+        october_opal: {
+          month: "10月",
+          gem_th: "欧泊",
+          gem_en: "Opal",
+          hardness: "5.5-6.5 Mohs",
+          color: "变彩",
+          origin: "澳大利亚为最大产地"
+        },
+        december: {
+          month: "12月",
+          gem_th: "坦桑石",
+          gem_en: "Tanzanite",
+          hardness: "6.5-7 Mohs",
+          color: "蓝紫色",
+          origin: "主要产自坦桑尼亚"
+        },
+        june: {
+          month: "6月",
+          gem_th: "月光石",
+          gem_en: "Moonstone",
+          hardness: "6-6.5 Mohs",
+          color: "白色带蓝光",
+          origin: "斯里兰卡、印度"
+        },
+        march: {
+          month: "3月",
+          gem_th: "海蓝宝",
+          gem_en: "Aquamarine",
+          hardness: "7.5-8 Mohs",
+          color: "浅蓝色",
+          origin: "巴西、巴基斯坦"
+        }
+      }
+    },
     lucky_label: "信念与寓意",
     lucky_title: "幸运宝石",
     gems: {
@@ -105,7 +174,7 @@ const zh = {
       },
       garnet: {
         name: "Garnet",
-        meaning: "Wealth",
+        meaning: "Vitality",
         desc: "常被认为可增强好运、稳定与内在能量。"
       }
     }
@@ -120,16 +189,12 @@ const zh = {
     studio_location: "工作室位置",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "导航路线",
-    photo_caption: "Mejai Craft Jewelry · 尖竹汶"
+    photo_caption: "Mejai Crafts Jewelry · 尖竹汶"
   },
   jewelry: {
+    dropdown_label: "分类",
     tab: {
       ring: "戒指",
-      earring: "耳环",
-      bracelet: "手链",
-      necklace: "项链",
-      pendant: "吊坠",
-      perfume: "香水",
       "souvenir-pen": "纪念笔"
     }
   },
@@ -180,7 +245,7 @@ const zh = {
   },
   page: {
     home: {
-      title: "Mejai Craft",
+      title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
       description: "在简洁优雅的氛围中介绍宝石、珠宝与工坊体验。",
       cards: {
@@ -188,7 +253,7 @@ const zh = {
           title: "按你的风格选择手作作品",
           subtitle: "Gemstone & Jewelry",
           description: "按清晰分类浏览宝石与珠宝，图文信息易读。",
-          accent: "Mejai Craft"
+          accent: "Mejai Crafts"
         },
         "1": {
           title: "探索宝石",
@@ -205,7 +270,7 @@ const zh = {
       }
     },
     about: {
-      title: "About Mejai Craft",
+      title: "About Mejai Crafts",
       eyebrow: "Our Story",
       description: "品牌故事与联系方式。",
       cards: {
@@ -214,6 +279,19 @@ const zh = {
           subtitle: "Gem City Heritage",
           description: "来自宝石之城的家族手作传承故事。",
           accent: "About"
+        }
+      }
+    },
+    contact: {
+      title: "联系我们",
+      eyebrow: "Get in Touch",
+      description: "联系渠道与工作室位置。",
+      cards: {
+        "0": {
+          title: "联系 Mejai Crafts",
+          subtitle: "Studio Contact",
+          description: "Mejai Crafts 联系信息。",
+          accent: "Contact"
         }
       }
     },

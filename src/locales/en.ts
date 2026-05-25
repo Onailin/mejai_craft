@@ -1,12 +1,13 @@
 const en = {
   nav_home: "Home",
   nav_about: "About",
+  nav_contact: "Contact",
   nav_jewelry: "Jewelry",
   nav_workshop: "Workshop",
   app: {
-    brand_name: "Mejai Craft",
+    brand_name: "Mejai Crafts",
     brand_tagline: "Jewelry Design and Exhibition",
-    footer: "© Mejai Craft · Luxury gemstone and jewelry information"
+    footer: "© Mejai Crafts · Luxury gemstone and jewelry information"
   },
   home_banner: {
     cta_collection: "View Collection",
@@ -17,7 +18,7 @@ const en = {
     cta_jewelry: "View Jewelry"
   },
   home: {
-    brand_title: "Mejai Craft",
+    brand_title: "Mejai Crafts",
     brand_desc: "Gemstone craftsmanship with attention to every detail, blending natural beauty with timeless contemporary design.",
     tag_1: "Art",
     tag_2: "Design",
@@ -36,6 +37,74 @@ const en = {
     no_gem_desc: "This hardness range is mostly common minerals. Slide to 7-10 Mohs to view precious gemstones.",
     collection_label: "Collection",
     collection_title: "Gemstone Showcase",
+    birthstone_table: {
+      label: "Birthstone Guide",
+      title: "Monthly Gemstone Showcase",
+      headers: {
+        month: "Month",
+        gem: "Gemstone",
+        color: "Color",
+        origin: "Primary Sources"
+      },
+      rows: {
+        august: {
+          month: "August",
+          gem_th: "Peridot",
+          gem_en: "Peridot",
+          hardness: "6.5-7 Mohs",
+          color: "Olive Green",
+          origin: "Pakistan, Myanmar"
+        },
+        november: {
+          month: "November",
+          gem_th: "Topaz",
+          gem_en: "Topaz",
+          hardness: "8 Mohs",
+          color: "Blue/Golden",
+          origin: "Brazil, Russia"
+        },
+        october_tourmaline: {
+          month: "October",
+          gem_th: "Tourmaline",
+          gem_en: "Tourmaline",
+          hardness: "7-7.5 Mohs",
+          color: "Multicolor",
+          origin: "Afghanistan, Brazil, Mozambique"
+        },
+        october_opal: {
+          month: "October",
+          gem_th: "Opal",
+          gem_en: "Opal",
+          hardness: "5.5-6.5 Mohs",
+          color: "Play-of-Color",
+          origin: "Australia is the largest source"
+        },
+        december: {
+          month: "December",
+          gem_th: "Tanzanite",
+          gem_en: "Tanzanite",
+          hardness: "6.5-7 Mohs",
+          color: "Violet Blue",
+          origin: "Mainly found in Tanzania"
+        },
+        june: {
+          month: "June",
+          gem_th: "Moonstone",
+          gem_en: "Moonstone",
+          hardness: "6-6.5 Mohs",
+          color: "White with Blue Sheen",
+          origin: "Sri Lanka, India"
+        },
+        march: {
+          month: "March",
+          gem_th: "Aquamarine",
+          gem_en: "Aquamarine",
+          hardness: "7.5-8 Mohs",
+          color: "Light Blue",
+          origin: "Brazil, Pakistan"
+        }
+      }
+    },
     lucky_label: "Beliefs & Meanings",
     lucky_title: "Lucky Stones",
     gems: {
@@ -105,7 +174,7 @@ const en = {
       },
       garnet: {
         name: "Garnet",
-        meaning: "Wealth",
+        meaning: "Vitality",
         desc: "Believed to enhance fortune, stability, and inner strength."
       }
     }
@@ -120,16 +189,12 @@ const en = {
     studio_location: "Studio Location",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "Get Directions",
-    photo_caption: "Mejai Craft Jewelry · Chanthaburi"
+    photo_caption: "Mejai Crafts Jewelry · Chanthaburi"
   },
   jewelry: {
+    dropdown_label: "Category",
     tab: {
       ring: "Ring",
-      earring: "Earring",
-      bracelet: "Bracelet",
-      necklace: "Necklace",
-      pendant: "Pendant",
-      perfume: "Perfume",
       "souvenir-pen": "Souvenir Pen"
     }
   },
@@ -180,7 +245,7 @@ const en = {
   },
   page: {
     home: {
-      title: "Mejai Craft",
+      title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
       description: "A clean and elegant space introducing gemstones, jewelry, and workshops in a refined atmosphere.",
       cards: {
@@ -188,7 +253,7 @@ const en = {
           title: "Craft Pieces in Your Style",
           subtitle: "Gemstone & Jewelry",
           description: "Explore gemstones and jewelry in clear categories with easy-to-read visuals and details.",
-          accent: "Mejai Craft"
+          accent: "Mejai Crafts"
         },
         "1": {
           title: "Explore Gemstones",
@@ -205,7 +270,7 @@ const en = {
       }
     },
     about: {
-      title: "About Mejai Craft",
+      title: "About Mejai Crafts",
       eyebrow: "Our Story",
       description: "Our story and contact information.",
       cards: {
@@ -214,6 +279,19 @@ const en = {
           subtitle: "Gem City Heritage",
           description: "A family craft story from the city of gems.",
           accent: "About"
+        }
+      }
+    },
+    contact: {
+      title: "Contact Us",
+      eyebrow: "Get in Touch",
+      description: "Contact channels and studio location.",
+      cards: {
+        "0": {
+          title: "Contact Mejai Crafts",
+          subtitle: "Studio Contact",
+          description: "Contact details for Mejai Crafts.",
+          accent: "Contact"
         }
       }
     },

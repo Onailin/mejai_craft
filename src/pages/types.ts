@@ -1,6 +1,7 @@
 export type PageKey =
   | "home"
   | "about"
+  | "contact"
   | "gemstones"
   | "jewelry"
   | "workshop";

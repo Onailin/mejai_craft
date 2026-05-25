@@ -1,6 +1,6 @@
-import { AboutSection } from "../../components/AboutSection";
+import { AboutOverviewSection } from "../../components/AboutOverviewSection";
 import type { PageContent } from "../types";
 
 export function AboutPage({ page }: { page: PageContent }) {
-  return <AboutSection page={page} />;
+  return <AboutOverviewSection page={page} />;
 }

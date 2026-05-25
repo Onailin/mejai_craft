@@ -312,12 +312,12 @@ export function AboutSection({ page }: { page: PageContent }) {
       <header className="about-header">
         <span className="about-eyebrow">{page.eyebrow}</span>
         <h1 className="about-title">
-          {t("about.title").split(" ").map((word: string, i: number) =>
+          {page.title.split(" ").map((word: string, i: number) =>
             i % 2 === 1 ? <em key={i}> {word}</em> : <span key={i}>{word}</span>
           )}
         </h1>
         <hr className="about-rule" />
-        <p className="about-intro">{t("about.intro")}</p>
+        <p className="about-intro">{page.description}</p>
       </header>
 
       <div className="about-grid">

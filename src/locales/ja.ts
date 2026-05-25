@@ -1,12 +1,13 @@
 const ja = {
   nav_home: "ホーム",
   nav_about: "私たちについて",
+  nav_contact: "お問い合わせ",
   nav_jewelry: "ジュエリー",
   nav_workshop: "ワークショップ",
   app: {
-    brand_name: "Mejai Craft",
+    brand_name: "Mejai Crafts",
     brand_tagline: "ジュエリーデザインと展示",
-    footer: "© Mejai Craft · 高級宝石とジュエリー情報"
+    footer: "© Mejai Crafts · 高級宝石とジュエリー情報"
   },
   home_banner: {
     cta_collection: "コレクションを見る",
@@ -17,7 +18,7 @@ const ja = {
     cta_jewelry: "ジュエリーを見る"
   },
   home: {
-    brand_title: "Mejai Craft",
+    brand_title: "Mejai Crafts",
     brand_desc: "細部までこだわる宝石クラフト。自然の美しさと現代的で時代を超えるデザインを融合します。",
     tag_1: "Art",
     tag_2: "Design",
@@ -36,6 +37,74 @@ const ja = {
     no_gem_desc: "この硬度帯は一般鉱物が中心です。7-10 Mohs に動かして貴石をご覧ください。",
     collection_label: "コレクション",
     collection_title: "宝石ショーケース",
+    birthstone_table: {
+      label: "バースストーンガイド",
+      title: "月別ジェムストーンショーケース",
+      headers: {
+        month: "月",
+        gem: "宝石",
+        color: "色",
+        origin: "主な産地"
+      },
+      rows: {
+        august: {
+          month: "8月",
+          gem_th: "ペリドット",
+          gem_en: "Peridot",
+          hardness: "6.5-7 Mohs",
+          color: "オリーブグリーン",
+          origin: "パキスタン、ミャンマー"
+        },
+        november: {
+          month: "11月",
+          gem_th: "トパーズ",
+          gem_en: "Topaz",
+          hardness: "8 Mohs",
+          color: "ブルー/ゴールド",
+          origin: "ブラジル、ロシア"
+        },
+        october_tourmaline: {
+          month: "10月",
+          gem_th: "トルマリン",
+          gem_en: "Tourmaline",
+          hardness: "7-7.5 Mohs",
+          color: "多色",
+          origin: "アフガニスタン、ブラジル、モザンビーク"
+        },
+        october_opal: {
+          month: "10月",
+          gem_th: "オパール",
+          gem_en: "Opal",
+          hardness: "5.5-6.5 Mohs",
+          color: "遊色",
+          origin: "オーストラリアが最大産地"
+        },
+        december: {
+          month: "12月",
+          gem_th: "タンザナイト",
+          gem_en: "Tanzanite",
+          hardness: "6.5-7 Mohs",
+          color: "青紫",
+          origin: "主産地はタンザニア"
+        },
+        june: {
+          month: "6月",
+          gem_th: "ムーンストーン",
+          gem_en: "Moonstone",
+          hardness: "6-6.5 Mohs",
+          color: "青白い光沢",
+          origin: "スリランカ、インド"
+        },
+        march: {
+          month: "3月",
+          gem_th: "アクアマリン",
+          gem_en: "Aquamarine",
+          hardness: "7.5-8 Mohs",
+          color: "ライトブルー",
+          origin: "ブラジル、パキスタン"
+        }
+      }
+    },
     lucky_label: "意味と信念",
     lucky_title: "ラッキーストーン",
     gems: {
@@ -105,7 +174,7 @@ const ja = {
       },
       garnet: {
         name: "Garnet",
-        meaning: "Wealth",
+        meaning: "Vitality",
         desc: "幸運、安定、前向きなエネルギーを高めるとされています。"
       }
     }
@@ -120,16 +189,12 @@ const ja = {
     studio_location: "スタジオ所在地",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "経路案内",
-    photo_caption: "Mejai Craft Jewelry · チャンタブリー"
+    photo_caption: "Mejai Crafts Jewelry · チャンタブリー"
   },
   jewelry: {
+    dropdown_label: "カテゴリー",
     tab: {
       ring: "リング",
-      earring: "イヤリング",
-      bracelet: "ブレスレット",
-      necklace: "ネックレス",
-      pendant: "ペンダント",
-      perfume: "香水",
       "souvenir-pen": "記念ペン"
     }
   },
@@ -180,7 +245,7 @@ const ja = {
   },
   page: {
     home: {
-      title: "Mejai Craft",
+      title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
       description: "洗練された雰囲気で、宝石・ジュエリー・ワークショップを紹介します。",
       cards: {
@@ -188,7 +253,7 @@ const ja = {
           title: "スタイルに合わせて選べるクラフト",
           subtitle: "Gemstone & Jewelry",
           description: "カテゴリーごとに宝石とジュエリーを分かりやすく閲覧できます。",
-          accent: "Mejai Craft"
+          accent: "Mejai Crafts"
         },
         "1": {
           title: "宝石を知る",
@@ -205,7 +270,7 @@ const ja = {
       }
     },
     about: {
-      title: "About Mejai Craft",
+      title: "About Mejai Crafts",
       eyebrow: "Our Story",
       description: "ブランドのストーリーとお問い合わせ情報。",
       cards: {
@@ -214,6 +279,19 @@ const ja = {
           subtitle: "Gem City Heritage",
           description: "宝石の街から受け継がれる家族のクラフトストーリー。",
           accent: "About"
+        }
+      }
+    },
+    contact: {
+      title: "お問い合わせ",
+      eyebrow: "Get in Touch",
+      description: "連絡先とスタジオ所在地。",
+      cards: {
+        "0": {
+          title: "Mejai Crafts 連絡先",
+          subtitle: "Studio Contact",
+          description: "Mejai Crafts のお問い合わせ情報。",
+          accent: "Contact"
         }
       }
     },

@@ -1,12 +1,13 @@
 const th = {
-  nav_home: "Home",
+  nav_home: "หน้าหลัก",
   nav_about: "เกี่ยวกับเรา",
+  nav_contact: "ติดต่อ",
   nav_jewelry: "จิวเวลรี่",
   nav_workshop: "เวิร์คชอป",
   app: {
-    brand_name: "Mejai Craft",
+    brand_name: "Mejai Crafts",
     brand_tagline: "Jewelry Design and Exhibition",
-    footer: "© Mejai Craft · Luxury gemstone and jewelry information",
+    footer: "© Mejai Crafts · Luxury gemstone and jewelry information",
   },
   home_banner: {
     cta_collection: "ชมคอลเลกชัน",
@@ -25,17 +26,85 @@ const th = {
     interactive_label: "Interactive Lab",
     interactive_title: "สเกลความแข็งของอัญมณี",
     hard_gem_title: "พลอยเนื้อแข็ง",
-    hard_gem_desc: "7.5-10 Mohs เหมาะกับแหวนและชิ้นที่ใช้ประจำวัน",
-    hard_gem_examples: "เพชร · ทับทิม · ไพลิน",
+    hard_gem_desc: "7.5-10 Mohs มีราคาสูง และนิยมใช้ทำเครื่องประดับ",
+    hard_gem_examples: "เพชร · ทับทิม · ไพลิน · มรกต",
     soft_gem_title: "พลอยเนื้ออ่อน",
-    soft_gem_desc: "ต่ำกว่า 7 Mohs ต้องดูแลมากขึ้น เหมาะกับงานที่ไม่โดนกระแทก",
-    soft_gem_examples: "โอปอล · ไข่มุก · เทอร์ควอยซ์",
-    origin: "Origin",
+    soft_gem_desc: "อัญมณีอื่นๆ ทุกชนิดนอกเหนือจากพลอยเนื้อแข็ง ซึ่งมีความหลากหลายอย่างมหาศาลทั้งในด้านสีสัน และโครงร้าง",
+    soft_gem_examples: "โอปอล · เทอร์ควอยซ์ · มูนสโตน · อเมทิสต์ · อความารีน · ทัวร์มาลีน",
+    origin: "Origin", 
     color: "Color",
     no_gem_title: "No gemstones active at {{hardness}} Mohs",
     no_gem_desc: "ระดับความแข็งนี้ส่วนใหญ่เป็นแร่ทั่วไป กรุณาเลื่อนสไลด์ไปที่ระดับ 7 - 10 เพื่อดูอัญมณีมีค่า",
-    collection_label: "Collection",
-    collection_title: "Gemstone Showcase",
+    collection_label: "คอลเลกชัน",
+    collection_title: "โชว์เคสอัญมณี",
+    birthstone_table: {
+      label: "คู่มืออัญมณี",
+      title: "อัญมณีประจำเดือน",
+      headers: {
+        month: "เดือน",
+        gem: "อัญมณี",
+        color: "สี",
+        origin: "แหล่งที่พบ",
+      },
+      rows: {
+        august: {
+          month: "สิงหาคม",
+          gem_th: "เพอริดอต",
+          gem_en: "Peridot",
+          hardness: "6.5-7 Mohs",
+          color: "เขียวมะกอก",
+          origin: "ปากีสถาน, เมียนมา",
+        },
+        november: {
+          month: "พฤศจิกายน",
+          gem_th: "โทแพซ",
+          gem_en: "Topaz",
+          hardness: "8 Mohs",
+          color: "ฟ้า/ทอง",
+          origin: "บราซิล, รัสเซีย",
+        },
+        october_tourmaline: {
+          month: "ตุลาคม",
+          gem_th: "ทัวร์มาลีน",
+          gem_en: "Tourmaline",
+          hardness: "7-7.5 Mohs",
+          color: "หลากสี",
+          origin: "อัฟกานิสถาน, บราซิล, โมซัมบิก",
+        },
+        october_opal: {
+          month: "ตุลาคม",
+          gem_th: "โอปอล",
+          gem_en: "Opal",
+          hardness: "5.5-6.5 Mohs",
+          color: "เล่นสีรุ้ง",
+          origin: "Australia เป็นแหล่งใหญ่ที่สุด",
+        },
+        december: {
+          month: "ธันวาคม",
+          gem_th: "แทนซาไนต์",
+          gem_en: "Tanzanite",
+          hardness: "6.5-7 Mohs",
+          color: "น้ำเงินอมม่วง",
+          origin: "พบหลักใน Tanzania เท่านั้น",
+        },
+        june: {
+          month: "มิถุนายน",
+          gem_th: "มูนสโตน",
+          gem_en: "Moonstone",
+          hardness: "6-6.5 Mohs",
+          color: "ขาวเหลือบฟ้า",
+          origin: "Sri Lanka, India",
+        },
+        march: {
+          month: "มีนาคม",
+          gem_th: "อความารีน",
+          gem_en: "Aquamarine",
+          hardness: "7.5-8 Mohs",
+          color: "ฟ้าอ่อน",
+          origin: "Brazil, Pakistan",
+        },
+      },
+    },
     lucky_label: "Beliefs & Meanings",
     lucky_title: "Lucky Stones",
     gems: {
@@ -105,7 +174,7 @@ const th = {
       },
       garnet: {
         name: "Garnet (โกเมน)",
-        meaning: "Wealth",
+        meaning: "Vitality",
         desc: "โกเมนเป็นอัญมณีที่เชื่อกันว่าช่วยเสริมสิริมงคล นำพาโชคลาภ ความมั่นคง และพลังใจให้กับผู้สวมใส่",
       },
     },
@@ -124,13 +193,10 @@ const th = {
     photo_caption: "มีใจ คราฟต์ จิวเวลรี่ · จันทบุรี",
   },
   jewelry: {
+    dropdown_label: "หมวดสินค้า",
+    ring_collection_heading: "แหวนเงินทั้งหมด",
     tab: {
       ring: "แหวน",
-      earring: "ต่างหู",
-      bracelet: "กำไล",
-      necklace: "สร้อยคอ",
-      pendant: "จี้",
-      perfume: "น้ำหอม",
       "souvenir-pen": "ปากกาที่ระลึก",
     },
   },
@@ -181,7 +247,7 @@ const th = {
   },
   page: {
     home: {
-      title: "Mejai Craft",
+      title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
       description: "พื้นที่แนะนำอัญมณี เครื่องประดับ และเวิร์คชอปในบรรยากาศเรียบ สะอาด และหรูแบบพอดี",
       cards: {
@@ -189,7 +255,7 @@ const th = {
           title: "งานคราฟต์ที่เลือกได้ตามสไตล์",
           subtitle: "Gemstone & Jewelry",
           description: "เลือกชมอัญมณีและจิวเวลรี่ในหมวดที่ชัดเจน พร้อมภาพและคำอธิบายอ่านง่าย",
-          accent: "Mejai Craft",
+          accent: "Mejai Crafts",
         },
         1: {
           title: "สำรวจอัญมณี",
@@ -206,7 +272,7 @@ const th = {
       },
     },
     about: {
-      title: "About Mejai Craft",
+      title: "About Mejai Crafts",
       eyebrow: "Our Story",
       description: "เรื่องราวของร้านและข้อมูลสำหรับติดต่อเรา",
       cards: {
@@ -218,10 +284,23 @@ const th = {
         },
       },
     },
+    contact: {
+      title: "ติดต่อเรา",
+      eyebrow: "Get in Touch",
+      description: "ช่องทางติดต่อและที่ตั้งร้าน",
+      cards: {
+        0: {
+          title: "Contact Mejai Crafts",
+          subtitle: "Studio Contact",
+          description: "รายละเอียดการติดต่อ Mejai Crafts",
+          accent: "Contact",
+        },
+      },
+    },
     jewelry: {
       title: "Fine Jewelry Pieces",
       eyebrow: "Curated Details",
-      description: "รวมแหวน สร้อย กำไล และชิ้นงานสั่งทำในโทนพรีเมียม เน้นภาพใหญ่ อ่านง่าย และเลือกชมเป็นหมวด",
+      description: "รวมเครื่องประดับ และชิ้นงานที่สามารถสั่งทำได้",
       cards: {
         0: {
           title: "เซ็ตสร้อยและจี้",

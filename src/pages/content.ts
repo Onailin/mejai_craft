@@ -4,7 +4,7 @@ export const pages: PageContent[] = [
   {
     id: "home",
     navLabel: "Home",
-    title: "Mejai Craft",
+    title: "Mejai Crafts",
     eyebrow: "Minimal Jewelry Atelier",
     description:
       "พื้นที่แนะนำอัญมณี เครื่องประดับ และเวิร์คชอปในบรรยากาศเรียบ สะอาด และหรูแบบพอดี",
@@ -15,7 +15,7 @@ export const pages: PageContent[] = [
         description:
           "เลือกชมอัญมณีและจิวเวลรี่ในหมวดที่ชัดเจน พร้อมภาพและคำอธิบายอ่านง่าย",
         image: "/images/banner/home.jpg",
-        accent: "Mejai Craft",
+        accent: "Mejai Crafts",
       },
       {
         title: "สำรวจอัญมณี",
@@ -40,7 +40,7 @@ export const pages: PageContent[] = [
   {
     id: "about",
     navLabel: "เกี่ยวกับเรา",
-    title: "About Mejai Craft",
+    title: "About Mejai Crafts",
     eyebrow: "Our Story",
     description: "เรื่องราวของร้านและข้อมูลสำหรับติดต่อเรา",
     cards: [
@@ -54,12 +54,28 @@ export const pages: PageContent[] = [
     ],
   },
   {
+    id: "contact",
+    navLabel: "ติดต่อ",
+    title: "Contact Us",
+    eyebrow: "Get in Touch",
+    description: "ช่องทางติดต่อและที่ตั้งร้าน",
+    cards: [
+      {
+        title: "Contact Mejai Crafts",
+        subtitle: "Studio Contact",
+        description: "รายละเอียดการติดต่อ Mejai Crafts",
+        image: "/images/banner/banner4.jpg",
+        accent: "Contact",
+      },
+    ],
+  },
+  {
     id: "jewelry",
     navLabel: "จิวเวลรี่",
     title: "Fine Jewelry Pieces",
     eyebrow: "Curated Details",
     description:
-      "รวมแหวน สร้อย กำไล และชิ้นงานสั่งทำในโทนพรีเมียม เน้นภาพใหญ่ อ่านง่าย และเลือกชมเป็นหมวด",
+      "รวมเครื่องประดับ และชิ้นงานที่สามารถสั่งทำได้",
     cards: [
       {
         title: "เซ็ตสร้อยและจี้",
@@ -107,6 +123,34 @@ export const pages: PageContent[] = [
         description: "ได้สัมผัสขั้นตอนพื้นฐานของงานจิวเวลรี่ พร้อมคำแนะนำจากทีมงาน",
         image: "/images/banner/banner1.jpg",
         accent: "Workshop day",
+      },
+      {
+        title: "บรรยากาศเวิร์คชอป 1",
+        subtitle: "Workshop Gallery",
+        description: "ภาพบรรยากาศเวิร์คช็อปจริงจาก Mejai Crafts",
+        image: "/images/banner/banner5.jpg",
+        accent: "Workshop gallery",
+      },
+      {
+        title: "บรรยากาศเวิร์คชอป 2",
+        subtitle: "Workshop Gallery",
+        description: "ภาพบรรยากาศเวิร์คช็อปจริงจาก Mejai Crafts",
+        image: "/images/banner/banner7.jpg",
+        accent: "Workshop gallery",
+      },
+      {
+        title: "บรรยากาศเวิร์คชอป 3",
+        subtitle: "Workshop Gallery",
+        description: "ภาพบรรยากาศเวิร์คช็อปจริงจาก Mejai Crafts",
+        image: "/images/banner/banner8.jpg",
+        accent: "Workshop gallery",
+      },
+      {
+        title: "บรรยากาศเวิร์คชอป 4",
+        subtitle: "Workshop Gallery",
+        description: "ภาพบรรยากาศเวิร์คช็อปจริงจาก Mejai Crafts",
+        image: "/images/banner/banner14.jpg",
+        accent: "Workshop gallery",
       },
     ],
   },
