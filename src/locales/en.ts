@@ -247,7 +247,8 @@ const en = {
     home: {
       title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
-      description: "A clean and elegant space introducing gemstones, jewelry, and workshops in a refined atmosphere.",
+      description:
+        "Welcome to \"Mejai Crafts,\" a jewelry and gemstone store in Chanthaboon Waterfront Community, Chanthaburi, with workshops that give everyone the chance to learn and create their own pieces.",
       cards: {
         "0": {
           title: "Craft Pieces in Your Style",

@@ -291,7 +291,7 @@ function RingShowcase({
               alt={card.title}
               style={{
                 width: "100%",
-                aspectRatio: "4/5",
+                aspectRatio: "5/4",
                 objectFit: "cover",
                 display: "block",
                 flexShrink: 0,
@@ -412,19 +412,54 @@ function RingShowcase({
         >
           {selected.subtitle}
         </p>
-        <h3
+        <div
           style={{
             margin: "10px 0 12px",
-            fontFamily: "'EB Garamond', Georgia, serif",
-            fontStyle: "italic",
-            fontWeight: 500,
-            fontSize: "clamp(26px, 3vw, 36px)",
-            lineHeight: 1.12,
-            color: "#111",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            gap: "12px",
+            flexWrap: "wrap",
           }}
         >
-          แหวนเงิน
-        </h3>
+          <h3
+            style={{
+              margin: 0,
+              fontFamily: "'EB Garamond', Georgia, serif",
+              fontStyle: "italic",
+              fontWeight: 500,
+              fontSize: "clamp(26px, 3vw, 36px)",
+              lineHeight: 1.12,
+              color: "#111",
+            }}
+          >
+            แหวนเงิน
+          </h3>
+
+          <a
+            href="https://www.facebook.com/mejaicrafts"
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 999,
+              padding: "8px 14px",
+              fontFamily: "'DM Sans', sans-serif",
+              fontSize: "12px",
+              fontWeight: 500,
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              textDecoration: "none",
+              background: "#111",
+              color: "#fff",
+              whiteSpace: "nowrap",
+            }}
+          >
+            🛒 สั่งซื้อ
+          </a>
+        </div>
         <p
           style={{
             margin: "0 0 18px",
@@ -448,29 +483,6 @@ function RingShowcase({
         >
           {selected.accent}
         </p>
-        <a
-          href="https://www.facebook.com/mejaicrafts"
-          target="_blank"
-          rel="noreferrer"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "100%",
-            borderRadius: 999,
-            padding: "12px 20px",
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: "13px",
-            fontWeight: 500,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase",
-            textDecoration: "none",
-            background: "#111",
-            color: "#fff",
-          }}
-        >
-          สั่งซื้อ
-        </a>
       </article>
     </section>
   );

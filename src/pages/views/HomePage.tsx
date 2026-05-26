@@ -207,12 +207,12 @@ export function HomePage({ page }: { page: PageContent }) {
         <div className="mx-auto max-w-6xl px-6">
           
           {/* Header & Graphic Slider Control */}
-          <div className="mb-16 space-y-8 text-center">
+          <div className="mb-12 space-y-6 text-center sm:mb-16 sm:space-y-8">
             <div className="space-y-2">
               <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400">
                 {t("home.interactive_label")}
               </p>
-              <h2 className="font-serif text-3xl font-light tracking-wide text-stone-800 sm:text-4xl">
+              <h2 className="font-serif text-2xl font-light leading-[1.12] tracking-wide text-stone-800 sm:text-3xl sm:leading-tight">
                 {t("home.interactive_title")}
               </h2>
             </div>
@@ -256,82 +256,52 @@ export function HomePage({ page }: { page: PageContent }) {
               </div>
             </div>
 
-            {/* ส่วนข้อมูลพลอยเนื้อแข็ง / พลอยเนื้ออ่อน (ปรับดีไซน์ให้ตอบสนองกับสเกลที่เลือกด้วยเส้นขอบหนาขึ้น) */}
-            <div className="mx-auto grid max-w-3xl gap-6 pt-4 text-left sm:grid-cols-2">
-              <article
-                className={`transition-all duration-500 border-l-2 py-3 pl-6 ${
-                  selectedHardness >= 7.5 
-                    ? "border-stone-800 bg-stone-100/60 shadow-sm" 
-                    : "border-stone-200 opacity-40"
-                }`}
-              >
-                <h4 className="text-sm font-medium text-stone-700 flex items-center gap-2">
-                  <span>{t("home.hard_gem_title")}</span>
-                  {selectedHardness >= 7.5 && <span className="h-1.5 w-1.5 rounded-full bg-stone-800" />}
-                </h4>
-                <p className="mt-1 text-xs text-stone-500">{t("home.hard_gem_desc")}</p>
-                <p className="mt-2 text-[11px] font-medium text-stone-400">{t("home.hard_gem_examples")}</p>
-              </article>
-
-              <article
-                className={`transition-all duration-500 border-l-2 py-3 pl-6 ${
-                  selectedHardness < 7.5 
-                    ? "border-stone-800 bg-stone-100/60 shadow-sm" 
-                    : "border-stone-200 opacity-40"
-                }`}
-              >
-                <h4 className="text-sm font-medium text-stone-700 flex items-center gap-2">
-                  <span>{t("home.soft_gem_title")}</span>
-                  {selectedHardness < 7.5 && <span className="h-1.5 w-1.5 rounded-full bg-stone-800" />}
-                </h4>
-                <p className="mt-1 text-xs text-stone-500">{t("home.soft_gem_desc")}</p>
-                <p className="mt-2 text-[11px] font-medium text-stone-400">{t("home.soft_gem_examples")}</p>
-              </article>
-            </div>
           </div>
 
           {/* ส่วนแสดงรายละเอียดพลอยตามระดับที่เลือก */}
-          <div className="min-h-[350px]">
+          <div className="min-h-[280px]">
             {activeGems.length > 0 ? (
-              <div className={`grid gap-12 items-center ${activeGems.length > 1 ? 'lg:grid-cols-3' : 'lg:grid-cols-2'}`}>
-                
-                {/* ฝั่งเนื้อหา */}
-                <div className={`space-y-8 ${activeGems.length > 1 ? 'lg:col-span-2 grid sm:grid-cols-2 gap-8 space-y-0' : ''}`}>
-                  {activeGems.map((gem) => (
-                    <article key={gem.name} className="space-y-4 border-l border-stone-300 pl-6">
-                      <span className="inline-block bg-stone-800 px-2 py-0.5 text-[9px] uppercase tracking-widest text-white">
-                        {gem.hardnessDisplay}
-                      </span>
-                      <h3 className="font-serif text-4xl font-light text-stone-800">
-                        {gem.name}
-                      </h3>
-                      <p className="text-sm leading-relaxed text-stone-500">
-                        {gem.detail}
-                      </p>
-                      <div className="flex gap-8 pt-2">
-                        <div>
-                          <p className="text-[9px] uppercase tracking-wider text-stone-400">{t("home.origin")}</p>
-                          <p className="text-xs font-medium text-stone-700">{gem.origin}</p>
-                        </div>
-                        <div>
-                          <p className="text-[9px] uppercase tracking-wider text-stone-400">{t("home.color")}</p>
-                          <p className="text-xs font-medium text-stone-700">{gem.color}</p>
+              <div className="space-y-3 sm:space-y-5">
+                {activeGems.map((gem) => (
+                  <article key={`${gem.name}-${gem.hardnessDisplay}`} className="px-1 py-1.5 sm:px-2">
+                    <div className="flex items-start gap-2.5 sm:gap-5">
+                      <div className="h-20 w-20 shrink-0 overflow-hidden bg-stone-100 sm:h-36 sm:w-40">
+                        <img
+                          src={gem.image}
+                          alt={gem.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0">
+                        <span className="inline-block bg-stone-800 px-1.5 py-0.5 text-[7px] uppercase tracking-[0.14em] text-white sm:px-2 sm:text-[9px] sm:tracking-widest">
+                          {gem.hardnessDisplay}
+                        </span>
+                        <h3 className="mt-1 font-serif text-[22px] font-light leading-[1.08] text-stone-800 sm:mt-2 sm:text-4xl">
+                          {gem.name}
+                        </h3>
+                        <p className="mt-1 text-[11px] leading-relaxed text-stone-500 sm:mt-2 sm:text-sm">
+                          {gem.detail}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1.5 sm:mt-4 sm:gap-8">
+                          <div>
+                            <p className="text-[7px] uppercase tracking-[0.12em] text-stone-400 sm:text-[9px] sm:tracking-wider">
+                              {t("home.origin")}
+                            </p>
+                            <p className="text-[10px] font-medium text-stone-700 sm:text-xs">{gem.origin}</p>
+                          </div>
+                          <div>
+                            <p className="text-[7px] uppercase tracking-[0.12em] text-stone-400 sm:text-[9px] sm:tracking-wider">
+                              {t("home.color")}
+                            </p>
+                            <p className="text-[10px] font-medium text-stone-700 sm:text-xs">{gem.color}</p>
+                          </div>
                         </div>
                       </div>
-                    </article>
-                  ))}
-                </div>
 
-                {/* ฝั่งรูปภาพ */}
-                <div className="overflow-hidden bg-stone-200 aspect-[4/3] sm:aspect-[16/10] lg:aspect-square max-w-md mx-auto w-full shadow-sm">
-                  <img
-                    key={activeGems[0].name}
-                    className="h-full w-full object-cover"
-                    src={activeGems[0].image}
-                    alt={activeGems[0].name}
-                  />
-                </div>
-
+                    </div>
+                  </article>
+                ))}
               </div>
             ) : (
               /* หน้าว่างในกรณีไม่มีผลลัพธ์ */
@@ -393,7 +363,7 @@ export function HomePage({ page }: { page: PageContent }) {
 
       {/* Lucky Stones */}
       <section className="mx-auto mt-20 max-w-6xl px-6 pb-20 sm:mt-28 sm:pb-28">
-        <header className="mb-10 text-center">
+        <header className="mb-10">
           <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
             {t("home.lucky_label")}
           </p>

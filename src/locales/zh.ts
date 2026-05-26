@@ -247,7 +247,8 @@ const zh = {
     home: {
       title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
-      description: "在简洁优雅的氛围中介绍宝石、珠宝与工坊体验。",
+      description:
+        "欢迎来到\"Mejai Crafts\"。我们位于尖竹汶府占塔汶河畔社区，提供珠宝与宝石，并开设工作坊，让每个人都能亲手学习并创作属于自己的作品。",
       cards: {
         "0": {
           title: "按你的风格选择手作作品",

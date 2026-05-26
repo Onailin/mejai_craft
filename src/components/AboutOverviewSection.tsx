@@ -3,13 +3,12 @@ import { useTranslation } from "react-i18next";
 import type { PageContent } from "../pages/types";
 
 const SLIDES = [
-  { id: "01", src: "/images/banner/album1.jpg", label: "Album 1" },
-  { id: "02", src: "/images/banner/album2.jpg", label: "Album 2" },
-  { id: "03", src: "/images/banner/album3.jpg", label: "Album 3" },
-  { id: "04", src: "/images/banner/album4.jpg", label: "Album 4" },
-  { id: "05", src: "/images/banner/album5.jpg", label: "Album 5" },
-  { id: "06", src: "/images/banner/banner.jpg", label: "Banner" },
-  { id: "07", src: "/images/banner/banner4.jpg", label: "Banner 4" },
+  { id: "01", src: "/images/banner/album2.jpg", label: "Album 2" },
+  { id: "02", src: "/images/banner/album3.jpg", label: "Album 3" },
+  { id: "03", src: "/images/banner/album4.jpg", label: "Album 4" },
+  { id: "04", src: "/images/banner/album5.jpg", label: "Album 5" },
+  { id: "05", src: "/images/banner/banner.jpg", label: "Banner" },
+  { id: "06", src: "/images/banner/banner4.jpg", label: "Banner 4" },
 ];
 
 export function AboutOverviewSection({ page }: { page: PageContent }) {

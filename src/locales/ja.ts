@@ -247,7 +247,8 @@ const ja = {
     home: {
       title: "Mejai Crafts",
       eyebrow: "Minimal Jewelry Atelier",
-      description: "洗練された雰囲気で、宝石・ジュエリー・ワークショップを紹介します。",
+      description:
+        "「Mejai Crafts」へようこそ。チャンタブリーのチャーンタブーン川沿いコミュニティにあるジュエリーと宝石のショップで、どなたでも学びながら自分だけの作品を作れるワークショップもご用意しています。",
       cards: {
         "0": {
           title: "スタイルに合わせて選べるクラフト",
