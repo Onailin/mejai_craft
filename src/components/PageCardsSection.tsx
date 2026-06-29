@@ -1,5 +1,5 @@
 import { ProductCard } from "./ProductCard";
-import type { PageContent } from "../pages/types";
+import type { PageContent } from "@/types";
 
 export function PageCardsSection({
   page,

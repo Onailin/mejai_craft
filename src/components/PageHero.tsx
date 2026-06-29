@@ -1,4 +1,4 @@
-import type { PageContent } from "../pages/types";
+import type { PageContent } from "@/types";
 import { useTranslation } from "react-i18next";
 
 export function PageHero({ page }: { page: PageContent }) {
@@ -33,6 +33,7 @@ export function PageHero({ page }: { page: PageContent }) {
       </div>
 
       <div className="relative hidden min-h-[390px] lg:block">
+        {page.cards[0]?.image ? (
         <div className="relative ml-auto max-w-md overflow-hidden rounded-3xl border border-gray-200 bg-white p-3 shadow-sm">
           <img
             className="h-[370px] w-full rounded-2xl object-cover"
@@ -44,6 +45,7 @@ export function PageHero({ page }: { page: PageContent }) {
             <p className="mt-2 text-sm leading-6 text-luxury-muted">{page.cards[0].description}</p>
           </div>
         </div>
+        ) : null}
       </div>
     </section>
   );

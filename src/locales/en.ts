@@ -2,8 +2,10 @@ const en = {
   nav_home: "Home",
   nav_about: "About",
   nav_contact: "Contact",
-  nav_jewelry: "Jewelry",
+  nav_jewelry: "Products",
   nav_workshop: "Workshop",
+  nav_login: "Login",
+  nav_admin: "Admin",
   app: {
     brand_name: "Mejai Crafts",
     brand_tagline: "Jewelry Design and Exhibition",
@@ -15,7 +17,7 @@ const en = {
   },
   page_hero: {
     cta_workshop: "View Workshop Info",
-    cta_jewelry: "View Jewelry"
+    cta_jewelry: "View Products"
   },
   home: {
     brand_title: "Mejai Crafts",
@@ -186,6 +188,7 @@ const en = {
     contact_title: "Contact",
     tagline: "Jewelry & curated gemstones",
     facebook_label: "MEJAI Crafts",
+    line_label: "Inquire / Order via LINE",
     studio_location: "Studio Location",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "Get Directions",
@@ -193,6 +196,16 @@ const en = {
   },
   jewelry: {
     dropdown_label: "Category",
+    ring_collection_heading: "All Silver Rings",
+    ring_title: "Silver Ring",
+    buy_button: "Order Now",
+    items_count: "{{count}} items",
+    prev_image_aria: "Previous image",
+    next_image_aria: "Next image",
+    preview_image_aria: "View product image {{index}}",
+    prev_banner_aria: "Previous banner",
+    next_banner_aria: "Next banner",
+    go_banner_aria: "Go to banner {{index}}",
     tab: {
       ring: "Ring",
       "souvenir-pen": "Souvenir Pen"
@@ -200,6 +213,7 @@ const en = {
   },
   workshop: {
     label: "Workshop",
+    categories_label: "Workshop Categories",
     book_button: "Book Workshop",
     banner_slide_aria: "Go to slide {{index}}",
     featured_slide_aria: "Go to workshop image {{index}}",

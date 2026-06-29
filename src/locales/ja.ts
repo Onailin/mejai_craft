@@ -2,8 +2,10 @@ const ja = {
   nav_home: "ホーム",
   nav_about: "私たちについて",
   nav_contact: "お問い合わせ",
-  nav_jewelry: "ジュエリー",
+  nav_jewelry: "商品",
   nav_workshop: "ワークショップ",
+  nav_login: "ログイン",
+  nav_admin: "管理",
   app: {
     brand_name: "Mejai Crafts",
     brand_tagline: "ジュエリーデザインと展示",
@@ -15,7 +17,7 @@ const ja = {
   },
   page_hero: {
     cta_workshop: "ワークショップ情報を見る",
-    cta_jewelry: "ジュエリーを見る"
+    cta_jewelry: "商品を見る"
   },
   home: {
     brand_title: "Mejai Crafts",
@@ -186,6 +188,7 @@ const ja = {
     contact_title: "お問い合わせ",
     tagline: "厳選ジュエリー＆宝石",
     facebook_label: "MEJAI Crafts",
+    line_label: "LINEで問い合わせ・注文",
     studio_location: "スタジオ所在地",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "経路案内",
@@ -193,6 +196,16 @@ const ja = {
   },
   jewelry: {
     dropdown_label: "カテゴリー",
+    ring_collection_heading: "シルバーリング一覧",
+    ring_title: "シルバーリング",
+    buy_button: "購入する",
+    items_count: "{{count}} 点",
+    prev_image_aria: "前の画像",
+    next_image_aria: "次の画像",
+    preview_image_aria: "商品画像 {{index}} を表示",
+    prev_banner_aria: "前のバナー",
+    next_banner_aria: "次のバナー",
+    go_banner_aria: "バナー {{index}} へ移動",
     tab: {
       ring: "リング",
       "souvenir-pen": "記念ペン"
@@ -200,6 +213,7 @@ const ja = {
   },
   workshop: {
     label: "ワークショップ",
+    categories_label: "ワークショップカテゴリー",
     book_button: "ワークショップ予約",
     banner_slide_aria: "スライド {{index}} に移動",
     featured_slide_aria: "ワークショップ画像 {{index}} に移動",

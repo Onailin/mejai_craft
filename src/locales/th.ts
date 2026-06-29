@@ -2,8 +2,10 @@ const th = {
   nav_home: "หน้าหลัก",
   nav_about: "เกี่ยวกับเรา",
   nav_contact: "ติดต่อ",
-  nav_jewelry: "จิวเวลรี่",
+  nav_jewelry: "สินค้า",
   nav_workshop: "เวิร์คชอป",
+  nav_login: "เข้าสู่ระบบ",
+  nav_admin: "แอดมิน",
   app: {
     brand_name: "Mejai Crafts",
     brand_tagline: "Jewelry Design and Exhibition",
@@ -15,7 +17,7 @@ const th = {
   },
   page_hero: {
     cta_workshop: "ดูข้อมูลเวิร์คชอป",
-    cta_jewelry: "ชมจิวเวลรี่",
+    cta_jewelry: "ชมสินค้า",
   },
   home: {
     brand_title: "มีใจ คราฟต์",
@@ -187,6 +189,7 @@ const th = {
     contact_title: "ติดต่อที่",
     tagline: "เครื่องประดับ & อัญมณีคัดพิเศษ",
     facebook_label: "MEJAI Crafts - มีใจ คราฟต์",
+    line_label: "สอบถาม / สั่งซื้อทาง LINE",
     studio_location: "ที่ตั้งสตูดิโอ",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "เส้นทาง",
@@ -195,6 +198,15 @@ const th = {
   jewelry: {
     dropdown_label: "หมวดสินค้า",
     ring_collection_heading: "แหวนเงินทั้งหมด",
+    ring_title: "แหวนเงิน",
+    buy_button: "สั่งซื้อ",
+    items_count: "{{count}} รายการ",
+    prev_image_aria: "รูปก่อนหน้า",
+    next_image_aria: "รูปถัดไป",
+    preview_image_aria: "ดูรูปสินค้า {{index}}",
+    prev_banner_aria: "แบนเนอร์ก่อนหน้า",
+    next_banner_aria: "แบนเนอร์ถัดไป",
+    go_banner_aria: "ไปที่แบนเนอร์ {{index}}",
     tab: {
       ring: "แหวน",
       "souvenir-pen": "ปากกาที่ระลึก",
@@ -202,6 +214,7 @@ const th = {
   },
   workshop: {
     label: "Workshop",
+    categories_label: "หมวดเวิร์คชอป",
     book_button: "จองเวิร์คชอป",
     banner_slide_aria: "ไปยังสไลด์ {{index}}",
     featured_slide_aria: "ไปยังรูปเวิร์คชอป {{index}}",
@@ -225,8 +238,8 @@ const th = {
       price4_value: "1,899 บาท/ท่าน",
     },
     steps: {
-      design_title: "เลือกดีไซน์",
-      design_desc: "เลือกแบบแหวนระหว่างแหวนเกลี้ยงและแหวนทุบ (texture)",
+      design_title: "เลือกขนาด",
+      design_desc: "เลือกขนาดหน้ากว้างแหวนตามงบประมาณและสไตล์ที่ต้องการ",
       material_title: "เลือกวัสดุ",
       material_desc: "เลือกขนาดหน้ากว้างแหวนมาตรฐาน 2, 3 หรือ 4 มม.",
       craft_title: "ลงมือทำ",
@@ -235,7 +248,7 @@ const th = {
       finish_desc: "รับแหวนเงินที่ทำเสร็จกลับบ้านได้ภายในคลาส",
     },
     received: {
-      item1: "เลือกแบบแหวนได้ 2 แบบ: แหวนเกลี้ยง หรือ แหวนทุบ (texture)",
+      item1: "เลือกขนาดหน้ากว้างแหวนได้ตามรายการราคา",
       item2: "ขนาดหน้ากว้างมาตรฐาน 2, 3 และ 4 มม.",
       item3: "ได้รับแหวนเงินที่ทำเสร็จกลับบ้าน",
     },
@@ -244,6 +257,15 @@ const th = {
       item2: "ขนาด 5 มม. มีค่าใช้จ่ายเพิ่มเติม",
       item3: "ราคาเวิร์คชอปคิดตามขนาดหน้ากว้างแหวนต่อท่าน",
     },
+    ring_options_title: "ตัวเลือกแหวนเงิน",
+    ring_options_intro:
+      "เลือกขนาดหน้ากว้างและบริการเสริมได้ตามต้องการ ราคาหลักคิดตามขนาดต่อท่าน ภายในเวลาประมาณ 45 นาที–1 ชั่วโมง",
+    ring_size_desc:
+      "ราคาเวิร์คชอปคิดตามขนาดหน้ากว้างแหวนต่อท่าน ขนาด 5 มม. กรุณาแจ้งแอดมินล่วงหน้าและอาจมีค่าใช้จ่ายเพิ่มเติม",
+    ring_plating_desc:
+      "เลือกโทนสีชุบเพิ่มเติมได้ บริการชุบสีอาจมีค่าใช้จ่ายเพิ่มเติมตามแบบที่เลือก",
+    ring_addon_desc: "บริการเสริมหลังทำแหวน หรือสั่งเพิ่มตามต้องการ",
+    price_inquire: "สอบถามราคา",
   },
   page: {
     home: {

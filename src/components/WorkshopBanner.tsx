@@ -1,4 +1,4 @@
-import type { PageContent } from "../pages/types";
+import type { PageContent } from "@/types";
 import { useTranslation } from "react-i18next";
 
 export function WorkshopBanner({

@@ -1,17 +1,22 @@
-import type { ProductCard as ProductCardType } from "../pages/types";
+import type { ProductCard as ProductCardType } from "@/types";
 
 export function ProductCard({ card }: { card: ProductCardType }) {
   return (
     <article className="group w-[84vw] max-w-[360px] shrink-0 snap-center overflow-hidden rounded-xl border border-stone-200 bg-white transition duration-300 hover:-translate-y-1 hover:border-stone-300 sm:w-auto sm:max-w-none">
-      
-      {/* รูปเตี้ยลง (aspect-[4/3]) และ border นุ่มขึ้น */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-stone-100 rounded-md">
-        <img
-          src={card.image}
-          alt={card.title}
-          loading="lazy"
-          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-        />
+
+      <div className="relative overflow-hidden rounded-md bg-stone-100">
+        {card.image ? (
+          <img
+            src={card.image}
+            alt={card.title}
+            loading="lazy"
+            className="block h-auto w-full transition duration-500 group-hover:scale-[1.02]"
+          />
+        ) : (
+          <div className="flex min-h-[160px] w-full items-center justify-center text-xs text-stone-400">
+            ไม่มีรูป
+          </div>
+        )}
 
         {/* Accent Tag — ปรับให้ดูแพงขึ้น */}
         {card.accent && (

@@ -2,8 +2,10 @@ const zh = {
   nav_home: "主页",
   nav_about: "关于我们",
   nav_contact: "联系",
-  nav_jewelry: "珠宝",
+  nav_jewelry: "商品",
   nav_workshop: "工坊",
+  nav_login: "登录",
+  nav_admin: "管理",
   app: {
     brand_name: "Mejai Crafts",
     brand_tagline: "珠宝设计与展览",
@@ -15,7 +17,7 @@ const zh = {
   },
   page_hero: {
     cta_workshop: "查看工坊信息",
-    cta_jewelry: "查看珠宝"
+    cta_jewelry: "查看商品"
   },
   home: {
     brand_title: "Mejai Crafts",
@@ -186,6 +188,7 @@ const zh = {
     contact_title: "联系我们",
     tagline: "精选珠宝与宝石",
     facebook_label: "MEJAI Crafts",
+    line_label: "LINE 咨询 / 订购",
     studio_location: "工作室位置",
     address_detail: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
     get_directions: "导航路线",
@@ -193,6 +196,16 @@ const zh = {
   },
   jewelry: {
     dropdown_label: "分类",
+    ring_collection_heading: "银戒系列",
+    ring_title: "银戒",
+    buy_button: "立即购买",
+    items_count: "{{count}} 件",
+    prev_image_aria: "上一张图片",
+    next_image_aria: "下一张图片",
+    preview_image_aria: "查看商品图片 {{index}}",
+    prev_banner_aria: "上一张横幅",
+    next_banner_aria: "下一张横幅",
+    go_banner_aria: "前往第 {{index}} 张横幅",
     tab: {
       ring: "戒指",
       "souvenir-pen": "纪念笔"
@@ -200,6 +213,7 @@ const zh = {
   },
   workshop: {
     label: "工坊",
+    categories_label: "工坊分类",
     book_button: "预约工坊",
     banner_slide_aria: "跳转到第 {{index}} 张幻灯片",
     featured_slide_aria: "跳转到工坊图片 {{index}}",

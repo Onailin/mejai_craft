@@ -1,10 +1,31 @@
-import { STORE } from "../data/gems";
-import type { PageContent } from "../pages/types";
-import { useTranslation } from "react-i18next";
-import { Phone, Mail, Globe, MapPin } from "lucide-react";
+"use client";
 
-export function AboutSection({ page }: { page: PageContent }) {
+import type { PageContent } from "@/types";
+import { useTranslation } from "react-i18next";
+import { Phone, Mail, Globe, MapPin, MessageCircle } from "lucide-react";
+import { SITE_LINE_URL } from "@/lib/brand";
+
+export function AboutSection({
+  page,
+  settings,
+}: {
+  page: PageContent;
+  settings?: {
+    phone?: string;
+    facebook_url?: string;
+    maps_url?: string;
+    address?: string;
+    qrcode_url?: string;
+    studio_image_url?: string;
+  };
+}) {
   const { t } = useTranslation();
+  const phone = settings?.phone ?? "0888491111";
+  const facebookUrl = settings?.facebook_url ?? "https://www.facebook.com/mejaicrafts";
+  const mapsUrl = settings?.maps_url ?? "https://maps.google.com";
+  const address = settings?.address ?? t("about.address_detail");
+  const qrcodeUrl = settings?.qrcode_url ?? "";
+  const studioImageUrl = settings?.studio_image_url ?? "";
 
   return (
     <section className="about-section">
@@ -335,7 +356,7 @@ export function AboutSection({ page }: { page: PageContent }) {
               <h2 className="biz-info-title">{t("about.contact_title")}</h2>
             </div>
             <div className="biz-qr-large">
-              <img src="/images/qrcode/qrcode.jpg" alt="QR Code" />
+              {qrcodeUrl ? <img src={qrcodeUrl} alt="QR Code" /> : null}
             </div>
           </div>
           <p className="biz-tagline">{t("about.tagline")}</p>
@@ -343,18 +364,27 @@ export function AboutSection({ page }: { page: PageContent }) {
           <hr className="biz-hr" />
 
           <div className="contact-list">
-            <a href={`tel:${STORE.phone.replace(/-/g, "")}`} className="contact-row">
+            <a href={`tel:${phone.replace(/-/g, "")}`} className="contact-row">
               <span className="contact-icon"><Phone size={13} /></span>
-              {STORE.phone}
+              {phone}
             </a>
             <a
-              href="https://www.facebook.com/mejaicrafts"
+              href={facebookUrl}
               target="_blank"
               rel="noreferrer"
               className="contact-row"
             >
               <span className="contact-icon"><Globe size={13} /></span>
               {t("about.facebook_label")}
+            </a>
+            <a
+              href={SITE_LINE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-row"
+            >
+              <span className="contact-icon"><MessageCircle size={13} /></span>
+              {t("about.line_label")}
             </a>
             <a href="mailto:Mejaistudioandgallery@gmail.com" className="contact-row">
               <span className="contact-icon"><Mail size={13} /></span>
@@ -366,7 +396,7 @@ export function AboutSection({ page }: { page: PageContent }) {
             <span className="location-icon"><MapPin size={15} /></span>
             <div>
               <p className="location-label">{t("about.studio_location")}</p>
-              <p className="location-address">{t("about.address_detail")}</p>
+              <p className="location-address">{address}</p>
               <div className="location-actions">
                 <a
                   href="https://maps.app.goo.gl/A1WeSNCQxHUZDJmN6"
@@ -381,12 +411,14 @@ export function AboutSection({ page }: { page: PageContent }) {
           </div>
         </article>
 
+        {studioImageUrl ? (
         <div className="photo-panel">
-          <img src="/images/banner/banner4.jpg" alt="Mejai Studio" />
+          <img src={studioImageUrl} alt="Mejai Studio" />
           <div className="photo-overlay" />
           <span className="photo-number">01 / Studio</span>
           <p className="photo-caption">{t("about.photo_caption")}</p>
         </div>
+        ) : null}
       </div>
     </section>
   );

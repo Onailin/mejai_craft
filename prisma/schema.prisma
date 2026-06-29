@@ -1,0 +1,393 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+enum DisplayMode {
+  GRID
+  SHOWCASE
+  IMAGE_ONLY
+}
+
+enum WorkshopListType {
+  RECEIVED
+  TERMS
+}
+
+enum WorkshopOptionGroupType {
+  STYLE
+  SIZE
+  PLATING
+  ADDON
+  CUSTOM
+}
+
+enum WorkshopRingStyle {
+  CLASSIC
+  TEXTURE
+}
+
+enum WorkshopPlatingType {
+  WHITE_GOLD
+  GOLD
+  ROSE_GOLD
+}
+
+enum WorkshopAddonType {
+  LASER
+  STONE_SETTING
+}
+
+enum WorkshopRingSampleType {
+  STYLE_CLASSIC
+  STYLE_TEXTURE
+  PLATING_WHITE_GOLD
+  PLATING_GOLD
+  PLATING_ROSE_GOLD
+  SIZE_2MM
+  SIZE_3MM
+  SIZE_4MM
+  SIZE_5MM
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         Role     @default(EDITOR)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  accounts Account[]
+  sessions Session[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Gem {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  origin           String?
+  color            String?
+  detail           String?  @db.Text
+  hardnessMin      Decimal? @db.Decimal(4, 1)
+  hardnessMax      Decimal? @db.Decimal(4, 1)
+  hardnessDisplay  String?
+  hue              String?
+  imageUrl         String
+  sortOrder        Int      @default(0)
+  isActive         Boolean  @default(true)
+  showInCollection Boolean  @default(true)
+  showInSlider     Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model LuckyStone {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  meaning     String?
+  description String?  @db.Text
+  imageUrl    String
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Birthstone {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  month           String
+  gemName         String
+  gemNameEn       String?
+  color           String?
+  origin          String?
+  hardness        String?
+  detail          String?  @db.Text
+  imageUrl        String?
+  sortOrder       Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model JewelryCategory {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  name        String
+  displayMode DisplayMode @default(GRID)
+  sortOrder   Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  products JewelryProduct[]
+}
+
+model JewelryProduct {
+  id          String   @id @default(cuid())
+  categoryId  String
+  title       String
+  subtitle    String?
+  description String?  @db.Text
+  accent      String?
+  price       Int?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  category JewelryCategory      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  images   JewelryProductImage[]
+}
+
+model JewelryProductImage {
+  id        String   @id @default(cuid())
+  productId String
+  imageUrl  String
+  altText   String?
+  sortOrder Int      @default(0)
+  isPrimary Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  product JewelryProduct @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopCategory {
+  id          String     @id @default(cuid())
+  slug        String     @unique
+  name        String
+  description String?    @db.Text
+  sortOrder   Int        @default(0)
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  workshops Workshop[]
+}
+
+model Workshop {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  categoryId      String?
+  title           String
+  summary         String?  @db.Text
+  featuredTitle   String?
+  featuredSubtitle String?
+  sortOrder       Int      @default(0)
+  isActive        Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  category       WorkshopCategory?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  bannerImages   WorkshopBannerImage[]
+  featuredImages WorkshopFeaturedImage[]
+  infoCards      WorkshopInfoCard[]
+  steps          WorkshopStep[]
+  listItems      WorkshopListItem[]
+  optionGroups   WorkshopOptionGroup[]
+  ringPrices        WorkshopRingPrice[]
+  addons            WorkshopAddon[]
+  ringSampleImages  WorkshopRingSampleImage[]
+}
+
+model WorkshopBannerImage {
+  id         String   @id @default(cuid())
+  workshopId String
+  imageUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopFeaturedImage {
+  id         String   @id @default(cuid())
+  workshopId String
+  imageUrl   String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopInfoCard {
+  id         String   @id @default(cuid())
+  workshopId String
+  label      String
+  value      String
+  sortOrder  Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopStep {
+  id          String   @id @default(cuid())
+  workshopId  String
+  title       String
+  description String?  @db.Text
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopListItem {
+  id         String           @id @default(cuid())
+  workshopId String
+  listType   WorkshopListType
+  text       String           @db.Text
+  sortOrder  Int              @default(0)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopOptionGroup {
+  id          String                  @id @default(cuid())
+  workshopId  String
+  groupType   WorkshopOptionGroupType
+  title       String
+  description String?                 @db.Text
+  sortOrder   Int                     @default(0)
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  workshop Workshop         @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+  options  WorkshopOption[]
+}
+
+model WorkshopOption {
+  id          String   @id @default(cuid())
+  groupId     String
+  label       String
+  description String?  @db.Text
+  price       Int?
+  priceNote   String?
+  imageUrl    String?
+  sortOrder   Int      @default(0)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  group WorkshopOptionGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+model WorkshopRingPrice {
+  id         String              @id @default(cuid())
+  workshopId String
+  style      WorkshopRingStyle
+  sizeMm     Int
+  plating    WorkshopPlatingType
+  price      Int?
+  priceNote  String?
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+
+  @@unique([workshopId, style, sizeMm, plating])
+}
+
+model WorkshopAddon {
+  id         String            @id @default(cuid())
+  workshopId String
+  addonType  WorkshopAddonType
+  label      String
+  price      Int?
+  priceNote  String?
+  imageUrl   String?
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+
+  @@unique([workshopId, addonType])
+}
+
+model WorkshopRingSampleImage {
+  id         String                 @id @default(cuid())
+  workshopId String
+  sampleType WorkshopRingSampleType
+  imageUrl   String
+  createdAt  DateTime               @default(now())
+  updatedAt  DateTime               @updatedAt
+
+  workshop Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+
+  @@unique([workshopId, sampleType])
+}
+
+model ContentTranslation {
+  id              String   @id @default(cuid())
+  entityType      String
+  entityId        String
+  fieldName       String
+  locale          String
+  translatedText  String   @db.Text
+  isManualOverride Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([entityType, entityId, fieldName, locale])
+  @@index([entityType, entityId])
+}
+
+model SiteSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+}
