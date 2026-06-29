@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "react-i18next";
+import { Menu, X } from "lucide-react";
+import { useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { AdminAuthButton } from "@/components/layout/AdminAuthButton";
 
@@ -16,6 +18,7 @@ const navPages = [
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { t } = useTranslation();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const isAbout = pathname === "/about";
   const isContact = pathname === "/contact";
@@ -33,7 +36,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             <BrandLogo size="lg" />
           </Link>
 
-          <div className="relative z-50 flex shrink-0 items-center gap-2 sm:gap-3">
+          <div className="relative z-50 hidden shrink-0 items-center gap-2 md:flex sm:gap-3">
             <nav
               className="flex items-center gap-0.5 sm:gap-1"
               aria-label="เมนูหลัก"
@@ -60,7 +63,44 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
 
             <AdminAuthButton />
           </div>
+
+          <button
+            type="button"
+            onClick={() => setMobileOpen((current) => !current)}
+            className="relative z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-900 text-white transition hover:bg-gray-700 md:hidden"
+            aria-label={mobileOpen ? "ปิดเมนู" : "เปิดเมนู"}
+            aria-expanded={mobileOpen}
+          >
+            {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
         </div>
+
+        {mobileOpen && (
+          <div className="border-t border-gray-200 bg-white px-4 py-4 shadow-lg md:hidden">
+            <nav className="grid gap-2" aria-label="เมนูหลักมือถือ">
+              {navPages.map((page) => {
+                const isActive = pathname === page.href;
+                return (
+                  <Link
+                    key={page.id}
+                    href={page.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`rounded-2xl px-4 py-3 text-sm font-medium no-underline transition ${
+                      isActive
+                        ? "bg-gray-900 text-white"
+                        : "bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                    }`}
+                  >
+                    {t(page.labelKey)}
+                  </Link>
+                );
+              })}
+            </nav>
+            <div className="mt-3 border-t border-gray-200 pt-3">
+              <AdminAuthButton />
+            </div>
+          </div>
+        )}
       </header>
 
       <main

@@ -103,13 +103,21 @@ export async function uploadImage(
   validateImageFile(normalized);
 
   const hasSupabase = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const isProduction = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+
   if (!hasSupabase) {
+    if (isProduction) {
+      throw new Error("ยังไม่ได้ตั้งค่า Supabase Storage บน production");
+    }
     return uploadImageLocal(normalized, folder);
   }
 
   try {
     return await uploadImageSupabase(normalized, folder);
   } catch (error) {
+    if (isProduction) {
+      throw error;
+    }
     console.error("Supabase upload failed, falling back to local storage:", error);
     return uploadImageLocal(normalized, folder);
   }

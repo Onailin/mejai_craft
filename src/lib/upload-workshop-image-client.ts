@@ -13,7 +13,14 @@ export async function uploadWorkshopImage(
   const response = await fetch("/api/admin/workshop/images", {
     method: "POST",
     body: formData,
-  });
+  }).catch(() => null);
+
+  if (!response) {
+    return {
+      ok: false,
+      error: "เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณารีเฟรชหน้าแล้วลองใหม่",
+    };
+  }
 
   const payload = (await response.json().catch(() => null)) as
     | { ok?: boolean; imageUrl?: string; id?: string; error?: string }
