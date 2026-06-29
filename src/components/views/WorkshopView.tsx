@@ -508,14 +508,29 @@ function WorkshopOverview({
     category.workshops.map((workshop) => ({ category, workshop }))
   );
   const fallbackImage = page.cards.map((card) => card.image).find(Boolean);
+  const heroImage = fallbackImage ?? workshops.map(({ workshop }) => getWorkshopImage(workshop)).find(Boolean);
 
   return (
     <div className="mx-auto max-w-5xl px-6 pb-16">
-      <header className="mb-12 max-w-2xl border-b border-stone-200 pb-8">
-        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-400">Workshop</p>
-        <h1 className="mt-3 text-3xl font-light tracking-tight text-stone-900 sm:text-4xl">
-          เลือกเวิร์คชอป
-        </h1>
+      <header className="mb-12">
+        {heroImage && (
+          <div className="mb-8 flex aspect-[16/7] items-center justify-center overflow-hidden bg-stone-100">
+            <img
+              src={heroImage}
+              alt={page.title}
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
+        )}
+        <div className="max-w-2xl border-b border-stone-200 pb-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-400">Workshop</p>
+          <h1 className="mt-3 text-3xl font-light tracking-tight text-stone-900 sm:text-4xl">
+            เลือกเวิร์คชอป
+          </h1>
+          <p className="mt-3 text-sm leading-relaxed text-stone-500">
+            เลือกคอร์สที่สนใจ แล้วกดดูรายละเอียดเพื่อดูขั้นตอน ราคา และตัวเลือกเพิ่มเติม
+          </p>
+        </div>
       </header>
 
       <div className="space-y-16">

@@ -46,7 +46,7 @@ export const pages: PageContent[] = [
         title: "Contact Mejai Crafts",
         subtitle: "Studio Contact",
         description: "รายละเอียดการติดต่อ Mejai Crafts",
-        image: "",
+        image: "/images/banner/album1.jpg",
         accent: "Contact",
       },
     ],
@@ -66,7 +66,15 @@ export const pages: PageContent[] = [
     eyebrow: "Hands-on Experience",
     description:
       "ข้อมูลเวิร์คชอปสำหรับลูกค้าที่อยากออกแบบ เลือกวัสดุ และเรียนรู้ขั้นตอนทำชิ้นงานของตัวเอง",
-    cards: [],
+    cards: [
+      {
+        title: "Workshop at Mejai Crafts",
+        subtitle: "Hands-on Experience",
+        description: "เลือกเวิร์คชอปและดูรายละเอียดก่อนจอง",
+        image: "/images/banner/banner19.jpg",
+        accent: "Workshop",
+      },
+    ],
   },
 ];
 

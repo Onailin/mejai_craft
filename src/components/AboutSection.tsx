@@ -25,13 +25,13 @@ export function AboutSection({
   const mapsUrl = settings?.maps_url ?? "https://maps.google.com";
   const address = settings?.address ?? t("about.address_detail");
   const qrcodeUrl = settings?.qrcode_url ?? "";
-  const studioImageUrl = settings?.studio_image_url ?? "";
+  const studioImageUrl = settings?.studio_image_url || page.cards[0]?.image || "";
 
   return (
     <section className="about-section">
       <style>{`
         .about-section {
-          font-family: 'Cormorant Garamond', 'Georgia', serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           max-width: 1100px;
           margin: 0 auto;
           padding: 5rem 2rem 6rem;
@@ -44,7 +44,7 @@ export function AboutSection({
         }
         .about-eyebrow {
           display: inline-block;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 9px;
           font-weight: 400;
           letter-spacing: 0.38em;
@@ -54,15 +54,15 @@ export function AboutSection({
         }
         .about-title {
           font-size: clamp(40px, 6vw, 64px);
-          font-weight: 300;
+          font-weight: 500;
           letter-spacing: -0.02em;
           color: #0e0e0e;
           line-height: 1.1;
           margin: 0 0 1.5rem;
         }
         .about-title em {
-          font-style: italic;
-          font-weight: 300;
+          font-style: normal;
+          font-weight: 500;
         }
         .about-rule {
           width: 40px;
@@ -72,7 +72,7 @@ export function AboutSection({
           border: none;
         }
         .about-intro {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 14px;
           line-height: 2;
           color: #666;
@@ -123,14 +123,14 @@ export function AboutSection({
           text-align: right;
         }
         .biz-brand-name {
-          font-family: 'Cormorant Garamond', serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 15px;
           font-weight: 500;
           letter-spacing: 0.12em;
           color: #111;
         }
         .biz-brand-sub {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 8.5px;
           letter-spacing: 0.28em;
           text-transform: uppercase;
@@ -139,7 +139,7 @@ export function AboutSection({
         }
 
         .biz-info-label {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 8.5px;
           letter-spacing: 0.32em;
           text-transform: uppercase;
@@ -174,7 +174,7 @@ export function AboutSection({
           margin-bottom: 0.35rem;
         }
         .biz-tagline {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 12px;
           color: #999;
           line-height: 1.75;
@@ -198,7 +198,7 @@ export function AboutSection({
           gap: 10px;
           text-decoration: none;
           color: #555;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 12px;
           letter-spacing: 0.01em;
           transition: color 0.18s;
@@ -237,7 +237,7 @@ export function AboutSection({
           margin-top: 2px;
         }
         .location-label {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 8.5px;
           letter-spacing: 0.3em;
           text-transform: uppercase;
@@ -245,7 +245,7 @@ export function AboutSection({
           margin-bottom: 0.4rem;
         }
         .location-address {
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 11.5px;
           color: #888;
           line-height: 1.75;
@@ -260,7 +260,7 @@ export function AboutSection({
           margin-top: 1rem;
           background: #111;
           color: #fff;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 9.5px;
           letter-spacing: 0.2em;
           text-transform: uppercase;
@@ -298,7 +298,7 @@ export function AboutSection({
           bottom: 1.5rem;
           left: 2rem;
           right: 2rem;
-          font-family: 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 9px;
           letter-spacing: 0.28em;
           text-transform: uppercase;
@@ -308,7 +308,7 @@ export function AboutSection({
           position: absolute;
           top: 1.75rem;
           right: 1.75rem;
-          font-family: 'Cormorant Garamond', serif;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
           font-size: 11px;
           letter-spacing: 0.18em;
           color: rgba(255,255,255,0.5);
