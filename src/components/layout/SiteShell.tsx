@@ -45,10 +45,13 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-dvh bg-[#f7f7f5] font-sans text-luxury-ink">
       <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_top,#ffffff_0,transparent_45%)]" />
 
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-gray-200/80 bg-white/95 shadow-sm shadow-gray-900/[0.03] backdrop-blur-xl">
-        <div className="mx-auto flex h-28 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="relative z-50 shrink-0 no-underline">
-            <BrandLogo size="lg" />
+      <header className="fixed inset-x-0 top-0 z-50 overflow-visible border-b border-gray-200/80 bg-white/95 shadow-sm shadow-gray-900/[0.03] backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-4 sm:px-6 lg:px-8">
+          <Link
+            href="/"
+            className="relative z-50 inline-flex h-10 w-[5.5rem] shrink-0 items-center overflow-visible no-underline sm:h-11 sm:w-[6.25rem]"
+          >
+            <BrandLogo size="sm" className="origin-left scale-[2.35] sm:scale-[2.65] md:scale-[2.85]" />
           </Link>
 
           <div className="relative z-50 hidden shrink-0 items-center gap-2 md:flex sm:gap-3">
@@ -89,64 +92,64 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
-
-        {mobileOpen ? (
-          <aside
-            className="mobile-sidebar-in fixed inset-0 z-[60] flex flex-col bg-black md:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-label="เมนูหลักมือถือ"
-          >
-            <div className="flex items-center justify-between border-b border-white/10 px-5 pb-5 pt-7">
-              <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-white/45">
-                Menu
-              </span>
-              <button
-                type="button"
-                onClick={() => setMobileOpen(false)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition hover:bg-white/20"
-                aria-label="ปิดเมนู"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <nav className="flex flex-1 flex-col justify-center gap-1 px-6 py-8" aria-label="เมนูหลักมือถือ">
-              {navPages.map((page) => {
-                const isActive = pathname === page.href;
-                return (
-                  <Link
-                    key={page.id}
-                    href={page.href}
-                    onClick={() => setMobileOpen(false)}
-                    className={`rounded-xl px-4 py-4 text-lg no-underline transition ${
-                      isActive
-                        ? "bg-white/12 font-medium text-white"
-                        : "font-normal text-white/75 hover:bg-white/8 hover:text-white"
-                    }`}
-                  >
-                    {t(page.labelKey)}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="border-t border-white/10 p-6 pb-10">
-              <AdminAuthButton tone="onDark" />
-            </div>
-          </aside>
-        ) : null}
       </header>
+
+      {mobileOpen ? (
+        <aside
+          className="mobile-sidebar-in fixed inset-0 z-[70] flex flex-col bg-neutral-950 md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="เมนูหลักมือถือ"
+        >
+          <div className="flex items-center justify-between border-b border-white/15 px-5 pb-5 pt-7">
+            <span className="text-[10px] font-medium uppercase tracking-[0.28em] text-white/70">
+              Menu
+            </span>
+            <button
+              type="button"
+              onClick={() => setMobileOpen(false)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-white/15 text-white transition hover:bg-white/25"
+              aria-label="ปิดเมนู"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+
+          <nav className="flex flex-1 flex-col justify-center gap-1 px-6 py-8" aria-label="เมนูหลักมือถือ">
+            {navPages.map((page) => {
+              const isActive = pathname === page.href;
+              return (
+                <Link
+                  key={page.id}
+                  href={page.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`rounded-xl px-4 py-4 text-lg no-underline transition ${
+                    isActive
+                      ? "bg-white/15 font-semibold text-white"
+                      : "font-medium text-white hover:bg-white/10"
+                  }`}
+                >
+                  {t(page.labelKey)}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="border-t border-white/15 p-6 pb-10">
+            <AdminAuthButton tone="onDark" />
+          </div>
+        </aside>
+      ) : null}
 
       <main
         className={
           isAbout || isContact
-            ? "relative z-10 pb-14 pt-28"
+            ? "relative z-10 pb-14 pt-24"
             : isJewelry || isBirthstones
-              ? "relative z-10 pb-16 pt-40"
+              ? "relative z-10 pb-16 pt-32"
             : isHome || isWorkshop
-              ? "relative z-10 pb-14 pt-28"
-              : "relative z-10 mx-auto max-w-7xl px-4 pb-14 pt-28 sm:px-6 lg:px-8"
+              ? "relative z-10 pb-14 pt-24"
+              : "relative z-10 mx-auto max-w-7xl px-4 pb-14 pt-24 sm:px-6 lg:px-8"
         }
       >
         {children}

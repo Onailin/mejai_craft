@@ -14,7 +14,7 @@ export function AdminAuthButton({ tone = "default" }: AdminAuthButtonProps) {
         onDark ? "w-full py-2.5" : "shrink-0"
       } ${
         onDark
-          ? "border border-white/25 bg-white/10 text-white hover:bg-white/15"
+          ? "border border-white/30 bg-white/15 text-white hover:bg-white/25"
           : "border border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50"
       }`}
     >

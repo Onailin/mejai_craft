@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import type { PageContent } from "@/types";
 import { useTranslation } from "react-i18next";
 
@@ -10,22 +9,19 @@ export function HomeBanner({ page }: { page: PageContent }) {
   const imageSrc = heroCard?.image;
 
   return (
-    <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-gray-100">
+    <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden bg-gray-100">
       {imageSrc ? (
-        <Image
-          className="object-cover"
+        <img
+          className="absolute inset-0 h-full w-full object-cover"
           src={imageSrc}
           alt={heroCard.title}
-          fill
-          priority
-          sizes="100vw"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-white to-stone-200" />
       )}
       <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-black/10" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-white/10" />
-      <div className="relative mx-auto flex min-h-[calc(100svh-5rem)] max-w-7xl flex-col justify-center px-5 py-16 sm:px-8 lg:px-12">
+      <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl flex-col justify-center px-5 py-16 sm:px-8 lg:px-12">
         <div className="max-w-2xl">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-gray-500">
             {page.eyebrow}

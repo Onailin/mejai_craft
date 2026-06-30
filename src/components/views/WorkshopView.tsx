@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { WorkshopBanner } from "@/components/WorkshopBanner";
 import { BRACELET_STONE_PRICE, getBraceletImageClass, getBraceletImageFrameClass, isBraceletWorkshop } from "@/lib/workshop-bracelet-pricing";
 import type { BraceletJewelryProductView } from "@/lib/bracelet-jewelry-products";
 import {
@@ -57,56 +56,6 @@ function SectionHeader({ title, description }: { title: string; description: str
       <h3 className="text-xl font-bold tracking-tight text-stone-900">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-stone-500">{description}</p>
     </header>
-  );
-}
-
-function FullWidthCarousel({
-  images,
-  alt,
-  activeIndex,
-  onSelectIndex,
-  slideAriaLabel,
-}: {
-  images: string[];
-  alt: string;
-  activeIndex: number;
-  onSelectIndex: (index: number) => void;
-  slideAriaLabel: (index: number) => string;
-}) {
-  if (!images.length) return null;
-
-  return (
-    <div className="relative w-full overflow-hidden bg-stone-200">
-      <div
-        className="flex transition-transform duration-700 ease-out"
-        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
-      >
-        {images.map((src) => (
-          <div
-            key={src}
-            className="h-[42vh] min-h-[280px] w-full shrink-0 sm:h-[50vh] sm:min-h-[360px] lg:max-h-[640px]"
-          >
-            <img src={src} alt={alt} className="h-full w-full object-cover" />
-          </div>
-        ))}
-      </div>
-
-      {images.length > 1 && (
-        <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
-          {images.map((_, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => onSelectIndex(index)}
-              className={`h-1.5 rounded-full transition ${
-                activeIndex === index ? "w-7 bg-white" : "w-1.5 bg-white/50"
-              }`}
-              aria-label={slideAriaLabel(index + 1)}
-            />
-          ))}
-        </div>
-      )}
-    </div>
   );
 }
 
@@ -784,8 +733,6 @@ export function WorkshopView({
     initialCatalog[0]?.workshops[0]?.slug ?? ""
   );
   const [viewMode, setViewMode] = useState<"overview" | "detail">("overview");
-  const [overviewBannerIndex, setOverviewBannerIndex] = useState(0);
-  const [detailBannerIndex, setDetailBannerIndex] = useState(0);
 
   useEffect(() => {
     const locale = i18n.resolvedLanguage ?? "th";
@@ -815,41 +762,12 @@ export function WorkshopView({
     activeCategory?.workshops.find((workshop) => workshop.slug === activeWorkshopSlug) ??
     activeCategory?.workshops[0];
 
-  const bannerImages = useMemo(() => {
-    if (!activeWorkshop?.bannerImages?.length) {
-      return page.cards.map((card) => card.image).filter(Boolean);
-    }
-    return activeWorkshop.bannerImages;
-  }, [activeWorkshop, page.cards]);
-
   useEffect(() => {
     if (!activeCategory) return;
     if (!activeCategory.workshops.some((workshop) => workshop.slug === activeWorkshopSlug)) {
       setActiveWorkshopSlug(activeCategory.workshops[0]?.slug ?? "");
     }
   }, [activeCategory, activeWorkshopSlug]);
-
-  useEffect(() => {
-    setDetailBannerIndex(0);
-  }, [activeWorkshop?.id]);
-
-  useEffect(() => {
-    if (page.cards.length <= 1) return;
-    const id = window.setInterval(
-      () => setOverviewBannerIndex((current) => (current + 1) % page.cards.length),
-      4000
-    );
-    return () => window.clearInterval(id);
-  }, [page.cards.length]);
-
-  useEffect(() => {
-    if (bannerImages.length <= 1) return;
-    const id = window.setInterval(
-      () => setDetailBannerIndex((current) => (current + 1) % bannerImages.length),
-      4000
-    );
-    return () => window.clearInterval(id);
-  }, [bannerImages.length]);
 
   if (!catalog.length || !activeCategory || !activeWorkshop) {
     return <p className="px-6 text-sm text-stone-500">ยังไม่มีข้อมูลเวิร์คชอป</p>;
@@ -858,13 +776,6 @@ export function WorkshopView({
   if (viewMode === "overview") {
     return (
       <section className="pb-16">
-        {page.cards.length > 0 && (
-          <WorkshopBanner
-            page={page}
-            activeIndex={overviewBannerIndex}
-            onSelectIndex={setOverviewBannerIndex}
-          />
-        )}
         <WorkshopOverview
           catalog={catalog}
           page={page}
@@ -881,15 +792,7 @@ export function WorkshopView({
 
   return (
     <section className="pb-16">
-      <FullWidthCarousel
-        images={bannerImages}
-        alt={activeWorkshop.title}
-        activeIndex={detailBannerIndex}
-        onSelectIndex={setDetailBannerIndex}
-        slideAriaLabel={(index) => t("workshop.banner_slide_aria", { index })}
-      />
-
-      <div className="mx-auto mt-10 max-w-4xl space-y-10 px-6">
+      <div className="mx-auto max-w-4xl space-y-10 px-6">
         <WorkshopDetail
           workshop={activeWorkshop}
           braceletProducts={braceletProducts}
