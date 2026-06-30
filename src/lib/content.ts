@@ -1,5 +1,7 @@
 import { prisma } from "./prisma";
 import { applyTranslations } from "./translate";
+import { ensureContentImagesRepaired, repairJewelryProductImages } from "./repair-content-images";
+import { isDisplayableImageUrl } from "./image-urls";
 import type { Prisma } from "@prisma/client";
 
 export async function getActiveGems(locale = "th") {
@@ -26,15 +28,19 @@ export async function getActiveBirthstones(locale = "th") {
     orderBy: { sortOrder: "asc" },
   });
 
-  return applyTranslations(
+  const translated = await applyTranslations(
     "birthstone",
     birthstones,
     ["month", "gemName", "color", "origin", "hardness", "detail"],
     locale
   );
+
+  return translated.filter((stone) => isDisplayableImageUrl(stone.imageUrl));
 }
 
 export async function getJewelryCategories(locale = "th") {
+  await ensureContentImagesRepaired();
+
   const categories = await prisma.jewelryCategory.findMany({
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
@@ -70,6 +76,10 @@ export async function getJewelryCategories(locale = "th") {
 }
 
 export async function getJewelryProductById(id: string, locale = "th") {
+  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    await repairJewelryProductImages(id).catch(() => undefined);
+  }
+
   const product = await prisma.jewelryProduct.findFirst({
     where: { id, isActive: true },
     include: {

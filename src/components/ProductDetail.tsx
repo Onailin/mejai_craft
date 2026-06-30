@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { SITE_FACEBOOK_URL, SITE_LINE_URL } from "@/lib/brand";
+import { getDisplayableProductImages } from "@/lib/image-urls";
 import type { JewelryProductView } from "@/types";
+
 function formatPrice(value: number) {
   return `฿${value.toLocaleString("th-TH")}`;
 }
@@ -14,13 +16,11 @@ type ProductDetailProps = {
 };
 
 export function ProductDetail({ product }: ProductDetailProps) {
-  const images = product.images.length > 0 ? product.images : [{ imageUrl: "", isPrimary: true }];
-  const [activeImage, setActiveImage] = useState(
-    images.findIndex((image) => image.isPrimary) >= 0
-      ? images.findIndex((image) => image.isPrimary)
-      : 0
+  const images = useMemo(
+    () => getDisplayableProductImages(product.images),
+    [product.images]
   );
-
+  const [activeImage, setActiveImage] = useState(0);
   const currentImage = images[activeImage]?.imageUrl;
 
   return (
@@ -41,7 +41,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
               <img
                 src={currentImage}
                 alt={product.title}
-                className="block h-auto w-full"
+                className="block h-auto w-full object-contain"
               />
             ) : (
               <div className="flex min-h-[240px] items-center justify-center text-sm text-stone-400">
@@ -61,14 +61,12 @@ export function ProductDetail({ product }: ProductDetailProps) {
                     activeImage === index ? "border-stone-900" : "border-stone-200 hover:border-stone-400"
                   }`}
                 >
-                  {image.imageUrl && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={image.imageUrl}
-                      alt=""
-                      className="max-h-16 max-w-16 object-contain"
-                    />
-                  )}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.imageUrl}
+                    alt=""
+                    className="max-h-16 max-w-16 object-contain"
+                  />
                 </button>
               ))}
             </div>

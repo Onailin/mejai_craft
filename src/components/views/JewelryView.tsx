@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { ProductCard } from "@/components/ProductCard";
+import { isDisplayableImageUrl, pickProductCoverImage } from "@/lib/image-urls";
 import type { JewelryCategoryView, JewelryProductView } from "@/types";
 
 const KEYFRAMES = `
@@ -17,20 +18,22 @@ function toProductCard(product: JewelryProductView) {
     title: product.title,
     subtitle: product.subtitle,
     description: product.description,
-    image: product.images.find((img) => img.isPrimary)?.imageUrl ?? product.images[0]?.imageUrl ?? "",
+    image: pickProductCoverImage(product.images) ?? "",
     accent: product.accent,
   };
 }
 
 function getShowcaseImages(product: JewelryProductView | undefined) {
   if (!product) return [];
-  return product.images.map((img) => ({
-    image: img.imageUrl,
-    title: product.title,
-    subtitle: product.subtitle,
-    description: product.description,
-    accent: product.accent,
-  }));
+  return product.images
+    .filter((img) => isDisplayableImageUrl(img.imageUrl))
+    .map((img) => ({
+      image: img.imageUrl,
+      title: product.title,
+      subtitle: product.subtitle,
+      description: product.description,
+      accent: product.accent,
+    }));
 }
 
 export function JewelryView({

@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { getFormDataFiles } from "@/lib/form-data-file";
 import { uploadImage } from "@/lib/supabase-storage";
+import { repairJewelryProductImages } from "@/lib/repair-content-images";
 import { upsertTranslations } from "@/lib/translate";
 
 const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
@@ -68,6 +69,15 @@ async function attachProductImages(productId: string, formData: FormData, existi
   const warnings: string[] = [];
   let sortOrder = existingCount;
   let isFirst = existingCount === 0;
+
+  if (existingCount > 0) {
+    await prisma.jewelryProductImage.updateMany({
+      where: { productId },
+      data: { isPrimary: false },
+    });
+    isFirst = true;
+  }
+
   let uploadedCount = 0;
 
   for (const file of files) {
@@ -123,9 +133,15 @@ function revalidateJewelryProductPaths(productId: string) {
 }
 
 export async function createJewelryProductRecord(formData: FormData) {
+  const files = getFormDataFiles(formData, "images");
+  if (files.length === 0) {
+    throw new Error("กรุณาเลือกรูปภาพสินค้าก่อนบันทึก");
+  }
+
   const data = parseProductFields(formData);
   const product = await prisma.jewelryProduct.create({ data });
   const warnings = await attachProductImages(product.id, formData);
+  await repairJewelryProductImages(product.id);
   await saveJewelryProductTranslations(product);
   revalidateJewelryProductPaths(product.id);
 
@@ -143,6 +159,7 @@ export async function updateJewelryProductRecord(id: string, formData: FormData)
   const product = await prisma.jewelryProduct.update({ where: { id }, data });
   const existingCount = await prisma.jewelryProductImage.count({ where: { productId: id } });
   const warnings = await attachProductImages(id, formData, existingCount);
+  await repairJewelryProductImages(id);
   await saveJewelryProductTranslations(product);
   revalidateJewelryProductPaths(product.id);
 

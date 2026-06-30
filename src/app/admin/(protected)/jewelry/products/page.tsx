@@ -4,6 +4,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { deleteJewelryProduct } from "@/actions/admin";
 import { GemDeleteButton } from "@/components/admin/GemDeleteButton";
+import { pickProductCoverImage } from "@/lib/image-urls";
 
 function formatPrice(price: number | null) {
   if (price == null) return "สอบถามราคา";
@@ -113,9 +114,12 @@ export default async function AdminJewelryProductsPage({
                 </tr>
               ) : (
                 products.map((product) => {
-                  const cover =
-                    product.images.find((image) => image.isPrimary)?.imageUrl ??
-                    product.images[0]?.imageUrl;
+                  const cover = pickProductCoverImage(
+                    product.images.map((image) => ({
+                      imageUrl: image.imageUrl,
+                      isPrimary: image.isPrimary,
+                    }))
+                  );
 
                   return (
                     <tr key={product.id} className="hover:bg-stone-50/80">

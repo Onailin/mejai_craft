@@ -16,6 +16,7 @@ import {
   fallbackWorkshop,
   fallbackWorkshopCatalog,
 } from "./fallback-content";
+import { orderProductImagesForDisplay } from "./image-urls";
 import type { BirthstoneView, GemView, JewelryCategoryView, JewelryProductView, LuckyStoneView, WorkshopCatalogView, WorkshopView } from "@/types";
 import { mapWorkshop, mapWorkshopCatalog } from "@/lib/workshop-mapper";
 
@@ -72,7 +73,9 @@ function mapCategories(categories: Awaited<ReturnType<typeof getJewelryCategorie
       price: p.price ?? null,
       categoryName: cat.name,
       categorySlug: cat.slug,
-      images: p.images.map((img) => ({ imageUrl: img.imageUrl, isPrimary: img.isPrimary })),
+      images: orderProductImagesForDisplay(
+        p.images.map((img) => ({ imageUrl: img.imageUrl, isPrimary: img.isPrimary }))
+      ),
     })),
   }));
 }
@@ -131,10 +134,12 @@ export async function loadJewelryProductById(id: string, locale = "th"): Promise
       price: product.price ?? null,
       categoryName: product.category.name,
       categorySlug: product.category.slug,
-      images: product.images.map((img) => ({
-        imageUrl: img.imageUrl,
-        isPrimary: img.isPrimary,
-      })),
+      images: orderProductImagesForDisplay(
+        product.images.map((img) => ({
+          imageUrl: img.imageUrl,
+          isPrimary: img.isPrimary,
+        }))
+      ),
     };
   } catch (error) {
     console.error("Failed to load jewelry product:", error);

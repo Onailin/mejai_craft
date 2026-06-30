@@ -1,17 +1,35 @@
-import type { JewelryCategoryView } from "@/types";
+export function isLocalDevOnlyImageUrl(url: string | null | undefined) {
+  return Boolean(url?.startsWith("/uploads/"));
+}
 
-export function collectJewelryBannerUrls(categories: JewelryCategoryView[], limit = 5): string[] {
-  const urls: string[] = [];
+export function isDisplayableImageUrl(url: string | null | undefined) {
+  if (!url) return false;
+  if (isLocalDevOnlyImageUrl(url)) return false;
+  return true;
+}
 
-  for (const category of categories) {
-    for (const product of category.products) {
-      for (const image of product.images) {
-        if (image.imageUrl) {
-          urls.push(image.imageUrl);
-        }
-      }
-    }
-  }
+export function orderProductImagesForDisplay<T extends { imageUrl: string; isPrimary: boolean }>(
+  images: T[]
+): T[] {
+  const displayable = images.filter((image) => isDisplayableImageUrl(image.imageUrl));
+  if (displayable.length === 0) return images;
 
-  return [...new Set(urls)].slice(0, limit);
+  const primary = displayable.find((image) => image.isPrimary) ?? displayable[0];
+  const rest = displayable.filter((image) => image !== primary);
+
+  return [primary, ...rest];
+}
+
+export function pickProductCoverImage(
+  images: Array<{ imageUrl: string; isPrimary: boolean }>
+): string | undefined {
+  return orderProductImagesForDisplay(images)[0]?.imageUrl;
+}
+
+export function getDisplayableProductImages<T extends { imageUrl: string; isPrimary: boolean }>(
+  images: T[]
+): T[] {
+  const ordered = orderProductImagesForDisplay(images);
+  const displayable = ordered.filter((image) => isDisplayableImageUrl(image.imageUrl));
+  return displayable.length > 0 ? displayable : ordered;
 }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { HomeBanner } from "@/components/HomeBanner";
+import { isDisplayableImageUrl } from "@/lib/image-urls";
 import type { BirthstoneView, GemView, LuckyStoneView, PageContent } from "@/types";
 
 type HomeViewProps = {
@@ -112,7 +113,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
   const activeGems = gemShowcase.filter(
     (gem) => selectedHardness >= gem.hardnessMin && selectedHardness <= gem.hardnessMax
   );
-  const visibleBirthstones = birthstones.filter((stone) => stone.image);
+  const visibleBirthstones = birthstones.filter((stone) => isDisplayableImageUrl(stone.image));
 
   return (
     <>

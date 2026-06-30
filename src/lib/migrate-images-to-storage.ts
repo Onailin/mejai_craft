@@ -145,5 +145,8 @@ export async function migrateImagesToStorage() {
     }
   }
 
+  const { repairAllJewelryProductImages } = await import("@/lib/repair-content-images");
+  await repairAllJewelryProductImages();
+
   return stats;
 }
