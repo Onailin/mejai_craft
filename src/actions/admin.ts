@@ -250,7 +250,7 @@ export async function updateBirthstone(id: string, formData: FormData) {
       origin: data.origin,
       hardness: data.hardness,
       detail: data.detail,
-      sortOrder: data.sortOrder,
+      sortOrder: birthstoneDaySortOrder(data.day),
       isActive: data.isActive,
       imageUrl,
     },
@@ -267,6 +267,7 @@ export async function updateBirthstone(id: string, formData: FormData) {
 
   revalidatePath("/");
   revalidatePath("/admin/birthstones");
+  revalidatePath(`/admin/birthstones/${id}`);
 }
 
 export async function deleteBirthstone(id: string) {

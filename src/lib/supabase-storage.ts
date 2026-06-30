@@ -23,6 +23,16 @@ function getBucket() {
   return process.env.SUPABASE_STORAGE_BUCKET || "mejai-assets";
 }
 
+function usesRemoteDatabase() {
+  const databaseUrl = process.env.DATABASE_URL ?? "";
+  return databaseUrl.includes("supabase.co") || databaseUrl.includes("supabase.com");
+}
+
+function requiresCloudStorage() {
+  const isProduction = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+  return isProduction || usesRemoteDatabase();
+}
+
 function getExtension(mimeType: string): string {
   switch (mimeType) {
     case "image/jpeg":
@@ -103,11 +113,13 @@ export async function uploadImage(
   validateImageFile(normalized);
 
   const hasSupabase = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
-  const isProduction = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+  const cloudStorageRequired = requiresCloudStorage();
 
   if (!hasSupabase) {
-    if (isProduction) {
-      throw new Error("ยังไม่ได้ตั้งค่า Supabase Storage บน production");
+    if (cloudStorageRequired) {
+      throw new Error(
+        "ต้องตั้งค่า SUPABASE_URL และ SUPABASE_SERVICE_ROLE_KEY เมื่อใช้ database บน cloud หรือ deploy production"
+      );
     }
     return uploadImageLocal(normalized, folder);
   }
@@ -115,7 +127,7 @@ export async function uploadImage(
   try {
     return await uploadImageSupabase(normalized, folder);
   } catch (error) {
-    if (isProduction) {
+    if (cloudStorageRequired) {
       throw error;
     }
     console.error("Supabase upload failed, falling back to local storage:", error);
