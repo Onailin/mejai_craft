@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { loadBirthstones, loadGems, loadJewelryCategories, loadLuckyStones, loadWorkshop, loadWorkshopCatalog } from "@/lib/load-content";
+import { loadBirthstones, loadBraceletJewelryProducts, loadGems, loadJewelryCategories, loadLuckyStones, loadWorkshop, loadWorkshopCatalog } from "@/lib/load-content";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +26,9 @@ export async function GET(request: NextRequest) {
     }
     if (type === "workshop-catalog") {
       return NextResponse.json(await loadWorkshopCatalog(locale));
+    }
+    if (type === "bracelet-products") {
+      return NextResponse.json(await loadBraceletJewelryProducts(locale));
     }
 
     const [gems, luckyStones, birthstones, jewelry, workshop] = await Promise.all([

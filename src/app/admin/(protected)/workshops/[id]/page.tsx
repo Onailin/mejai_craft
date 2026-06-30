@@ -8,6 +8,7 @@ import { WorkshopFeaturedImagesForm } from "@/components/admin/WorkshopFeaturedI
 import { WorkshopGeneralForm } from "@/components/admin/WorkshopGeneralForm";
 import { WorkshopRingPricingForm } from "@/components/admin/WorkshopRingPricingForm";
 import { ensureBraceletWorkshopOptions } from "@/lib/ensure-bracelet-workshop-options";
+import { getBraceletJewelryProducts } from "@/lib/bracelet-jewelry-products";
 import { isBraceletWorkshop } from "@/lib/workshop-bracelet-pricing";
 import { mapOptionGroups } from "@/lib/workshop-mapper";
 import { isRingWorkshop } from "@/lib/workshop-ring-pricing";
@@ -73,6 +74,10 @@ export default async function AdminWorkshopDetailPage({
   }
 
   const braceletOptionGroups = mapOptionGroups(workshop.optionGroups);
+  const braceletJewelry = showBraceletPricing ? await getBraceletJewelryProducts("th") : null;
+  const manageProductsHref = braceletJewelry?.primaryCategory
+    ? `/admin/jewelry/products?category=${braceletJewelry.primaryCategory.id}`
+    : "/admin/jewelry/products";
 
   return (
     <div className="mx-auto max-w-6xl space-y-8">
@@ -116,7 +121,13 @@ export default async function AdminWorkshopDetailPage({
       ) : null}
 
       {showBraceletPricing ? (
-        <WorkshopBraceletPricingForm workshopId={workshop.id} optionGroups={braceletOptionGroups} />
+        <WorkshopBraceletPricingForm
+          workshopId={workshop.id}
+          optionGroups={braceletOptionGroups}
+          braceletProducts={braceletJewelry?.products ?? []}
+          manageProductsHref={manageProductsHref}
+          braceletCategoryName={braceletJewelry?.primaryCategory?.name}
+        />
       ) : null}
 
       {!showRingPricing && !showBraceletPricing ? (

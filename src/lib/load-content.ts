@@ -16,6 +16,7 @@ import {
   fallbackWorkshop,
   fallbackWorkshopCatalog,
 } from "./fallback-content";
+import { getBraceletJewelryProducts } from "./bracelet-jewelry-products";
 import { orderProductImagesForDisplay } from "./image-urls";
 import type { BirthstoneView, GemView, JewelryCategoryView, JewelryProductView, LuckyStoneView, WorkshopCatalogView, WorkshopView } from "@/types";
 import { mapWorkshop, mapWorkshopCatalog } from "@/lib/workshop-mapper";
@@ -166,6 +167,15 @@ export async function loadWorkshopCatalog(locale = "th"): Promise<WorkshopCatalo
   } catch (error) {
     console.error("Failed to load workshop catalog:", error);
     return fallbackWorkshopCatalog;
+  }
+}
+
+export async function loadBraceletJewelryProducts(locale = "th") {
+  try {
+    return await getBraceletJewelryProducts(locale);
+  } catch (error) {
+    console.error("Failed to load bracelet jewelry products:", error);
+    return { primaryCategory: null, products: [] };
   }
 }
 

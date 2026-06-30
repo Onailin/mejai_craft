@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { WorkshopBanner } from "@/components/WorkshopBanner";
 import { BRACELET_STONE_PRICE, getBraceletImageClass, getBraceletImageFrameClass, isBraceletWorkshop } from "@/lib/workshop-bracelet-pricing";
+import type { BraceletJewelryProductView } from "@/lib/bracelet-jewelry-products";
 import {
   WORKSHOP_PLATING_OPTIONS,
   WORKSHOP_RING_SIZES,
@@ -309,11 +310,16 @@ function BraceletPendantCard({
   );
 }
 
-function BraceletOptionsSection({ workshop }: { workshop: WorkshopData }) {
-  const stoneGroup = workshop.optionGroups.find((group) => group.groupType === "CUSTOM");
+function BraceletOptionsSection({
+  workshop,
+  braceletProducts,
+}: {
+  workshop: WorkshopData;
+  braceletProducts: BraceletJewelryProductView[];
+}) {
   const pendantGroup = workshop.optionGroups.find((group) => group.groupType === "ADDON");
-  const visibleStones = stoneGroup?.options.filter((option) => option.imageUrl) ?? [];
   const visiblePendants = pendantGroup?.options.filter((option) => option.imageUrl) ?? [];
+  const visibleStones = braceletProducts.filter((product) => product.imageUrl);
 
   if (!visibleStones.length && !visiblePendants.length) return null;
 
@@ -337,12 +343,12 @@ function BraceletOptionsSection({ workshop }: { workshop: WorkshopData }) {
               description={`เลือกหินแต่ละชนิด ราคา ${formatPrice(BRACELET_STONE_PRICE)}`}
             />
             <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
-              {visibleStones.map((option) => (
+              {visibleStones.map((product) => (
                 <BraceletStoneCard
-                  key={option.id}
-                  label={option.label}
-                  price={option.price ?? BRACELET_STONE_PRICE}
-                  imageUrl={option.imageUrl}
+                  key={product.id}
+                  label={product.title}
+                  price={product.price ?? BRACELET_STONE_PRICE}
+                  imageUrl={product.imageUrl}
                 />
               ))}
             </div>
@@ -527,10 +533,12 @@ function OptionGroupSection({ group }: { group: WorkshopOptionGroupView }) {
 
 function WorkshopDetail({
   workshop,
+  braceletProducts,
   t,
   onBack,
 }: {
   workshop: WorkshopData;
+  braceletProducts: BraceletJewelryProductView[];
   t: (key: string) => string;
   onBack: () => void;
 }) {
@@ -560,7 +568,11 @@ function WorkshopDetail({
 
   const hasBraceletOptions =
     isBraceletWorkshop(workshop.slug, workshop.categorySlug) &&
-    workshop.optionGroups.some((group) => group.options.some((option) => option.imageUrl));
+    (braceletProducts.some((product) => product.imageUrl) ||
+      workshop.optionGroups.some(
+        (group) =>
+          group.groupType === "ADDON" && group.options.some((option) => option.imageUrl)
+      ));
 
   return (
     <div className="space-y-10">
@@ -635,7 +647,7 @@ function WorkshopDetail({
       {hasRingOptions ? (
         <RingOptionsSection workshop={workshop} t={t} />
       ) : hasBraceletOptions ? (
-        <BraceletOptionsSection workshop={workshop} />
+        <BraceletOptionsSection workshop={workshop} braceletProducts={braceletProducts} />
       ) : (
         sortedGroups.length > 0 && (
           <div>
@@ -758,12 +770,15 @@ function WorkshopOverview({
 export function WorkshopView({
   page,
   initialCatalog,
+  initialBraceletProducts,
 }: {
   page: PageContent;
   initialCatalog: WorkshopCatalogView[];
+  initialBraceletProducts: BraceletJewelryProductView[];
 }) {
   const { t, i18n } = useTranslation();
   const [catalog, setCatalog] = useState(initialCatalog);
+  const [braceletProducts, setBraceletProducts] = useState(initialBraceletProducts);
   const [activeCategorySlug, setActiveCategorySlug] = useState(initialCatalog[0]?.slug ?? "");
   const [activeWorkshopSlug, setActiveWorkshopSlug] = useState(
     initialCatalog[0]?.workshops[0]?.slug ?? ""
@@ -776,15 +791,22 @@ export function WorkshopView({
     const locale = i18n.resolvedLanguage ?? "th";
     if (locale === "th") {
       setCatalog(initialCatalog);
+      setBraceletProducts(initialBraceletProducts);
       return;
     }
-    fetch(`/api/content?type=workshop-catalog&locale=${locale}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data) && data.length > 0) setCatalog(data);
+    Promise.all([
+      fetch(`/api/content?type=workshop-catalog&locale=${locale}`).then((response) => response.json()),
+      fetch(`/api/content?type=bracelet-products&locale=${locale}`).then((response) => response.json()),
+    ])
+      .then(([catalogData, braceletData]) => {
+        if (Array.isArray(catalogData) && catalogData.length > 0) setCatalog(catalogData);
+        if (braceletData?.products) setBraceletProducts(braceletData.products);
       })
-      .catch(() => setCatalog(initialCatalog));
-  }, [i18n.resolvedLanguage, initialCatalog]);
+      .catch(() => {
+        setCatalog(initialCatalog);
+        setBraceletProducts(initialBraceletProducts);
+      });
+  }, [i18n.resolvedLanguage, initialCatalog, initialBraceletProducts]);
 
   const activeCategory =
     catalog.find((category) => category.slug === activeCategorySlug) ?? catalog[0];
@@ -870,6 +892,7 @@ export function WorkshopView({
       <div className="mx-auto mt-10 max-w-4xl space-y-10 px-6">
         <WorkshopDetail
           workshop={activeWorkshop}
+          braceletProducts={braceletProducts}
           t={t}
           onBack={() => {
             setViewMode("overview");

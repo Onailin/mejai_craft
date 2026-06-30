@@ -1,9 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, type ChangeEvent } from "react";
 import { deleteWorkshopOptionImage } from "@/actions/admin";
 import { uploadWorkshopImage } from "@/lib/upload-workshop-image-client";
-import { BRACELET_STONE_PRICE, getBraceletImageClass, getBraceletImageFrameClass, type BraceletImageVariant } from "@/lib/workshop-bracelet-pricing";
+import type { BraceletJewelryProductView } from "@/lib/bracelet-jewelry-products";
+import {
+  BRACELET_STONE_PRICE,
+  getBraceletImageClass,
+  getBraceletImageFrameClass,
+  type BraceletImageVariant,
+} from "@/lib/workshop-bracelet-pricing";
 import type { WorkshopOptionGroupView } from "@/types";
 
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
@@ -150,31 +157,35 @@ function OptionUploadField({
 type WorkshopBraceletPricingFormProps = {
   workshopId: string;
   optionGroups: WorkshopOptionGroupView[];
+  braceletProducts: BraceletJewelryProductView[];
+  manageProductsHref: string;
+  braceletCategoryName?: string;
 };
 
 export function WorkshopBraceletPricingForm({
   workshopId,
   optionGroups,
+  braceletProducts,
+  manageProductsHref,
+  braceletCategoryName,
 }: WorkshopBraceletPricingFormProps) {
   const [previews, setPreviews] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const stoneGroup = useMemo(
-    () => optionGroups.find((group) => group.groupType === "CUSTOM"),
-    [optionGroups]
-  );
   const pendantGroup = useMemo(
     () => optionGroups.find((group) => group.groupType === "ADDON"),
     [optionGroups]
   );
+
+  const visibleBraceletProducts = braceletProducts.filter((product) => product.imageUrl);
 
   return (
     <section className="space-y-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-200/70">
       <header className="border-b border-stone-100 pb-4">
         <h2 className="text-lg font-semibold text-stone-900">กำไลหินและจี้</h2>
         <p className="mt-1 text-sm text-stone-500">
-          อัปโหลดรูปตัวอย่าง — กำไลหินทุกชนิดราคา {formatPrice(BRACELET_STONE_PRICE)} · จี้เลเซอร์{" "}
+          รูปกำไลดึงจากหน้าสินค้าอัตโนมัติ — กำไลหินทุกชนิดราคา {formatPrice(BRACELET_STONE_PRICE)} · จี้เลเซอร์{" "}
           {formatPrice(666)} · จี้ฝังพลอย+เลเซอร์ {formatPrice(999)}
         </p>
       </header>
@@ -190,34 +201,64 @@ export function WorkshopBraceletPricingForm({
         </div>
       ) : null}
 
-      {stoneGroup ? (
-        <div className="space-y-4">
-          <h3 className="text-base font-semibold text-stone-900">กำไลหินแต่ละชนิด</h3>
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold text-stone-900">กำไลหิน</h3>
+            <p className="mt-1 text-sm text-stone-500">
+              {braceletCategoryName
+                ? `แสดงสินค้าจากหมวด "${braceletCategoryName}" — แก้รูปและชื่อที่หน้าสินค้า`
+                : "แสดงสินค้าจากหมวดกำไล — แก้รูปและชื่อที่หน้าสินค้า"}
+            </p>
+          </div>
+          <Link
+            href={manageProductsHref}
+            className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-medium text-stone-700 no-underline transition hover:bg-stone-50"
+          >
+            จัดการสินค้ากำไล
+          </Link>
+        </div>
+
+        {visibleBraceletProducts.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {stoneGroup.options.map((option) => (
-              <OptionUploadField
-                key={option.id}
-                optionId={option.id}
-                label={option.label}
-                price={option.price ?? BRACELET_STONE_PRICE}
-                imageUrl={previews[option.id] ?? option.imageUrl}
-                workshopId={workshopId}
-                variant="stone"
-                onPreview={(key, url) => setPreviews((current) => ({ ...current, [key]: url }))}
-                onError={setError}
-                onSuccess={(message) => {
-                  setSuccess(message);
-                  setError(null);
-                }}
-              />
+            {visibleBraceletProducts.map((product) => (
+              <div
+                key={product.id}
+                className="flex flex-col items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-center"
+              >
+                <div className={getBraceletImageFrameClass("stone")}>
+                  <img
+                    src={product.imageUrl}
+                    alt={product.title}
+                    className={getBraceletImageClass("stone")}
+                  />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-stone-900">{product.title}</p>
+                  <p className="mt-1 text-sm font-medium text-stone-700">
+                    {formatPrice(product.price ?? BRACELET_STONE_PRICE)}
+                  </p>
+                </div>
+                <Link
+                  href={`/admin/jewelry/products/${product.id}`}
+                  className="text-xs font-medium text-stone-600 no-underline hover:text-stone-900"
+                >
+                  แก้ไขสินค้า
+                </Link>
+              </div>
             ))}
           </div>
-        </div>
-      ) : null}
+        ) : (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900">
+            ยังไม่มีสินค้ากำไลที่มีรูป — เพิ่มสินค้าและอัปโหลดรูปที่หน้าสินค้าจิวเวลรี่
+          </div>
+        )}
+      </div>
 
       {pendantGroup ? (
         <div className="space-y-4 border-t border-stone-100 pt-6">
           <h3 className="text-base font-semibold text-stone-900">จี้</h3>
+          <p className="text-sm text-stone-500">อัปโหลดรูปตัวอย่างจี้สำหรับเวิร์คชอป</p>
           <div className="grid gap-4 sm:grid-cols-2">
             {pendantGroup.options.map((option) => (
               <OptionUploadField
