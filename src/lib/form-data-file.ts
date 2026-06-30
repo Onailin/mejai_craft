@@ -46,3 +46,12 @@ function guessMimeType(filename: string) {
   if (lower.endsWith(".webp")) return "image/webp";
   return "image/jpeg";
 }
+
+/** Checkbox + hidden input pattern: getAll and prefer "true" when checked. */
+export function getFormDataBoolean(formData: FormData, name: string, defaultValue = true): boolean {
+  const values = formData.getAll(name);
+  if (values.length === 0) return defaultValue;
+  if (values.some((value) => value === "true" || value === "on")) return true;
+  if (values.some((value) => value === "false" || value === "off")) return false;
+  return defaultValue;
+}

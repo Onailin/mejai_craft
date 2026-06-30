@@ -14,7 +14,7 @@ export const pages: PageContent[] = [
         subtitle: "Gemstone & Jewelry",
         description:
           "เลือกชมอัญมณีและจิวเวลรี่ในหมวดที่ชัดเจน พร้อมภาพและคำอธิบายอ่านง่าย",
-        image: "/images/banner/home.jpg",
+        image: "/images/banner/banner19.jpg",
         accent: "Mejai Crafts",
       },
     ],
@@ -46,7 +46,7 @@ export const pages: PageContent[] = [
         title: "Contact Mejai Crafts",
         subtitle: "Studio Contact",
         description: "รายละเอียดการติดต่อ Mejai Crafts",
-        image: "/images/banner/album1.jpg",
+        image: "/images/banner/shop1.jpg",
         accent: "Contact",
       },
     ],

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { PageContent } from "@/types";
 import { useTranslation } from "react-i18next";
 
@@ -11,10 +12,13 @@ export function HomeBanner({ page }: { page: PageContent }) {
   return (
     <section className="relative min-h-[calc(100svh-5rem)] overflow-hidden bg-gray-100">
       {imageSrc ? (
-        <img
-          className="absolute inset-0 h-full w-full object-cover"
+        <Image
+          className="object-cover"
           src={imageSrc}
           alt={heroCard.title}
+          fill
+          priority
+          sizes="100vw"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-white to-stone-200" />

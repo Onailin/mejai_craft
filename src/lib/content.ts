@@ -1,6 +1,5 @@
 import { prisma } from "./prisma";
 import { applyTranslations } from "./translate";
-import { ensureContentImagesRepaired, repairJewelryProductImages } from "./repair-content-images";
 import { isDisplayableImageUrl } from "./image-urls";
 import type { Prisma } from "@prisma/client";
 
@@ -39,8 +38,6 @@ export async function getActiveBirthstones(locale = "th") {
 }
 
 export async function getJewelryCategories(locale = "th") {
-  await ensureContentImagesRepaired();
-
   const categories = await prisma.jewelryCategory.findMany({
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },
@@ -62,24 +59,22 @@ export async function getJewelryCategories(locale = "th") {
     locale
   );
 
-  return Promise.all(
-    translatedCategories.map(async (category) => {
-      const products = await applyTranslations(
-        "jewelry_product",
-        category.products,
-        ["title", "subtitle", "description", "accent"],
-        locale
-      );
-      return { ...category, products };
-    })
+  const allProducts = translatedCategories.flatMap((category) => category.products);
+  const translatedProducts = await applyTranslations(
+    "jewelry_product",
+    allProducts,
+    ["title", "subtitle", "description", "accent"],
+    locale
   );
+  const productsById = new Map(translatedProducts.map((product) => [product.id, product]));
+
+  return translatedCategories.map((category) => ({
+    ...category,
+    products: category.products.map((product) => productsById.get(product.id) ?? product),
+  }));
 }
 
 export async function getJewelryProductById(id: string, locale = "th") {
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    await repairJewelryProductImages(id).catch(() => undefined);
-  }
-
   const product = await prisma.jewelryProduct.findFirst({
     where: { id, isActive: true },
     include: {

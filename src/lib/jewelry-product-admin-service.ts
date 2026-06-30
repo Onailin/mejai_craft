@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getFormDataFiles } from "@/lib/form-data-file";
+import { getFormDataFiles, getFormDataBoolean } from "@/lib/form-data-file";
 import { uploadImage } from "@/lib/supabase-storage";
 import { repairJewelryProductImages } from "@/lib/repair-content-images";
 import { upsertTranslations } from "@/lib/translate";
@@ -46,7 +46,7 @@ function parseProductFields(formData: FormData) {
     subtitle: formData.get("subtitle") || undefined,
     description: formData.get("description") || undefined,
     price,
-    isActive: formData.get("isActive"),
+    isActive: getFormDataBoolean(formData, "isActive", true),
   });
 }
 
@@ -130,6 +130,7 @@ function revalidateJewelryProductPaths(productId: string) {
   revalidatePath("/jewelry");
   revalidatePath(`/product/${productId}`);
   revalidatePath("/admin/jewelry/products");
+  revalidatePath("/workshop");
 }
 
 export async function createJewelryProductRecord(formData: FormData) {

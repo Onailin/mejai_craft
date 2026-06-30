@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadBirthstones, loadBraceletJewelryProducts, loadGems, loadJewelryCategories, loadLuckyStones, loadWorkshop, loadWorkshopCatalog } from "@/lib/load-content";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function GET(request: NextRequest) {
   const locale = request.nextUrl.searchParams.get("locale") ?? "th";

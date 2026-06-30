@@ -2,7 +2,7 @@ import { AboutSection } from "@/components/AboutSection";
 import { loadSiteSettings } from "@/lib/load-content";
 import { getPage } from "@/lib/pages";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function ContactPage() {
   const page = getPage("contact");

@@ -3,7 +3,7 @@ import ProductListing from "@/components/ProductListing";
 import { loadJewelryCategories } from "@/lib/load-content";
 import { toListingCategories, toListingProducts } from "@/lib/jewelry-listing";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "สินค้า | Mejai Crafts",

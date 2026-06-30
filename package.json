@@ -16,7 +16,8 @@
     "db:setup": "prisma db push && prisma db seed",
     "db:migrate-images": "tsx scripts/sync-static-content.ts --images-only",
     "db:sync-static": "tsx scripts/sync-static-content.ts",
-    "db:repair-images": "tsx scripts/repair-product-images.ts"
+    "db:repair-images": "tsx scripts/repair-product-images.ts",
+    "db:repair-jewelry-visibility": "tsx scripts/repair-jewelry-visibility.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

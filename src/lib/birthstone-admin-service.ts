@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { getFormDataFile } from "@/lib/form-data-file";
+import { getFormDataFile, getFormDataBoolean } from "@/lib/form-data-file";
 import { uploadImage } from "@/lib/supabase-storage";
 import { upsertTranslations } from "@/lib/translate";
 import { uniqueSlug } from "@/lib/slug";
@@ -25,8 +25,14 @@ const birthstoneSchema = z.object({
 });
 
 function parseBirthstoneFormData(formData: FormData) {
-  const entries = [...formData.entries()].filter(([, value]) => typeof value === "string");
-  return birthstoneSchema.parse(Object.fromEntries(entries));
+  const entries = [...formData.entries()].filter(
+    ([key, value]) => typeof value === "string" && key !== "isActive"
+  );
+  const data = birthstoneSchema.parse(Object.fromEntries(entries));
+  return {
+    ...data,
+    isActive: getFormDataBoolean(formData, "isActive", true),
+  };
 }
 
 export async function createBirthstoneRecord(formData: FormData) {
@@ -67,7 +73,7 @@ export async function createBirthstoneRecord(formData: FormData) {
     detail: stone.detail ?? "",
   });
 
-  revalidatePath("/");
+  revalidatePath("/birthstones");
   revalidatePath("/admin/birthstones");
 
   return stone;
@@ -114,7 +120,7 @@ export async function updateBirthstoneRecord(id: string, formData: FormData) {
     detail: stone.detail ?? "",
   });
 
-  revalidatePath("/");
+  revalidatePath("/birthstones");
   revalidatePath("/admin/birthstones");
   revalidatePath(`/admin/birthstones/${id}`);
 

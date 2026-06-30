@@ -2,7 +2,7 @@ import { getPage } from "@/lib/pages";
 import { loadBraceletJewelryProducts, loadWorkshopCatalog } from "@/lib/load-content";
 import { WorkshopView } from "@/components/views/WorkshopView";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function WorkshopPage() {
   const page = getPage("workshop");

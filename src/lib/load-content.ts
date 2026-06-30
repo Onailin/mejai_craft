@@ -113,8 +113,7 @@ export async function loadBirthstones(locale = "th"): Promise<BirthstoneView[]> 
 
 export async function loadJewelryCategories(locale = "th"): Promise<JewelryCategoryView[]> {
   try {
-    const categories = mapCategories(await getJewelryCategories(locale));
-    return categories.length > 0 ? categories : fallbackJewelryCategories;
+    return mapCategories(await getJewelryCategories(locale));
   } catch (error) {
     console.error("Failed to load jewelry:", error);
     return fallbackJewelryCategories;

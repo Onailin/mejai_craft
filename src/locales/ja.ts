@@ -4,6 +4,7 @@ const ja = {
   nav_contact: "お問い合わせ",
   nav_jewelry: "商品",
   nav_workshop: "ワークショップ",
+  nav_birthstones: "誕生石",
   nav_login: "ログイン",
   nav_admin: "管理",
   app: {
@@ -180,6 +181,18 @@ const ja = {
         desc: "幸運、安定、前向きなエネルギーを高めるとされています。"
       }
     }
+  },
+  birthstones: {
+    eyebrow: "Daily Stones",
+    title: "曜日の誕生石",
+    intro:
+      "誕生日に結びついた宝石 — 各曜日の石の意味と詳細をご覧いただけます。",
+    day_label: "曜日",
+    color: "色",
+    origin: "原産地",
+    hardness: "硬度",
+    empty_title: "誕生石のデータがまだありません",
+    empty_desc: "管理画面から画像をアップロードすると表示されます。",
   },
   about: {
     title: "私たちについて",

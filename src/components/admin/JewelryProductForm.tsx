@@ -324,6 +324,7 @@ export function JewelryProductForm({
             className="h-4 w-4 rounded border-stone-300"
           />
           เปิดใช้งานบนหน้าร้าน
+          <span className="text-xs text-stone-500">(ต้องติ๊กถึงจะแสดงที่ /jewelry)</span>
         </label>
 
         <Field label="รายละเอียดสินค้า" htmlFor="description">

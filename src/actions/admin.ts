@@ -188,7 +188,7 @@ export async function updateBirthstone(id: string, formData: FormData) {
 export async function deleteBirthstone(id: string) {
   await requireEditorOrAdmin();
   await prisma.birthstone.delete({ where: { id } });
-  revalidatePath("/");
+  revalidatePath("/birthstones");
   revalidatePath("/admin/birthstones");
 }
 
@@ -238,7 +238,7 @@ export async function uploadBirthstoneDayImage(day: string, formData: FormData) 
     detail: stone.detail ?? "",
   });
 
-  revalidatePath("/");
+  revalidatePath("/birthstones");
   revalidatePath("/admin/birthstones");
 }
 
@@ -249,7 +249,7 @@ export async function clearBirthstoneDayImage(day: string) {
     data: { imageUrl: null },
   });
 
-  revalidatePath("/");
+  revalidatePath("/birthstones");
   revalidatePath("/admin/birthstones");
 }
 

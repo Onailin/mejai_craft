@@ -4,6 +4,7 @@ const zh = {
   nav_contact: "联系",
   nav_jewelry: "商品",
   nav_workshop: "工坊",
+  nav_birthstones: "生辰石",
   nav_login: "登录",
   nav_admin: "管理",
   app: {
@@ -180,6 +181,17 @@ const zh = {
         desc: "常被认为可增强好运、稳定与内在能量。"
       }
     }
+  },
+  birthstones: {
+    eyebrow: "Daily Stones",
+    title: "每日生辰石",
+    intro: "与出生日相关的宝石 — 浏览每日生辰石及其寓意与细节，助您挑选心仪首饰。",
+    day_label: "日期",
+    color: "颜色",
+    origin: "产地",
+    hardness: "硬度",
+    empty_title: "暂无生辰石数据",
+    empty_desc: "请先在管理后台上传图片。",
   },
   about: {
     title: "关于我们",

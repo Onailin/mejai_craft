@@ -2,8 +2,24 @@
 
 import type { PageContent } from "@/types";
 import { useTranslation } from "react-i18next";
-import { Phone, Mail, Globe, MapPin, MessageCircle } from "lucide-react";
-import { SITE_LINE_URL } from "@/lib/brand";
+import { Phone, Mail, MapPin } from "lucide-react";
+import { SITE_FACEBOOK_URL, SITE_LINE_URL } from "@/lib/brand";
+
+function LineIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M19.365 9.863c.349 0 .63.285.63.631 0 .345-.281.63-.63.63H17.61v1.125h1.755c.349 0 .63.283.63.63 0 .344-.281.629-.63.629h-2.386c-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63h2.386c.346 0 .627.285.627.63 0 .349-.281.63-.63.63H17.61v1.125h1.755zm-3.855 3.016c0 .27-.174.51-.432.596-.064.021-.133.031-.199.031-.211 0-.391-.09-.51-.25l-2.443-3.317v2.94c0 .344-.279.629-.631.629-.346 0-.626-.285-.626-.629V8.108c0-.27.173-.51.43-.595.06-.023.136-.033.194-.033.195 0 .375.104.495.254l2.462 3.33V8.108c0-.345.282-.63.63-.63.345 0 .63.285.63.63v4.771zm-5.741 0c0 .344-.282.629-.631.629-.345 0-.627-.285-.627-.629V8.108c0-.345.282-.63.63-.63.346 0 .628.285.628.63v4.771zm-2.466.629H4.917c-.345 0-.63-.285-.63-.629V8.108c0-.345.285-.63.63-.63.348 0 .63.285.63.63v4.141h1.756c.348 0 .629.283.629.63 0 .344-.282.629-.629.629M24 10.314C24 4.943 18.615.572 12 .572S0 4.943 0 10.314c0 4.811 4.27 8.842 10.035 9.608.391.082.923.258 1.058.59.12.301.079.766.038 1.08l-.164 1.02c-.045.301-.24 1.186 1.049.645 1.291-.539 6.916-4.078 9.436-6.975C23.176 14.393 24 12.458 24 10.314" />
+    </svg>
+  );
+}
+
+function FacebookIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+  );
+}
 
 export function AboutSection({
   page,
@@ -15,16 +31,13 @@ export function AboutSection({
     facebook_url?: string;
     maps_url?: string;
     address?: string;
-    qrcode_url?: string;
     studio_image_url?: string;
   };
 }) {
   const { t } = useTranslation();
   const phone = settings?.phone ?? "0888491111";
-  const facebookUrl = settings?.facebook_url ?? "https://www.facebook.com/mejaicrafts";
-  const mapsUrl = settings?.maps_url ?? "https://maps.google.com";
+  const facebookUrl = settings?.facebook_url ?? SITE_FACEBOOK_URL;
   const address = settings?.address ?? t("about.address_detail");
-  const qrcodeUrl = settings?.qrcode_url ?? "";
   const studioImageUrl = settings?.studio_image_url || page.cards[0]?.image || "";
 
   return (
@@ -105,20 +118,6 @@ export function AboutSection({
           align-items: flex-start;
           margin-bottom: 1.5rem;
         }
-        .biz-qr {
-          width: 48px;
-          height: 48px;
-          border: 1px solid #e8e8e8;
-          padding: 4px;
-          background: #fff;
-          flex-shrink: 0;
-        }
-        .biz-qr img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          display: block;
-        }
         .biz-brand {
           text-align: right;
         }
@@ -152,19 +151,35 @@ export function AboutSection({
           justify-content: space-between;
           gap: 1rem;
         }
-        .biz-qr-large {
-          width: 84px;
-          height: 84px;
-          border: 1px solid #e8e8e8;
-          padding: 5px;
-          background: #fff;
+        .social-actions {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 0.5rem;
           flex-shrink: 0;
         }
-        .biz-qr-large img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          display: block;
+        .social-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          border-radius: 9999px;
+          padding: 0.55rem 0.9rem;
+          font-family: 'Prompt', 'Noto Sans Thai', system-ui, sans-serif;
+          font-size: 11px;
+          font-weight: 500;
+          letter-spacing: 0.04em;
+          text-decoration: none;
+          color: #fff;
+          transition: opacity 0.18s;
+        }
+        .social-btn:hover {
+          opacity: 0.9;
+        }
+        .social-btn-line {
+          background: #06C755;
+        }
+        .social-btn-facebook {
+          background: #1877F2;
         }
         .biz-info-title {
           font-size: 22px;
@@ -355,8 +370,25 @@ export function AboutSection({
               <p className="biz-info-label">{t("about.business_card")}</p>
               <h2 className="biz-info-title">{t("about.contact_title")}</h2>
             </div>
-            <div className="biz-qr-large">
-              {qrcodeUrl ? <img src={qrcodeUrl} alt="QR Code" /> : null}
+            <div className="social-actions">
+              <a
+                href={SITE_LINE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-btn social-btn-line"
+              >
+                <LineIcon className="h-3.5 w-3.5 shrink-0" />
+                LINE
+              </a>
+              <a
+                href={facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-btn social-btn-facebook"
+              >
+                <FacebookIcon className="h-3.5 w-3.5 shrink-0" />
+                Facebook
+              </a>
             </div>
           </div>
           <p className="biz-tagline">{t("about.tagline")}</p>
@@ -367,24 +399,6 @@ export function AboutSection({
             <a href={`tel:${phone.replace(/-/g, "")}`} className="contact-row">
               <span className="contact-icon"><Phone size={13} /></span>
               {phone}
-            </a>
-            <a
-              href={facebookUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="contact-row"
-            >
-              <span className="contact-icon"><Globe size={13} /></span>
-              {t("about.facebook_label")}
-            </a>
-            <a
-              href={SITE_LINE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="contact-row"
-            >
-              <span className="contact-icon"><MessageCircle size={13} /></span>
-              {t("about.line_label")}
             </a>
             <a href="mailto:Mejaistudioandgallery@gmail.com" className="contact-row">
               <span className="contact-icon"><Mail size={13} /></span>

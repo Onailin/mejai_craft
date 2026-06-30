@@ -4,6 +4,7 @@ const en = {
   nav_contact: "Contact",
   nav_jewelry: "Products",
   nav_workshop: "Workshop",
+  nav_birthstones: "Daily Stones",
   nav_login: "Login",
   nav_admin: "Admin",
   app: {
@@ -180,6 +181,18 @@ const en = {
         desc: "Believed to enhance fortune, stability, and inner strength."
       }
     }
+  },
+  birthstones: {
+    eyebrow: "Daily Stones",
+    title: "Birthstones by Day",
+    intro:
+      "Gemstones linked to your day of birth — browse each day's stone with meaning and details to help you choose jewelry that feels personal.",
+    day_label: "Day",
+    color: "Color",
+    origin: "Origin",
+    hardness: "Hardness",
+    empty_title: "No birthstone data yet",
+    empty_desc: "Upload images from the admin panel to display them here.",
   },
   about: {
     title: "About Us",

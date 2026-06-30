@@ -3,14 +3,12 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { HomeBanner } from "@/components/HomeBanner";
-import { isDisplayableImageUrl } from "@/lib/image-urls";
-import type { BirthstoneView, GemView, LuckyStoneView, PageContent } from "@/types";
+import type { GemView, LuckyStoneView, PageContent } from "@/types";
 
 type HomeViewProps = {
   page: PageContent;
   initialGems: GemView[];
   initialLuckyStones: LuckyStoneView[];
-  initialBirthstones: BirthstoneView[];
 };
 
 function toGemView(gem: {
@@ -53,44 +51,17 @@ function toLuckyStoneView(stone: {
   };
 }
 
-function toBirthstoneView(stone: {
-  id: string;
-  day?: string | null;
-  month?: string | null;
-  gemName: string;
-  gemNameEn?: string | null;
-  color?: string | null;
-  origin?: string | null;
-  hardness?: string | null;
-  detail?: string | null;
-  image?: string | null;
-}): BirthstoneView {
-  return {
-    id: stone.id,
-    day: stone.day ?? stone.month ?? "",
-    gemName: stone.gemName,
-    gemNameEn: stone.gemNameEn ?? "",
-    color: stone.color ?? "",
-    origin: stone.origin ?? "",
-    hardness: stone.hardness ?? "",
-    detail: stone.detail ?? "",
-    image: stone.image ?? "",
-  };
-}
-
-export function HomeView({ page, initialGems, initialLuckyStones, initialBirthstones }: HomeViewProps) {
+export function HomeView({ page, initialGems, initialLuckyStones }: HomeViewProps) {
   const { t, i18n } = useTranslation();
   const [selectedHardness, setSelectedHardness] = useState(9);
   const [gemShowcase, setGemShowcase] = useState(initialGems);
   const [luckyStones, setLuckyStones] = useState(initialLuckyStones);
-  const [birthstones, setBirthstones] = useState(initialBirthstones);
 
   useEffect(() => {
     const locale = i18n.resolvedLanguage ?? "th";
     if (locale === "th") {
       setGemShowcase(initialGems);
       setLuckyStones(initialLuckyStones);
-      setBirthstones(initialBirthstones);
       return;
     }
 
@@ -103,17 +74,11 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
       .then((r) => r.json())
       .then((stones) => setLuckyStones(stones.map(toLuckyStoneView)))
       .catch(() => setLuckyStones(initialLuckyStones));
-
-    fetch(`/api/content?type=birthstones&locale=${locale}`)
-      .then((r) => r.json())
-      .then((stones) => setBirthstones(stones.map(toBirthstoneView)))
-      .catch(() => setBirthstones(initialBirthstones));
-  }, [i18n.resolvedLanguage, initialGems, initialLuckyStones, initialBirthstones]);
+  }, [i18n.resolvedLanguage, initialGems, initialLuckyStones]);
 
   const activeGems = gemShowcase.filter(
     (gem) => selectedHardness >= gem.hardnessMin && selectedHardness <= gem.hardnessMax
   );
-  const visibleBirthstones = birthstones.filter((stone) => isDisplayableImageUrl(stone.image));
 
   return (
     <>
@@ -266,41 +231,6 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
                     <p className="text-sm leading-relaxed text-stone-500">{gem.detail}</p>
                   )}
                 </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="mx-auto mt-20 max-w-6xl px-6 sm:mt-28">
-        <header className="mb-10 max-w-2xl">
-          <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
-            Daily Stones
-          </p>
-          <h2 className="mt-2 text-3xl font-bold text-stone-800 sm:text-4xl">
-            พลอยตามวันเกิด
-          </h2>
-        </header>
-
-        {visibleBirthstones.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50 px-6 py-10 text-center">
-            <p className="text-sm font-medium text-stone-700">ยังไม่มีข้อมูลพลอยตามวันเกิด</p>
-            <p className="mt-1 text-xs text-stone-500">อัปโหลดรูปจากหน้าแอดมินก่อนจึงจะแสดงบนหน้าเว็บ</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-6">
-            {visibleBirthstones.map((stone) => (
-              <article key={stone.id}>
-                <div className="flex aspect-[4/5] items-center justify-center bg-stone-100 p-3">
-                  <img
-                    src={stone.image}
-                    alt={stone.day}
-                    className="max-h-full max-w-full object-contain"
-                  />
-                </div>
-                <h3 className="mt-4 text-center text-sm text-stone-800 sm:text-base">
-                  {stone.day}
-                </h3>
               </article>
             ))}
           </div>

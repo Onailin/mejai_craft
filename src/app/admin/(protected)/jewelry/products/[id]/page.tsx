@@ -15,7 +15,7 @@ export default async function AdminJewelryProductEditPage({
   const [categories, product] = await Promise.all([
     prisma.jewelryCategory.findMany({
       orderBy: { sortOrder: "asc" },
-      select: { id: true, name: true },
+      select: { id: true, name: true, isActive: true },
     }),
     prisma.jewelryProduct.findUnique({
       where: { id },
@@ -27,7 +27,10 @@ export default async function AdminJewelryProductEditPage({
 
   return (
     <JewelryProductForm
-      categories={categories}
+      categories={categories.map((category) => ({
+        id: category.id,
+        name: category.isActive ? category.name : `${category.name} (หมวดปิดอยู่)`,
+      }))}
       product={{
         categoryId: product.categoryId,
         title: product.title,

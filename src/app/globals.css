@@ -31,3 +31,16 @@ img {
   display: block;
   max-width: 100%;
 }
+
+@keyframes mobile-sidebar-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.mobile-sidebar-in {
+  animation: mobile-sidebar-in 0.28s ease-out;
+}

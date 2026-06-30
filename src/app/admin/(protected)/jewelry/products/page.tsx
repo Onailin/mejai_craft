@@ -31,9 +31,18 @@ export default async function AdminJewelryProductsPage({
   const activeCategory = categoryFilter
     ? categories.find((category) => category.id === categoryFilter)
     : null;
+  const hiddenProducts = products.filter(
+    (product) => !product.isActive || !product.category.isActive
+  );
 
   return (
     <div className="space-y-8">
+      {hiddenProducts.length > 0 ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          มี {hiddenProducts.length} รายการที่ยังไม่แสดงบนหน้าร้าน — ตรวจสอบคอลัมน์สถานะ
+          (ต้องเปิดทั้งสินค้าและหมวดหมู่) แล้วบันทึกอีกครั้ง
+        </div>
+      ) : null}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-stone-900">สินค้าจิวเวลรี่</h1>
@@ -121,8 +130,13 @@ export default async function AdminJewelryProductsPage({
                     }))
                   );
 
+                  const isHiddenOnStorefront = !product.isActive || !product.category.isActive;
+
                   return (
-                    <tr key={product.id} className="hover:bg-stone-50/80">
+                    <tr
+                      key={product.id}
+                      className={isHiddenOnStorefront ? "bg-amber-50/80 hover:bg-amber-50" : "hover:bg-stone-50/80"}
+                    >
                       <td className="px-4 py-3">
                         {cover ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -151,11 +165,14 @@ export default async function AdminJewelryProductsPage({
                       <td className="px-4 py-3">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                            product.isActive ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-500"
+                            product.isActive ? "bg-stone-900 text-white" : "bg-amber-100 text-amber-900"
                           }`}
                         >
-                          {product.isActive ? "เปิด" : "ปิด"}
+                          {product.isActive ? "เปิด" : "ปิด · ไม่โชว์หน้าร้าน"}
                         </span>
+                        {!product.category.isActive ? (
+                          <p className="mt-1 text-xs text-amber-800">หมวดหมู่ปิดอยู่</p>
+                        ) : null}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-2">

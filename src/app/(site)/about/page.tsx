@@ -1,16 +1,15 @@
 import { AboutOverviewSection } from "@/components/AboutOverviewSection";
+import { ABOUT_GALLERY_IMAGES } from "@/lib/about-gallery";
 import { getPage } from "@/lib/pages";
-import { loadWorkshop } from "@/lib/load-content";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
-export default async function AboutPage() {
+export default function AboutPage() {
   const page = getPage("about");
-  const workshop = await loadWorkshop("th");
-  const slides = workshop.bannerImages.map((src, index) => ({
+  const slides = ABOUT_GALLERY_IMAGES.map((src, index) => ({
     id: String(index + 1).padStart(2, "0"),
     src,
-    label: `Gallery ${index + 1}`,
+    label: `Mejai Crafts ${index + 1}`,
   }));
 
   return <AboutOverviewSection page={page} slides={slides} />;

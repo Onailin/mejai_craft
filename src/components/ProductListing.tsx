@@ -26,7 +26,7 @@ export type ListingCategory = {
 const PAGE_SIZE = 9;
 
 function formatPrice(value: number) {
-  return `฿${value.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  return `฿${value.toLocaleString("th-TH")}`;
 }
 
 type ProductListingProps = {
@@ -192,7 +192,7 @@ export default function ProductListing({ products, categories }: ProductListingP
               {paginatedProducts.map((product) => (
                 <article
                   key={product.id}
-                  className="group relative flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition hover:border-stone-300 hover:shadow-sm"
+                  className="group relative flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition hover:border-stone-300 hover:shadow-md"
                 >
                   <Link
                     href={`/product/${product.id}`}
@@ -212,38 +212,56 @@ export default function ProductListing({ products, categories }: ProductListingP
 
                   <Link
                     href={`/product/${product.id}`}
-                    className="flex flex-col gap-1 border-t border-stone-100 p-3 pr-14 pb-12 no-underline sm:p-3.5 sm:pr-14 sm:pb-12"
+                    className="flex flex-1 flex-col gap-1 p-3.5 no-underline sm:p-4"
                   >
-                    <h2 className="line-clamp-1 text-sm font-semibold text-stone-900">
+                    <h2 className="line-clamp-1 text-sm font-semibold text-stone-900 group-hover:text-stone-700">
                       {product.name}
                     </h2>
                     {product.subLabel && product.description ? (
                       <p className="line-clamp-1 text-xs text-stone-500">{product.subLabel}</p>
                     ) : null}
                     {(product.description || product.subLabel) && (
-                      <p className="line-clamp-1 text-xs leading-relaxed text-stone-600">
+                      <p className="line-clamp-2 text-xs leading-relaxed text-stone-500">
                         {product.description ?? product.subLabel}
                       </p>
                     )}
-                    <div className="pt-1.5">
-                      {product.price != null ? (
-                        <p className="text-sm font-bold text-stone-900">{formatPrice(product.price)}</p>
-                      ) : (
-                        <p className="text-xs text-stone-500">สอบถามราคา</p>
-                      )}
-                    </div>
                   </Link>
 
-                  <a
-                    href={SITE_LINE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`สอบถาม / สั่งซื้อ ${product.name} ทาง LINE`}
-                    title="สอบถาม / สั่งซื้อทาง LINE"
-                    className="absolute bottom-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white shadow-md transition hover:bg-stone-700"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </a>
+                  <div className="mt-auto flex items-center justify-between gap-3 border-t border-stone-100 bg-stone-50/70 px-3.5 py-3 sm:px-4">
+                    {product.price != null ? (
+                      <Link
+                        href={`/product/${product.id}`}
+                        className="min-w-0 no-underline"
+                      >
+                        <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-stone-400">
+                          ราคา
+                        </p>
+                        <p className="text-lg font-bold leading-none tracking-tight text-stone-900">
+                          {formatPrice(product.price)}
+                        </p>
+                      </Link>
+                    ) : (
+                      <Link
+                        href={`/product/${product.id}`}
+                        className="no-underline"
+                      >
+                        <span className="inline-flex rounded-full border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-600">
+                          สอบถามราคา
+                        </span>
+                      </Link>
+                    )}
+
+                    <a
+                      href={SITE_LINE_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`สอบถาม / สั่งซื้อ ${product.name} ทาง LINE`}
+                      title="สอบถาม / สั่งซื้อทาง LINE"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-stone-900 text-white shadow-sm transition hover:bg-stone-700"
+                    >
+                      <ShoppingCart className="h-3.5 w-3.5" />
+                    </a>
+                  </div>
                 </article>
               ))}
             </div>

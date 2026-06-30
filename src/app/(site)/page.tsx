@@ -1,23 +1,12 @@
 import { getPage } from "@/lib/pages";
-import { loadBirthstones, loadGems, loadLuckyStones } from "@/lib/load-content";
+import { loadGems, loadLuckyStones } from "@/lib/load-content";
 import { HomeView } from "@/components/views/HomeView";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export default async function HomePage() {
   const page = getPage("home");
-  const [gems, luckyStones, birthstones] = await Promise.all([
-    loadGems("th"),
-    loadLuckyStones("th"),
-    loadBirthstones("th"),
-  ]);
+  const [gems, luckyStones] = await Promise.all([loadGems("th"), loadLuckyStones("th")]);
 
-  return (
-    <HomeView
-      page={page}
-      initialGems={gems}
-      initialLuckyStones={luckyStones}
-      initialBirthstones={birthstones}
-    />
-  );
+  return <HomeView page={page} initialGems={gems} initialLuckyStones={luckyStones} />;
 }
