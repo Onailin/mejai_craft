@@ -1,9 +1,9 @@
 import type { NextAuthConfig } from "next-auth";
-
-const ADMIN_ROLES = new Set(["ADMIN", "EDITOR"]);
+import { getAuthSecret } from "./auth-env";
 
 export const authConfig = {
   trustHost: true,
+  secret: getAuthSecret(),
   session: { strategy: "jwt", maxAge: 60 * 60 * 8 },
   pages: {
     signIn: "/admin/login",
@@ -11,27 +11,8 @@ export const authConfig = {
   },
   providers: [],
   callbacks: {
-    authorized({ auth, request }) {
-      const { pathname } = request.nextUrl;
-      const isLogin = pathname === "/admin/login";
-      const isUnauthorized = pathname === "/admin/unauthorized";
-      const isAdminRoute = pathname === "/admin" || pathname.startsWith("/admin/");
-
-      if (!isAdminRoute || isLogin || isUnauthorized) {
-        return true;
-      }
-
-      const user = auth?.user;
-      if (!user?.email || !user.role || !ADMIN_ROLES.has(user.role)) {
-        return false;
-      }
-
-      if (pathname.startsWith("/admin/settings") || pathname.startsWith("/admin/users")) {
-        return user.role === "ADMIN";
-      }
-
-      return true;
-    },
+    // Admin access control lives in src/middleware.ts to avoid conflicting redirects.
+    authorized: () => true,
     jwt({ token, user }) {
       if (user) {
         token.id = user.id!;

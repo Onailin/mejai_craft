@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import type { LoginSetupStatus } from "@/lib/db-setup-status";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 
@@ -11,14 +11,17 @@ const SETUP_MESSAGES: Record<Exclude<LoginSetupStatus, { ok: true }>["reason"], 
   placeholder_password:
     "ยังไม่ได้ตั้งรหัสผ่านฐานข้อมูล — แก้ [YOUR-PASSWORD] ในไฟล์ .env ให้เป็นรหัสผ่านจริงจาก Supabase แล้วรัน npm run db:setup",
   db_unreachable:
-    "เชื่อมต่อฐานข้อมูลไม่ได้ — ตรวจสอบ DATABASE_URL / DIRECT_URL ใน .env ว่ารหัสผ่านถูกต้อง",
+    "เชื่อมต่อฐานข้อมูลไม่ได้ — ตรวจสอบ DATABASE_URL / DIRECT_URL บน Vercel ว่าตั้งค่าถูกต้อง",
   no_users:
-    "ยังไม่มีบัญชีแอดมิน — รัน npm run db:setup หลังตั้งค่า .env ให้ครบ",
+    "ยังไม่มีบัญชีแอดมิน — รัน npm run db:setup กับฐานข้อมูล production หรือตั้ง ADMIN_EMAIL / ADMIN_PASSWORD แล้ว seed ใหม่",
+  missing_auth_secret:
+    "ยังไม่ได้ตั้ง AUTH_SECRET บน production — สร้างด้วย openssl rand -base64 32 แล้วเพิ่มใน Vercel Environment Variables",
+  localhost_auth_url:
+    "NEXTAUTH_URL ชี้ไป localhost — ลบตัวแปร NEXTAUTH_URL ออกจาก Vercel (หรือตั้งเป็น https://mejaicrafts.com) แล้ว redeploy",
 };
 
 export default function AdminLoginPage({ setup }: { setup: LoginSetupStatus }) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -41,20 +44,18 @@ export default function AdminLoginPage({ setup }: { setup: LoginSetupStatus }) {
     if (result?.error) {
       if (!setup.ok) {
         setError(SETUP_MESSAGES[setup.reason]);
+      } else if (result.error === "Configuration") {
+        setError(
+          "ตั้งค่า Auth บนเซิร์ฟเวอร์ไม่ครบ — ตรวจสอบ AUTH_SECRET และลบ NEXTAUTH_URL=localhost ออกจาก Vercel",
+        );
       } else {
         setError("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
       }
       return;
     }
 
-    const callbackParam = searchParams.get("callbackUrl");
-    const callbackUrl =
-      callbackParam?.startsWith("/") && !callbackParam.startsWith("//")
-        ? callbackParam
-        : "/admin/dashboard";
-
     router.refresh();
-    window.location.assign(callbackUrl);
+    window.location.assign("/admin/dashboard");
   }
 
   return (

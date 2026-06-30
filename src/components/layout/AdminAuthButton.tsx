@@ -30,7 +30,7 @@ export function AdminAuthButton() {
 
   return (
     <Link
-      href="/admin/login?callbackUrl=/admin/dashboard"
+      href="/admin/login"
       className="relative z-50 inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-white px-3.5 py-2 text-xs font-medium text-gray-700 no-underline transition hover:border-gray-300 hover:bg-gray-50 sm:px-4 sm:text-sm"
     >
       เข้าสู่ระบบ

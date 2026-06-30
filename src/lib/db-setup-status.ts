@@ -1,8 +1,23 @@
+import { getAuthConfigIssue } from "./auth-env";
+
 export type LoginSetupStatus =
   | { ok: true; adminEmail: string }
-  | { ok: false; reason: "placeholder_password" | "db_unreachable" | "no_users" };
+  | {
+      ok: false;
+      reason:
+        | "placeholder_password"
+        | "db_unreachable"
+        | "no_users"
+        | "missing_auth_secret"
+        | "localhost_auth_url";
+    };
 
 export async function getLoginSetupStatus(): Promise<LoginSetupStatus> {
+  const authIssue = getAuthConfigIssue();
+  if (authIssue) {
+    return { ok: false, reason: authIssue };
+  }
+
   const databaseUrl = process.env.DATABASE_URL ?? "";
   const directUrl = process.env.DIRECT_URL ?? "";
 

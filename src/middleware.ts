@@ -34,9 +34,7 @@ export default auth((req) => {
 
   const user = req.auth?.user;
   if (!user?.email || !user.role || !ADMIN_ROLES.has(user.role)) {
-    const loginUrl = new URL("/admin/login", req.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
+    return NextResponse.redirect(new URL("/admin/login", req.url));
   }
 
   if (
