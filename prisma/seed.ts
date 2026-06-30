@@ -655,6 +655,9 @@ async function main() {
     });
   }
 
+  const { ensureBraceletWorkshopOptions } = await import("../src/lib/ensure-bracelet-workshop-options");
+  await ensureBraceletWorkshopOptions(braceletWorkshop.id);
+
   console.log("Seed completed");
 }
 

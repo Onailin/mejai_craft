@@ -4,7 +4,9 @@ import { getFormDataFile } from "@/lib/form-data-file";
 import { revalidateWorkshopPaths } from "@/lib/revalidate-workshop";
 import {
   saveWorkshopAddonImage,
+  saveWorkshopBannerImage,
   saveWorkshopFeaturedImage,
+  saveWorkshopOptionImage,
   saveWorkshopRingSampleImage,
 } from "@/lib/workshop-image-upload";
 
@@ -50,8 +52,18 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: "ไม่พบประเภทบริการ" }, { status: 400 });
       }
       imageUrl = await saveWorkshopAddonImage(workshopId, addonType, file);
+    } else if (kind === "option") {
+      const optionId = String(formData.get("optionId") ?? "").trim();
+      if (!optionId) {
+        return NextResponse.json({ error: "ไม่พบตัวเลือก" }, { status: 400 });
+      }
+      imageUrl = await saveWorkshopOptionImage(workshopId, optionId, file);
     } else if (kind === "featured") {
       const saved = await saveWorkshopFeaturedImage(workshopId, file);
+      imageUrl = saved.imageUrl;
+      imageId = saved.id;
+    } else if (kind === "banner") {
+      const saved = await saveWorkshopBannerImage(workshopId, file);
       imageUrl = saved.imageUrl;
       imageId = saved.id;
     } else {

@@ -1,4 +1,4 @@
-export type WorkshopImageUploadKind = "sample" | "addon" | "featured";
+export type WorkshopImageUploadKind = "sample" | "addon" | "option" | "featured" | "banner";
 
 export type WorkshopImageUploadResult =
   | { ok: true; imageUrl: string; id?: string }

@@ -33,9 +33,7 @@ export default async function AdminJewelryProductEditPage({
         title: product.title,
         subtitle: product.subtitle ?? "",
         description: product.description ?? "",
-        accent: product.accent ?? "",
         price: product.price,
-        sortOrder: product.sortOrder,
         isActive: product.isActive,
         images: product.images.map((image) => ({
           id: image.id,

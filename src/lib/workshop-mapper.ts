@@ -55,7 +55,7 @@ type WorkshopRecord = {
   }>;
 };
 
-function mapOptionGroups(
+export function mapOptionGroups(
   groups: NonNullable<WorkshopRecord["optionGroups"]>
 ): WorkshopOptionGroupView[] {
   return groups.map((group) => ({

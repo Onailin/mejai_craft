@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
-import { SITE_LINE_URL } from "@/lib/brand";
+import { SITE_FACEBOOK_URL, SITE_LINE_URL } from "@/lib/brand";
 import type { JewelryProductView } from "@/types";
 function formatPrice(value: number) {
   return `฿${value.toLocaleString("th-TH")}`;
@@ -108,22 +108,31 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </div>
           )}
 
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <a
-              href={SITE_LINE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-[#06C755] px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-[#05b34c]"
-            >
-              สอบถาม / สั่งซื้อทาง LINE
-            </a>
-            <Link
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-stone-200 px-6 py-3 text-sm font-medium text-stone-700 no-underline transition hover:bg-stone-50"
-            >
-              ข้อมูลติดต่อร้าน
-            </Link>
-          </div>        </div>
+          <div className="mt-8 rounded-2xl border border-stone-200 bg-stone-50 p-5">
+            <h2 className="text-sm font-semibold text-stone-900">สอบถาม / สั่งซื้อ</h2>
+            <p className="mt-1 text-sm text-stone-500">
+              ติดต่อทาง LINE หรือ Facebook เพื่อสอบถามรายละเอียดและสั่งซื้อสินค้า
+            </p>
+            <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+              <a
+                href={SITE_LINE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#06C755] px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-[#05b34c]"
+              >
+                สอบถาม / สั่งซื้อทาง LINE
+              </a>
+              <a
+                href={SITE_FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex flex-1 items-center justify-center gap-2 rounded-full bg-[#1877F2] px-6 py-3 text-sm font-medium text-white no-underline transition hover:bg-[#166fe0]"
+              >
+                สอบถามทาง Facebook
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

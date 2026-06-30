@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { deleteWorkshopFeaturedImage } from "@/actions/admin";
+import { deleteWorkshopBannerImage } from "@/actions/admin";
 import { uploadWorkshopImage } from "@/lib/upload-workshop-image-client";
 
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 
-type FeaturedImage = {
+type BannerImage = {
   id: string;
   imageUrl: string;
 };
 
-type WorkshopFeaturedImagesFormProps = {
+type WorkshopBannerImagesFormProps = {
   workshopId: string;
-  images: FeaturedImage[];
+  images: BannerImage[];
 };
 
 function validateFileSize(file: File) {
@@ -23,7 +23,7 @@ function validateFileSize(file: File) {
   return null;
 }
 
-export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeaturedImagesFormProps) {
+export function WorkshopBannerImagesForm({ workshopId, images }: WorkshopBannerImagesFormProps) {
   const [gallery, setGallery] = useState(images);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -51,7 +51,7 @@ export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeatu
     formData.set("file", file);
 
     try {
-      const result = await uploadWorkshopImage(formData, "featured");
+      const result = await uploadWorkshopImage(formData, "banner");
 
       if (!result.ok) {
         setError(result.error);
@@ -62,7 +62,7 @@ export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeatu
         ...current,
         { id: result.id ?? `new-${Date.now()}`, imageUrl: result.imageUrl },
       ]);
-      setSuccess("เพิ่มรูปตัวอย่างเรียบร้อยแล้ว");
+      setSuccess("เพิ่มแบนเนอร์เรียบร้อยแล้ว");
     } catch {
       setError("อัปโหลดรูปไม่สำเร็จ กรุณาลองใหม่");
     } finally {
@@ -72,16 +72,16 @@ export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeatu
   }
 
   async function handleDelete(imageId: string) {
-    if (!confirm("ยืนยันการลบรูปนี้?")) return;
+    if (!confirm("ยืนยันการลบแบนเนอร์นี้?")) return;
 
     setDeletingId(imageId);
     setError(null);
     setSuccess(null);
 
     try {
-      await deleteWorkshopFeaturedImage(imageId);
+      await deleteWorkshopBannerImage(imageId);
       setGallery((current) => current.filter((image) => image.id !== imageId));
-      setSuccess("ลบรูปเรียบร้อยแล้ว");
+      setSuccess("ลบแบนเนอร์เรียบร้อยแล้ว");
     } catch {
       setError("ลบรูปไม่สำเร็จ กรุณาลองใหม่");
     } finally {
@@ -92,9 +92,9 @@ export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeatu
   return (
     <section className="space-y-4 rounded-2xl border border-stone-200 bg-white p-6">
       <div>
-        <h2 className="font-medium text-stone-800">รูปตัวอย่างงาน</h2>
+        <h2 className="font-medium text-stone-800">แบนเนอร์หน้าเวิร์คชอป</h2>
         <p className="mt-1 text-sm text-stone-500">
-          รูปสไลด์ในหน้ารายละเอียดเวิร์คชอป (เช่น ตัวอย่างแหวน กำไล) — อัปโหลดแล้วแสดงบนเว็บทันที
+          รูปเต็มจอด้านบนเมื่อลูกค้าเปิดดูรายละเอียดเวิร์คชอป — แนะนำแนวนอน 16:9
         </p>
       </div>
 
@@ -107,7 +107,11 @@ export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeatu
         <div className="flex flex-wrap gap-3">
           {gallery.map((img) => (
             <div key={img.id} className="group relative">
-              <img src={img.imageUrl} alt="" className="h-24 w-32 rounded-lg object-cover ring-1 ring-stone-200" />
+              <img
+                src={img.imageUrl}
+                alt=""
+                className="h-20 w-36 rounded-lg object-cover ring-1 ring-stone-200"
+              />
               <button
                 type="button"
                 onClick={() => handleDelete(img.id)}
@@ -120,16 +124,17 @@ export function WorkshopFeaturedImagesForm({ workshopId, images }: WorkshopFeatu
           ))}
         </div>
       ) : (
-        <p className="text-sm text-stone-500">ยังไม่มีรูปตัวอย่าง</p>
+        <p className="text-sm text-stone-500">ยังไม่มีแบนเนอร์ — จะใช้รูปเริ่มต้นของหน้า Workshop</p>
       )}
 
       <label className="inline-flex cursor-pointer flex-col gap-2">
-        <span className="text-sm text-stone-600">{uploading ? "กำลังอัปโหลด..." : "เลือกรูปเพิ่ม"}</span>
+        <span className="text-sm text-stone-600">{uploading ? "กำลังอัปโหลด..." : "เลือกรูปแบนเนอร์เพิ่ม"}</span>
         <input
           type="file"
           accept="image/jpeg,image/png,image/webp"
           disabled={uploading}
           onChange={handleChange}
+          className="w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-stone-700 hover:file:bg-stone-200"
         />
       </label>
     </section>

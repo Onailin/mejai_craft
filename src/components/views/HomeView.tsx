@@ -119,7 +119,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
       <HomeBanner page={page} />
 
       <section className="mx-auto mt-20 max-w-4xl px-6 text-center sm:mt-28">
-        <h2 className="font-serif text-3xl font-light tracking-wide text-stone-800 sm:text-4xl">
+        <h2 className="text-3xl font-bold tracking-wide text-stone-800 sm:text-4xl">
           {t("home.brand_title")}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-stone-500">
@@ -141,7 +141,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
               <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400">
                 {t("home.interactive_label")}
               </p>
-              <h2 className="font-serif text-2xl font-light leading-[1.12] tracking-wide text-stone-800 sm:text-3xl sm:leading-tight">
+              <h2 className="text-2xl font-bold leading-[1.12] tracking-wide text-stone-800 sm:text-3xl sm:leading-tight">
                 {t("home.interactive_title")}
               </h2>
             </div>
@@ -193,7 +193,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
                         <span className="inline-block bg-stone-800 px-1.5 py-0.5 text-[7px] uppercase tracking-[0.14em] text-white sm:px-2 sm:text-[9px] sm:tracking-widest">
                           {gem.hardnessDisplay}
                         </span>
-                        <h3 className="mt-1 font-serif text-[22px] font-light leading-[1.08] text-stone-800 sm:mt-2 sm:text-4xl">
+                        <h3 className="mt-1 text-[22px] font-bold leading-[1.08] text-stone-800 sm:mt-2 sm:text-4xl">
                           {gem.name}
                         </h3>
                         <p className="mt-1 text-[11px] leading-relaxed text-stone-500 sm:mt-2 sm:text-sm">
@@ -220,7 +220,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center text-stone-400">
-                <span className="font-serif text-xl italic">
+                <span className="text-xl font-medium italic">
                   {t("home.no_gem_title", { hardness: selectedHardness })}
                 </span>
                 <p className="mt-1 max-w-xs text-xs">{t("home.no_gem_desc")}</p>
@@ -235,7 +235,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
           <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
             {t("home.collection_label")}
           </p>
-          <h2 className="mt-2 font-serif text-3xl font-light text-stone-800 sm:text-4xl">
+          <h2 className="mt-2 text-3xl font-bold text-stone-800 sm:text-4xl">
             {t("home.collection_title")}
           </h2>
         </header>
@@ -255,7 +255,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-baseline justify-between">
-                    <h3 className="font-serif text-lg text-stone-800">{gem.name}</h3>
+                    <h3 className="text-lg font-bold text-stone-800">{gem.name}</h3>
                     <span className="text-xs text-stone-400">{gem.hardnessDisplay}</span>
                   </div>
                   <p className="text-xs text-stone-400">
@@ -276,7 +276,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
           <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
             Daily Stones
           </p>
-          <h2 className="mt-2 font-serif text-3xl font-light text-stone-800 sm:text-4xl">
+          <h2 className="mt-2 text-3xl font-bold text-stone-800 sm:text-4xl">
             พลอยตามวันเกิด
           </h2>
         </header>
@@ -289,17 +289,17 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
         ) : (
           <div className="grid grid-cols-2 gap-5 lg:grid-cols-4 lg:gap-6">
             {visibleBirthstones.map((stone) => (
-              <article key={stone.id} className="group">
-                <div className="flex aspect-[4/5] items-center justify-center overflow-hidden bg-stone-100 p-3">
+              <article key={stone.id}>
+                <div className="flex aspect-[4/5] items-center justify-center bg-stone-100 p-3">
                   <img
                     src={stone.image}
-                    alt={stone.gemName}
-                    className="max-h-full max-w-full object-contain transition-transform duration-500 group-hover:scale-105"
+                    alt={stone.day}
+                    className="max-h-full max-w-full object-contain"
                   />
                 </div>
-                <div className="mt-4">
-                  <h3 className="font-serif text-xl text-stone-800">{stone.day}</h3>
-                </div>
+                <h3 className="mt-4 text-center text-sm text-stone-800 sm:text-base">
+                  {stone.day}
+                </h3>
               </article>
             ))}
           </div>
@@ -311,7 +311,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
           <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
             {t("home.lucky_label")}
           </p>
-          <h2 className="mt-2 font-serif text-3xl font-light text-stone-800 sm:text-4xl">
+          <h2 className="mt-2 text-3xl font-bold text-stone-800 sm:text-4xl">
             {t("home.lucky_title")}
           </h2>
         </header>
@@ -336,7 +336,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, initialBirthst
                   <p className="text-[10px] uppercase tracking-[0.25em] text-stone-400">
                     {stone.meaning}
                   </p>
-                  <h3 className="font-serif text-lg text-stone-800">{stone.name}</h3>
+                  <h3 className="text-lg font-bold text-stone-800">{stone.name}</h3>
                   <p className="text-sm leading-relaxed text-stone-500">{stone.desc}</p>
                 </div>
               </article>

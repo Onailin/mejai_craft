@@ -65,25 +65,24 @@ export default function AdminLoginPage({ setup }: { setup: LoginSetupStatus }) {
       <div className="pointer-events-none absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-amber-100/50 blur-3xl" />
 
       <section className="relative w-full max-w-md">
-        <div className="mb-7 text-center">
-          <div className="mb-3 flex justify-center">
-            <BrandLogo size="xl" />
-          </div>
-          <p className="text-xs font-medium uppercase tracking-[0.28em] text-stone-400">
-            Admin Console
-          </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-stone-900">
-            เข้าสู่ระบบจัดการเว็บไซต์
-          </h1>
-          <p className="mt-2 text-sm leading-relaxed text-stone-500">
-            สำหรับจัดการสินค้า เวิร์คชอป รูปภาพ และเนื้อหาบนเว็บไซต์ Mejai Crafts
-          </p>
-        </div>
-
         <form
           onSubmit={handleSubmit}
-          className="space-y-5 rounded-[1.75rem] border border-stone-200/80 bg-white/90 p-7 shadow-xl shadow-stone-900/[0.06] backdrop-blur sm:p-8"
+          className="rounded-[1.75rem] border border-stone-200/80 bg-white/90 p-7 shadow-xl shadow-stone-900/[0.06] backdrop-blur sm:p-8"
         >
+          <div className="flex flex-col items-center gap-1.5 text-center">
+            <BrandLogo size="lg" className="h-16 sm:h-[4.5rem]" />
+            <p className="text-xs font-medium uppercase tracking-[0.28em] text-stone-400">
+              Admin Console
+            </p>
+            <h1 className="text-xl font-semibold tracking-tight text-stone-900 sm:text-2xl">
+              เข้าสู่ระบบจัดการเว็บไซต์
+            </h1>
+            <p className="max-w-xs text-sm leading-snug text-stone-500">
+              สำหรับจัดการสินค้า เวิร์คชอป รูปภาพ และเนื้อหาบนเว็บไซต์ Mejai Crafts
+            </p>
+          </div>
+
+          <div className="mt-5 space-y-5">
           {!setup.ok && (
             <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
               {SETUP_MESSAGES[setup.reason]}
@@ -126,6 +125,7 @@ export default function AdminLoginPage({ setup }: { setup: LoginSetupStatus }) {
           >
             {loading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่แผงจัดการ"}
           </button>
+          </div>
         </form>
 
         <div className="mt-5 text-center">

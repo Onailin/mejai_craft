@@ -41,7 +41,7 @@ export async function getJewelryCategories(locale = "th") {
     include: {
       products: {
         where: { isActive: true },
-        orderBy: { sortOrder: "asc" },
+        orderBy: { createdAt: "desc" },
         include: {
           images: { orderBy: { sortOrder: "asc" } },
         },

@@ -1,22 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, type ReactNode } from "react";
+import { useActionState, useEffect, useState, type ChangeEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
-import {
-  AlertCircle,
-  CheckCircle2,
-  ImageIcon,
-  Package,
-  Save,
-  Settings2,
-  ShoppingBag,
-  Tag,
-} from "lucide-react";
+import { AlertCircle, CheckCircle2, Save } from "lucide-react";
 import type { ProductFormState } from "@/actions/admin";
 import { GemDeleteButton } from "@/components/admin/GemDeleteButton";
-import { ProductImagePicker } from "@/components/admin/ProductImagePicker";
 
 export type JewelryCategoryOption = {
   id: string;
@@ -34,15 +24,13 @@ export type JewelryProductFormValues = {
   title: string;
   subtitle: string;
   description: string;
-  accent: string;
   price: number | null;
-  sortOrder: number;
   isActive: boolean;
   images: JewelryProductImage[];
 };
 
 const inputClass =
-  "w-full rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:bg-white focus:ring-2 focus:ring-stone-200";
+  "w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-500 focus:ring-2 focus:ring-stone-200";
 
 type JewelryProductFormProps = {
   categories: JewelryCategoryOption[];
@@ -62,7 +50,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-stone-900 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60"
+      className="inline-flex items-center justify-center gap-2 rounded-lg bg-stone-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? (
         <>
@@ -76,33 +64,6 @@ function SubmitButton({ label }: { label: string }) {
         </>
       )}
     </button>
-  );
-}
-
-function Panel({
-  icon: Icon,
-  title,
-  description,
-  children,
-}: {
-  icon: typeof Package;
-  title: string;
-  description?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm">
-      <div className="flex items-start gap-3 border-b border-stone-100 bg-stone-50/80 px-5 py-4">
-        <div className="rounded-xl bg-white p-2.5 text-stone-700 shadow-sm ring-1 ring-stone-200">
-          <Icon className="h-4 w-4" />
-        </div>
-        <div>
-          <h2 className="text-sm font-semibold text-stone-900">{title}</h2>
-          {description && <p className="mt-0.5 text-xs text-stone-500">{description}</p>}
-        </div>
-      </div>
-      <div className="space-y-4 p-5">{children}</div>
-    </section>
   );
 }
 
@@ -122,13 +83,13 @@ function Field({
   className?: string;
 }) {
   return (
-    <label htmlFor={htmlFor} className={`block space-y-2 ${className}`}>
-      <span className="text-sm font-medium text-stone-700">
+    <label htmlFor={htmlFor} className={`block space-y-1.5 ${className}`}>
+      <span className="text-sm text-stone-600">
         {label}
         {required && <span className="ml-1 text-red-500">*</span>}
       </span>
       {children}
-      {hint && <span className="block text-xs leading-relaxed text-stone-500">{hint}</span>}
+      {hint && <span className="block text-xs text-stone-500">{hint}</span>}
     </label>
   );
 }
@@ -145,18 +106,21 @@ export function JewelryProductForm({
 }: JewelryProductFormProps) {
   const router = useRouter();
   const [state, formAction] = useActionState(action, {});
+  const [newPreviews, setNewPreviews] = useState<string[]>([]);
 
   const values = product ?? {
     categoryId: "",
     title: "",
     subtitle: "",
     description: "",
-    accent: "",
     price: null,
-    sortOrder: 0,
     isActive: true,
     images: [],
   };
+
+  const coverImage =
+    values.images.find((image) => image.isPrimary)?.imageUrl ?? values.images[0]?.imageUrl ?? "";
+  const previewSrc = newPreviews[0] ?? coverImage;
 
   useEffect(() => {
     if (state.success) {
@@ -168,28 +132,37 @@ export function JewelryProductForm({
     }
   }, [state.success, backHref, router]);
 
+  useEffect(() => {
+    return () => {
+      for (const url of newPreviews) {
+        URL.revokeObjectURL(url);
+      }
+    };
+  }, [newPreviews]);
+
+  function handleImageChange(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    for (const url of newPreviews) {
+      URL.revokeObjectURL(url);
+    }
+    setNewPreviews(files.map((file) => URL.createObjectURL(file)));
+  }
+
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
-      <div className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex items-start gap-4">
-            <div className="rounded-2xl bg-stone-900 p-3 text-white">
-              <ShoppingBag className="h-6 w-6" />
-            </div>
-            <div>
-              <Link href={backHref} className="text-sm text-stone-500 no-underline hover:text-stone-800">
-                ← กลับรายการสินค้า
-              </Link>
-              <h1 className="mt-1 text-2xl font-bold text-stone-900">{pageTitle}</h1>
-              {pageDescription && <p className="mt-1 text-sm text-stone-500">{pageDescription}</p>}
-            </div>
-          </div>
-          {deleteAction && <GemDeleteButton deleteAction={deleteAction} label="ลบสินค้า" />}
+    <div className="mx-auto max-w-2xl space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <Link href={backHref} className="text-sm text-stone-500 no-underline hover:text-stone-800">
+            ← กลับรายการสินค้า
+          </Link>
+          <h1 className="mt-2 text-2xl font-semibold text-stone-900">{pageTitle}</h1>
+          {pageDescription && <p className="text-sm text-stone-500">{pageDescription}</p>}
         </div>
+        {deleteAction && <GemDeleteButton deleteAction={deleteAction} label="ลบสินค้า" />}
       </div>
 
       {state.error && (
-        <div className="flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">บันทึกไม่สำเร็จ</p>
@@ -199,7 +172,7 @@ export function JewelryProductForm({
       )}
 
       {state.success && (
-        <div className="flex items-start gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-800">
+        <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">บันทึกสำเร็จ</p>
@@ -209,7 +182,7 @@ export function JewelryProductForm({
       )}
 
       {categories.length === 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
           ยังไม่มีหมวดหมู่สินค้า —{" "}
           <Link href="/admin/jewelry/categories" className="font-medium underline">
             สร้างหมวดหมู่ก่อน
@@ -217,164 +190,138 @@ export function JewelryProductForm({
         </div>
       )}
 
-      <form action={formAction} encType="multipart/form-data" className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
-        <div className="space-y-6">
-          <Panel icon={Package} title="ข้อมูลสินค้า" description="ชื่อ หมวดหมู่ และราคาที่แสดงบนหน้าร้าน">
-            <div className="grid gap-4 md:grid-cols-2">
-              <Field label="หมวดหมู่" htmlFor="categoryId" required className="md:col-span-2">
-                <select
-                  id="categoryId"
-                  name="categoryId"
-                  required
-                  defaultValue={values.categoryId}
-                  className={inputClass}
-                >
-                  <option value="">เลือกหมวดหมู่</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-
-              <Field label="ชื่อสินค้า" htmlFor="title" required>
-                <input
-                  id="title"
-                  name="title"
-                  required
-                  defaultValue={values.title}
-                  placeholder="เช่น แหวนเงิน"
-                  className={inputClass}
-                />
-              </Field>
-
-              <Field label="คำบรรยายสั้น" htmlFor="subtitle">
-                <input
-                  id="subtitle"
-                  name="subtitle"
-                  defaultValue={values.subtitle}
-                  placeholder="เช่น Silver Ring"
-                  className={inputClass}
-                />
-              </Field>
-
-              <Field label="ราคา (บาท)" htmlFor="price" hint="เว้นว่างหากต้องการแสดง “สอบถามราคา”">
-                <input
-                  id="price"
-                  name="price"
-                  type="number"
-                  min="0"
-                  step="1"
-                  defaultValue={values.price ?? ""}
-                  placeholder="3500"
-                  className={inputClass}
-                />
-              </Field>
-
-              <Field label="ข้อมูลเพิ่มเติม" htmlFor="accent" hint="เช่น 925 silver">
-                <input
-                  id="accent"
-                  name="accent"
-                  defaultValue={values.accent}
-                  placeholder="วัสดุ / จุดเด่น"
-                  className={inputClass}
-                />
-              </Field>
+      <form
+        action={formAction}
+        encType="multipart/form-data"
+        className="space-y-5 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6"
+      >
+        <Field label="รูปภาพสินค้า" className="space-y-3">
+          {previewSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={previewSrc}
+              alt={values.title || "รูปสินค้า"}
+              className="aspect-square w-full max-w-xs rounded-xl object-cover ring-1 ring-stone-200"
+            />
+          ) : (
+            <div className="flex aspect-square w-full max-w-xs items-center justify-center rounded-xl border border-dashed border-stone-300 bg-stone-50 text-sm text-stone-400">
+              ยังไม่มีรูป
             </div>
-          </Panel>
+          )}
 
-          <Panel icon={Tag} title="รายละเอียดสินค้า" description="ข้อความที่แสดงในหน้ารายละเอียดสินค้า">
-            <Field label="คำอธิบาย" htmlFor="description">
-              <textarea
-                id="description"
-                name="description"
-                rows={6}
-                defaultValue={values.description}
-                placeholder="อธิบายดีไซน์ วัสดุ และรายละเอียดที่ลูกค้าควรรู้"
-                className={`${inputClass} resize-y`}
-              />
-            </Field>
-          </Panel>
+          {(values.images.length > 1 || newPreviews.length > 1) && (
+            <div className="flex flex-wrap gap-2">
+              {values.images.slice(1).map((image) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={image.id}
+                  src={image.imageUrl}
+                  alt=""
+                  className="h-16 w-16 rounded-lg object-cover ring-1 ring-stone-200"
+                />
+              ))}
+              {newPreviews.slice(1).map((src) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img key={src} src={src} alt="" className="h-16 w-16 rounded-lg object-cover ring-1 ring-stone-200" />
+              ))}
+            </div>
+          )}
 
-          <Panel icon={ImageIcon} title="รูปภาพสินค้า" description="อัปโหลดไฟล์ หรือวางลิงก์รูปได้">
-            {values.images.length > 0 && (
-              <div>
-                <p className="mb-3 text-sm font-medium text-stone-700">รูปปัจจุบัน</p>
-                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-5">
-                  {values.images.map((image, index) => (
-                    <div
-                      key={image.id}
-                      className="relative aspect-square overflow-hidden rounded-xl border border-stone-200 bg-stone-50"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={image.imageUrl} alt="" className="h-full w-full object-cover" />
-                      {(image.isPrimary || index === 0) && (
-                        <span className="absolute left-2 top-2 rounded-full bg-stone-900 px-2 py-0.5 text-[10px] font-medium text-white">
-                          หลัก
-                        </span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+          <input
+            name="images"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            className="w-full text-sm text-stone-600 file:mr-3 file:rounded-md file:border-0 file:bg-stone-100 file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-stone-700 hover:file:bg-stone-200"
+            onChange={handleImageChange}
+          />
+          <span className="block text-xs text-stone-500">
+            รองรับ JPG, PNG, WebP — เลือกได้หลายรูป รูปแรกจะเป็นภาพหลัก
+          </span>
+        </Field>
 
-            <ProductImagePicker hint="รองรับ JPG, PNG, WebP — รูปแรกจะเป็นภาพหลัก" />
+        <Field label="หมวดหมู่" htmlFor="categoryId" required>
+          <select
+            id="categoryId"
+            name="categoryId"
+            required
+            defaultValue={values.categoryId}
+            className={inputClass}
+          >
+            <option value="">เลือกหมวดหมู่</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </Field>
 
-            <Field
-              label="ลิงก์รูปภาพ (ทางเลือก)"
-              htmlFor="imageUrl"
-              hint="ใส่ URL หรือ path เช่น /images/Jewelry/ring/silv1.jpg คั่นด้วยบรรทัดใหม่หรือจุลภาค"
-            >
-              <textarea
-                id="imageUrl"
-                name="imageUrl"
-                rows={3}
-                placeholder={"/images/Jewelry/ring/silv1.jpg\nhttps://..."}
-                className={`${inputClass} resize-y font-mono text-xs`}
-              />
-            </Field>
-          </Panel>
+        <Field label="ชื่อสินค้า" htmlFor="title" required>
+          <input
+            id="title"
+            name="title"
+            required
+            defaultValue={values.title}
+            placeholder="เช่น แหวนเงิน"
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="คำบรรยายสั้น" htmlFor="subtitle">
+          <input
+            id="subtitle"
+            name="subtitle"
+            defaultValue={values.subtitle}
+            placeholder="เช่น Silver Ring"
+            className={inputClass}
+          />
+        </Field>
+
+        <Field label="ราคา (บาท)" htmlFor="price" hint="เว้นว่างหากต้องการแสดง “สอบถามราคา”">
+          <input
+            id="price"
+            name="price"
+            type="number"
+            min="0"
+            step="1"
+            defaultValue={values.price ?? ""}
+            placeholder="3500"
+            className={inputClass}
+          />
+        </Field>
+
+        <label className="flex items-center gap-2 text-sm text-stone-700">
+          <input
+            name="isActive"
+            type="checkbox"
+            defaultChecked={values.isActive}
+            value="true"
+            className="h-4 w-4 rounded border-stone-300"
+          />
+          เปิดใช้งานบนหน้าร้าน
+        </label>
+
+        <Field label="รายละเอียดสินค้า" htmlFor="description">
+          <textarea
+            id="description"
+            name="description"
+            rows={4}
+            defaultValue={values.description}
+            placeholder="อธิบายดีไซน์ วัสดุ และรายละเอียดที่ลูกค้าควรรู้"
+            className={`${inputClass} resize-y`}
+          />
+        </Field>
+
+        <div className="flex flex-wrap items-center justify-start gap-2 border-t border-stone-100 pt-5">
+          <SubmitButton label={submitLabel} />
+          <Link
+            href={backHref}
+            className="rounded-lg border border-stone-200 px-5 py-2.5 text-sm text-stone-700 no-underline transition hover:bg-stone-50"
+          >
+            ยกเลิก
+          </Link>
         </div>
-
-        <aside className="space-y-6">
-          <Panel icon={Settings2} title="การเผยแพร่" description="ควบคุมการแสดงผลบนหน้าร้าน">
-            <Field label="ลำดับการแสดง" htmlFor="sortOrder" hint="เลขน้อยแสดงก่อน">
-              <input
-                id="sortOrder"
-                name="sortOrder"
-                type="number"
-                defaultValue={values.sortOrder}
-                className={inputClass}
-              />
-            </Field>
-
-            <label className="flex items-center gap-3 rounded-xl border border-stone-200 bg-stone-50 px-4 py-4 text-sm">
-              <input
-                name="isActive"
-                type="checkbox"
-                defaultChecked={values.isActive}
-                value="true"
-                className="h-4 w-4 rounded border-stone-300"
-              />
-              <span>
-                <span className="block font-medium text-stone-800">เปิดใช้งาน</span>
-                <span className="block text-xs text-stone-500">แสดงสินค้านี้บนหน้า Jewelry</span>
-              </span>
-            </label>
-          </Panel>
-
-          <div className="sticky top-24 space-y-3 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm">
-            <SubmitButton label={submitLabel} />
-            <Link
-              href={backHref}
-              className="block w-full rounded-xl border border-stone-200 px-4 py-3 text-center text-sm font-medium text-stone-700 no-underline transition hover:bg-stone-50"
-            >
-              ยกเลิก
-            </Link>
-          </div>
-        </aside>
       </form>
     </div>
   );

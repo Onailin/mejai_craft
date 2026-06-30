@@ -2,13 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Gem,
-  LayoutGrid,
-  PenLine,
-  Sparkle,
-  type LucideIcon,
-} from "lucide-react";
+import { Search, ShoppingCart, X } from "lucide-react";
 import { SITE_LINE_URL } from "@/lib/brand";
 
 export type ListingProduct = {
@@ -35,14 +29,6 @@ function formatPrice(value: number) {
   return `฿${value.toLocaleString("th-TH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-function getCategoryIcon(slug: string): LucideIcon {
-  if (slug === "all") return LayoutGrid;
-  if (slug.includes("ring") || slug.includes("แหวน")) return Gem;
-  if (slug.includes("pen") || slug.includes("ปากกา")) return PenLine;
-  if (slug.includes("necklace") || slug.includes("สร้อย")) return Sparkle;
-  return LayoutGrid;
-}
-
 type ProductListingProps = {
   products: ListingProduct[];
   categories: ListingCategory[];
@@ -58,7 +44,13 @@ export default function ProductListing({ products, categories }: ProductListingP
   }, [categories]);
 
   const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(0);
+
+  const categoryLabelById = useMemo(
+    () => new Map(navCategories.map((category) => [category.id, category.label])),
+    [navCategories]
+  );
 
   useEffect(() => {
     if (!navCategories.some((category) => category.id === activeCategory)) {
@@ -67,9 +59,21 @@ export default function ProductListing({ products, categories }: ProductListingP
   }, [navCategories, activeCategory]);
 
   const filteredProducts = useMemo(() => {
-    if (activeCategory === "all") return products;
-    return products.filter((product) => product.category === activeCategory);
-  }, [products, activeCategory]);
+    const normalizedQuery = searchQuery.trim().toLowerCase();
+
+    return products.filter((product) => {
+      const matchesCategory = activeCategory === "all" || product.category === activeCategory;
+      if (!matchesCategory) return false;
+      if (!normalizedQuery) return true;
+
+      const categoryLabel = categoryLabelById.get(product.category) ?? "";
+      const haystack = [product.name, product.subLabel, product.description ?? "", categoryLabel]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(normalizedQuery);
+    });
+  }, [products, activeCategory, searchQuery, categoryLabelById]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages - 1);
@@ -91,14 +95,19 @@ export default function ProductListing({ products, categories }: ProductListingP
     setPage(0);
   }
 
+  function handleSearchChange(value: string) {
+    setSearchQuery(value);
+    setPage(0);
+  }
+
   const categoryButtonClass = (isActive: boolean, compact: boolean) =>
     compact
-      ? `flex shrink-0 items-center gap-2 rounded-lg px-4 py-2.5 text-sm transition ${
+      ? `shrink-0 rounded-lg px-4 py-2.5 text-sm transition ${
           isActive
             ? "bg-stone-900 font-medium text-white"
             : "bg-stone-50 text-stone-600 ring-1 ring-stone-200 hover:bg-stone-100"
         }`
-      : `flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition ${
+      : `w-full rounded-lg px-3 py-2.5 text-left text-sm transition ${
           isActive
             ? "bg-stone-900 font-medium text-white"
             : "text-stone-600 hover:bg-stone-100"
@@ -116,7 +125,6 @@ export default function ProductListing({ products, categories }: ProductListingP
       >
         {navCategories.map((category) => {
           const isActive = category.id === activeCategory;
-          const Icon = getCategoryIcon(category.id);
 
           return (
             <button
@@ -125,8 +133,7 @@ export default function ProductListing({ products, categories }: ProductListingP
               onClick={() => handleCategoryChange(category.id)}
               className={categoryButtonClass(isActive, compact)}
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span className="truncate">{category.label}</span>
+              {category.label}
             </button>
           );
         })}
@@ -152,30 +159,45 @@ export default function ProductListing({ products, categories }: ProductListingP
         </aside>
 
         <section className="min-w-0 flex-1 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6 lg:p-8">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-stone-100 pb-4">
-            <h1 className="text-2xl font-bold text-stone-900">{activeCategoryLabel}</h1>
-            <div className="flex flex-wrap items-center gap-3">
+          <div className="mb-6 space-y-4 border-b border-stone-100 pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h1 className="text-2xl font-bold text-stone-900">{activeCategoryLabel}</h1>
               <span className="text-sm text-stone-500">{filteredProducts.length} รายการ</span>
-              <a
-                href={SITE_LINE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full bg-[#06C755] px-4 py-2 text-sm font-medium text-white no-underline transition hover:bg-[#05b34c]"
-              >
-                สอบถาม / สั่งซื้อทาง LINE
-              </a>
             </div>
+
+            <label className="relative block">
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+              <input
+                type="search"
+                value={searchQuery}
+                onChange={(event) => handleSearchChange(event.target.value)}
+                placeholder="ค้นหาชื่อสินค้า รายละเอียด หรือหมวดหมู่..."
+                className="w-full rounded-xl border border-stone-200 bg-stone-50 py-3 pl-11 pr-11 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-400 focus:bg-white focus:ring-2 focus:ring-stone-100"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => handleSearchChange("")}
+                  className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-stone-400 transition hover:bg-stone-200 hover:text-stone-700"
+                  aria-label="ล้างการค้นหา"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              ) : null}
+            </label>
           </div>
 
           {paginatedProducts.length > 0 ? (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {paginatedProducts.map((product) => (
-                <Link
+                <article
                   key={product.id}
-                  href={`/product/${product.id}`}
-                  className="group flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition hover:border-stone-300 hover:shadow-sm no-underline"
+                  className="group relative flex flex-col overflow-hidden rounded-xl border border-stone-200 bg-white transition hover:border-stone-300 hover:shadow-sm"
                 >
-                  <div className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-stone-50 p-3">
+                  <Link
+                    href={`/product/${product.id}`}
+                    className="flex aspect-[4/3] items-center justify-center overflow-hidden bg-stone-50 p-3 no-underline"
+                  >
                     {product.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -186,9 +208,12 @@ export default function ProductListing({ products, categories }: ProductListingP
                     ) : (
                       <span className="text-xs text-stone-400">ไม่มีรูป</span>
                     )}
-                  </div>
+                  </Link>
 
-                  <div className="flex flex-col gap-1 border-t border-stone-100 p-3 sm:p-3.5">
+                  <Link
+                    href={`/product/${product.id}`}
+                    className="flex flex-col gap-1 border-t border-stone-100 p-3 pr-14 pb-12 no-underline sm:p-3.5 sm:pr-14 sm:pb-12"
+                  >
                     <h2 className="line-clamp-1 text-sm font-semibold text-stone-900">
                       {product.name}
                     </h2>
@@ -207,12 +232,27 @@ export default function ProductListing({ products, categories }: ProductListingP
                         <p className="text-xs text-stone-500">สอบถามราคา</p>
                       )}
                     </div>
-                  </div>
-                </Link>
+                  </Link>
+
+                  <a
+                    href={SITE_LINE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`สอบถาม / สั่งซื้อ ${product.name} ทาง LINE`}
+                    title="สอบถาม / สั่งซื้อทาง LINE"
+                    className="absolute bottom-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white shadow-md transition hover:bg-stone-700"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                  </a>
+                </article>
               ))}
             </div>
           ) : (
-            <div className="py-20 text-center text-stone-500">ยังไม่มีสินค้าในหมวดนี้</div>
+            <div className="py-20 text-center text-stone-500">
+              {searchQuery.trim()
+                ? `ไม่พบสินค้าที่ตรงกับ "${searchQuery.trim()}"`
+                : "ยังไม่มีสินค้าในหมวดนี้"}
+            </div>
           )}
 
           {filteredProducts.length > PAGE_SIZE && (

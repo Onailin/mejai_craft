@@ -33,7 +33,7 @@ export function ProductCard({ card }: { card: ProductCardType }) {
             {card.subtitle}
           </p>
 
-          <h3 className="mt-1 font-serif text-xl text-stone-800">
+          <h3 className="mt-1 text-xl font-bold text-stone-800">
             {card.title}
           </h3>
         </div>

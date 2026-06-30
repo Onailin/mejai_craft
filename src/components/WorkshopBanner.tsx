@@ -30,7 +30,7 @@ export function WorkshopBanner({
 
         <div className="pointer-events-none absolute inset-x-0 bottom-0 p-6 text-white sm:p-10">
           <p className="text-[11px] uppercase tracking-[0.35em] text-white/80">{page.eyebrow}</p>
-          <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-5xl">{page.title}</h1>
+          <h1 className="mt-3 text-3xl font-bold leading-tight sm:text-5xl">{page.title}</h1>
           <p className="mt-4 max-w-2xl text-sm leading-7 text-white/90 sm:text-base">{page.description}</p>
           <a
             href="https://www.facebook.com/mejaicrafts"

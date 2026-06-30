@@ -15,7 +15,7 @@ export default async function AdminJewelryProductNewPage() {
       categories={categories}
       action={createJewelryProductFormAction}
       pageTitle="เพิ่มสินค้าใหม่"
-      pageDescription="กรอกข้อมูลสินค้า อัปโหลดรูป หรือวางลิงก์รูปภาพ"
+      pageDescription="กรอกข้อมูลสินค้าและอัปโหลดรูปภาพ"
       submitLabel="บันทึกสินค้า"
     />
   );

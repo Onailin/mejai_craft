@@ -1,81 +1,81 @@
-import { clearBirthstoneDayImage, uploadBirthstoneDayImage } from "@/actions/admin";
+import { deleteBirthstone } from "@/actions/admin";
+import { BirthstoneCreateForm } from "@/components/admin/BirthstoneCreateForm";
+import { GemDeleteButton } from "@/components/admin/GemDeleteButton";
 import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-const dayOptions = [
-  "วันอาทิตย์",
-  "วันจันทร์",
-  "วันอังคาร",
-  "วันพุธ",
-  "วันพฤหัสบดี",
-  "วันศุกร์",
-  "วันเสาร์",
-];
-
 export default async function AdminBirthstonesPage() {
   const stones = await prisma.birthstone.findMany({ orderBy: { sortOrder: "asc" } });
-  const stoneByDay = new Map(stones.map((stone) => [stone.month, stone]));
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-semibold text-stone-900">พลอยประจำวันเกิด</h1>
-        <p className="mt-2 text-sm text-stone-500">
-          อัปโหลดรูปสำหรับแต่ละวันเกิด รูปที่อัปโหลดแล้วเท่านั้นจะแสดงบนหน้า Home
+        <h1 className="text-2xl font-semibold text-stone-900">พลอยประจำวันเกิด</h1>
+        <p className="mt-1 text-sm text-stone-500">
+          เลือกวันแล้วอัปโหลดรูป รูปที่อัปโหลดแล้วเท่านั้นจะแสดงบนหน้า Home
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-        {dayOptions.map((day) => {
-          const stone = stoneByDay.get(day);
+      <BirthstoneCreateForm />
 
-          return (
-            <form
-              key={day}
-              action={uploadBirthstoneDayImage.bind(null, day)}
-              className="space-y-4 rounded-2xl border border-stone-200 bg-white p-4 shadow-sm"
-            >
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="text-lg font-semibold text-stone-900">{day}</h2>
-                <span
-                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
-                    stone?.imageUrl
-                      ? "bg-emerald-50 text-emerald-700"
-                      : "bg-stone-100 text-stone-500"
-                  }`}
-                >
-                  {stone?.imageUrl ? "มีรูปแล้ว" : "ยังไม่มีรูป"}
-                </span>
-              </div>
-
-              {stone?.imageUrl ? (
-                <img src={stone.imageUrl} alt={day} className="aspect-[4/5] w-full rounded-xl object-cover" />
+      <div className="overflow-hidden rounded-2xl border border-stone-200 bg-white">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[480px] text-left text-sm">
+            <thead className="border-b border-stone-200 bg-stone-50 text-stone-600">
+              <tr>
+                <th className="px-4 py-3 font-medium">รูป</th>
+                <th className="px-4 py-3 font-medium">วัน</th>
+                <th className="px-4 py-3 font-medium">สถานะ</th>
+                <th className="px-4 py-3 font-medium text-right">จัดการ</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-stone-100">
+              {stones.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-4 py-10 text-center text-stone-500">
+                    ยังไม่มีรายการ — เพิ่มจากฟอร์มด้านบน
+                  </td>
+                </tr>
               ) : (
-                <div className="flex aspect-[4/5] w-full items-center justify-center rounded-xl border border-dashed border-stone-300 bg-stone-50 text-sm text-stone-400">
-                  อัปโหลดรูปจากมือถือ
-                </div>
+                stones.map((stone) => (
+                  <tr key={stone.id} className="hover:bg-stone-50/80">
+                    <td className="px-4 py-3">
+                      {stone.imageUrl ? (
+                        <img
+                          src={stone.imageUrl}
+                          alt={stone.month}
+                          className="h-10 w-10 rounded-md object-cover"
+                        />
+                      ) : (
+                        <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-stone-100 text-xs text-stone-400">
+                          —
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 font-medium text-stone-900">{stone.month}</td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                          stone.imageUrl && stone.isActive
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-stone-100 text-stone-500"
+                        }`}
+                      >
+                        {stone.imageUrl && stone.isActive ? "แสดงบนเว็บ" : "ยังไม่แสดง"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end">
+                        <GemDeleteButton deleteAction={deleteBirthstone.bind(null, stone.id)} />
+                      </div>
+                    </td>
+                  </tr>
+                ))
               )}
-
-              <div className="space-y-3">
-                <input name="image" type="file" accept="image/jpeg,image/png,image/webp" className="w-full text-sm" />
-                <div className="flex flex-wrap gap-2">
-                  <button type="submit" className="rounded-full bg-stone-900 px-4 py-2 text-sm font-medium text-white">
-                    {stone?.imageUrl ? "เปลี่ยนรูป" : "อัปโหลดรูป"}
-                  </button>
-                  {stone?.imageUrl ? (
-                    <button
-                      formAction={clearBirthstoneDayImage.bind(null, day)}
-                      className="rounded-full border border-red-300 px-4 py-2 text-sm text-red-600"
-                    >
-                      ลบรูป
-                    </button>
-                  ) : null}
-                </div>
-              </div>
-            </form>
-          );
-        })}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

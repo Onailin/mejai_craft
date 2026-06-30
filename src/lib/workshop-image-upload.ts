@@ -64,11 +64,37 @@ export async function saveWorkshopAddonImage(
   return publicUrl;
 }
 
+export async function saveWorkshopOptionImage(workshopId: string, optionId: string, file: File) {
+  const option = await prisma.workshopOption.findFirst({
+    where: { id: optionId, group: { workshopId } },
+  });
+  if (!option) throw new Error("ไม่พบตัวเลือก");
+
+  const { publicUrl } = await uploadImage(file, "workshop/bracelet");
+  await prisma.workshopOption.update({
+    where: { id: optionId },
+    data: { imageUrl: publicUrl },
+  });
+
+  return publicUrl;
+}
+
 export async function saveWorkshopFeaturedImage(workshopId: string, file: File) {
   const count = await prisma.workshopFeaturedImage.count({ where: { workshopId } });
   const { publicUrl } = await uploadImage(file, "workshop/featured");
 
   const image = await prisma.workshopFeaturedImage.create({
+    data: { workshopId, imageUrl: publicUrl, sortOrder: count },
+  });
+
+  return { imageUrl: publicUrl, id: image.id };
+}
+
+export async function saveWorkshopBannerImage(workshopId: string, file: File) {
+  const count = await prisma.workshopBannerImage.count({ where: { workshopId } });
+  const { publicUrl } = await uploadImage(file, "workshop/banners");
+
+  const image = await prisma.workshopBannerImage.create({
     data: { workshopId, imageUrl: publicUrl, sortOrder: count },
   });
 

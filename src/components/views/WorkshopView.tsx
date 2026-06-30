@@ -2,9 +2,12 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { WorkshopBanner } from "@/components/WorkshopBanner";
+import { BRACELET_STONE_PRICE, getBraceletImageClass, getBraceletImageFrameClass, isBraceletWorkshop } from "@/lib/workshop-bracelet-pricing";
 import {
   WORKSHOP_PLATING_OPTIONS,
   WORKSHOP_RING_SIZES,
+  isRingWorkshop,
   platingToSampleType,
   sizeToSampleType,
   type WorkshopRingSampleType,
@@ -49,10 +52,60 @@ function shouldHideMetaText(text: string) {
 
 function SectionHeader({ title, description }: { title: string; description: string }) {
   return (
-    <header className="max-w-2xl">
-      <h3 className="text-2xl font-medium tracking-tight text-stone-900">{title}</h3>
+    <header className="max-w-xl">
+      <h3 className="text-xl font-bold tracking-tight text-stone-900">{title}</h3>
       <p className="mt-2 text-sm leading-relaxed text-stone-500">{description}</p>
     </header>
+  );
+}
+
+function FullWidthCarousel({
+  images,
+  alt,
+  activeIndex,
+  onSelectIndex,
+  slideAriaLabel,
+}: {
+  images: string[];
+  alt: string;
+  activeIndex: number;
+  onSelectIndex: (index: number) => void;
+  slideAriaLabel: (index: number) => string;
+}) {
+  if (!images.length) return null;
+
+  return (
+    <div className="relative w-full overflow-hidden bg-stone-200">
+      <div
+        className="flex transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${activeIndex * 100}%)` }}
+      >
+        {images.map((src) => (
+          <div
+            key={src}
+            className="h-[42vh] min-h-[280px] w-full shrink-0 sm:h-[50vh] sm:min-h-[360px] lg:max-h-[640px]"
+          >
+            <img src={src} alt={alt} className="h-full w-full object-cover" />
+          </div>
+        ))}
+      </div>
+
+      {images.length > 1 && (
+        <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 gap-2">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => onSelectIndex(index)}
+              className={`h-1.5 rounded-full transition ${
+                activeIndex === index ? "w-7 bg-white" : "w-1.5 bg-white/50"
+              }`}
+              aria-label={slideAriaLabel(index + 1)}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -73,39 +126,35 @@ function SizeSamplesSection({
   return (
     <section>
       <SectionHeader title="ขนาดหน้ากว้าง" description={t("workshop.ring_size_desc")} />
-      <div className="mt-8 grid gap-x-8 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
         {sizes.map((sizeMm) => {
           const src = sampleMap.get(sizeToSampleType(sizeMm));
           const priceInfo = getSizePriceInfo(ringPrices, sizeMm);
 
           return (
-            <figure key={sizeMm} className="group">
+            <figure key={sizeMm} className="text-center">
               {src ? (
                 <img
                   src={src}
                   alt={`ขนาด ${sizeMm} มม.`}
-                  className="aspect-square w-full bg-stone-50 object-contain transition duration-300 group-hover:scale-[1.015]"
+                  className="mx-auto max-h-40 w-auto object-contain"
                 />
               ) : (
-                <div className="flex aspect-square w-full items-center justify-center bg-stone-100 text-sm text-stone-400">
+                <div className="mx-auto flex h-32 max-w-[160px] items-center justify-center text-sm text-stone-400">
                   ไม่มีรูป
                 </div>
               )}
-              <figcaption className="pt-4">
-                <div className="flex items-baseline justify-between gap-3 border-b border-stone-200 pb-3">
-                  <p className="text-2xl font-light text-stone-900">{sizeMm} มม.</p>
-                  {priceInfo?.price != null ? (
-                    <p className="text-xl font-semibold text-stone-900">
-                      {formatPrice(priceInfo.price)}
-                    </p>
-                  ) : null}
-                </div>
+              <figcaption className="mt-4 space-y-1">
+                <p className="text-lg font-bold text-stone-900">{sizeMm} มม.</p>
                 {priceInfo?.price != null ? (
-                  priceInfo.priceNote && (
-                    <p className="mt-2 text-xs text-stone-500">{priceInfo.priceNote}</p>
-                  )
+                  <>
+                    <p className="text-base font-medium text-stone-900">{formatPrice(priceInfo.price)}</p>
+                    {priceInfo.priceNote && (
+                      <p className="text-xs text-stone-500">{priceInfo.priceNote}</p>
+                    )}
+                  </>
                 ) : (
-                  <p className="mt-2 text-sm text-stone-600">
+                  <p className="text-sm text-stone-600">
                     {priceInfo?.priceNote || t("workshop.price_inquire")}
                   </p>
                 )}
@@ -131,27 +180,25 @@ function PlatingSamplesSection({
   if (!platings.length) return null;
 
   return (
-    <section className="border-t border-stone-200 pt-12">
+    <section className="border-t border-stone-100 pt-12">
       <SectionHeader title="ชุบสี" description={t("workshop.ring_plating_desc")} />
-      <div className="mt-8 grid gap-8 sm:grid-cols-3">
+      <div className="mt-8 flex flex-wrap justify-center gap-10 sm:gap-14">
         {platings.map((plating) => {
           const src = sampleMap.get(platingToSampleType(plating.value));
           return (
-            <figure key={plating.value}>
+            <figure key={plating.value} className="w-28 text-center sm:w-32">
               {src ? (
                 <img
                   src={src}
                   alt={plating.label}
-                  className="mx-auto aspect-square w-full max-w-[220px] bg-stone-50 object-contain"
+                  className="mx-auto max-h-28 w-auto object-contain"
                 />
               ) : (
-                <div className="mx-auto flex aspect-square w-full max-w-[220px] items-center justify-center bg-stone-100 text-sm text-stone-400">
+                <div className="mx-auto flex h-24 items-center justify-center text-sm text-stone-400">
                   ไม่มีรูป
                 </div>
               )}
-              <figcaption className="mt-4 text-center text-sm font-medium text-stone-800">
-                {plating.label}
-              </figcaption>
+              <figcaption className="mt-3 text-sm font-bold text-stone-700">{plating.label}</figcaption>
             </figure>
           );
         })}
@@ -170,42 +217,155 @@ function AddonSamplesSection({
   if (!addons.length) return null;
 
   return (
-    <section className="border-t border-stone-200 pt-10">
+    <section className="border-t border-stone-100 pt-10">
       <SectionHeader title="เลเซอร์และฝังพลอย" description={t("workshop.ring_addon_desc")} />
-      <div className="mt-6 grid gap-8 md:grid-cols-2">
+      <div className="mt-8 grid justify-items-center gap-10 sm:grid-cols-2">
         {addons.map((addon) => (
-          <article
-            key={addon.addonType}
-            className="space-y-4 border-b border-stone-200 pb-8 last:border-b-0 md:border-b-0 md:pb-0"
-          >
+          <figure key={addon.addonType} className="w-full max-w-xs text-center">
             {addon.imageUrl ? (
-              <div className="flex aspect-[4/3] w-full items-center justify-center bg-stone-50">
-                <img
-                  src={addon.imageUrl}
-                  alt={addon.label}
-                  className="max-h-full max-w-full object-contain"
-                />
-              </div>
+              <img
+                src={addon.imageUrl}
+                alt={addon.label}
+                className="mx-auto max-h-52 w-full object-contain sm:max-h-60"
+              />
             ) : (
-              <div className="aspect-[4/3] w-full bg-stone-100" />
+              <div className="mx-auto flex h-40 w-full max-w-[240px] items-center justify-center text-sm text-stone-400">
+                ไม่มีรูป
+              </div>
             )}
-            <div className="min-w-0">
-              <h4 className="text-base font-semibold text-stone-900">{addon.label}</h4>
+            <figcaption className="mt-4 space-y-1">
+              <h4 className="text-base font-bold text-stone-900">{addon.label}</h4>
               {addon.price != null ? (
-                <p className="mt-1 text-sm font-semibold text-stone-900">{formatPrice(addon.price)}</p>
+                <p className="text-sm font-medium text-stone-900">{formatPrice(addon.price)}</p>
               ) : (
-                <p className="mt-1 text-sm font-medium text-stone-700">
+                <p className="text-sm text-stone-600">
                   {addon.priceNote || t("workshop.price_inquire")}
                 </p>
               )}
               {addon.priceNote && addon.price != null && (
-                <p className="mt-1 text-xs leading-relaxed text-stone-500">{addon.priceNote}</p>
+                <p className="text-xs leading-relaxed text-stone-500">{addon.priceNote}</p>
               )}
-            </div>
-          </article>
+            </figcaption>
+          </figure>
         ))}
       </div>
     </section>
+  );
+}
+
+function BraceletStoneCard({
+  label,
+  price,
+  imageUrl,
+}: {
+  label: string;
+  price: number;
+  imageUrl: string;
+}) {
+  return (
+    <figure className="text-center">
+      {imageUrl ? (
+        <div className={getBraceletImageFrameClass("stone")}>
+          <img src={imageUrl} alt={label} className={getBraceletImageClass("stone")} />
+        </div>
+      ) : (
+        <div className={`${getBraceletImageFrameClass("stone")} text-sm text-stone-400`}>
+          ไม่มีรูป
+        </div>
+      )}
+      <figcaption className="mt-4 space-y-1">
+        <p className="text-base font-bold text-stone-900">{label}</p>
+        <p className="text-sm font-medium text-stone-900">{formatPrice(price)}</p>
+      </figcaption>
+    </figure>
+  );
+}
+
+function BraceletPendantCard({
+  label,
+  price,
+  imageUrl,
+}: {
+  label: string;
+  price: number;
+  imageUrl: string;
+}) {
+  return (
+    <figure className="flex flex-col items-center text-center">
+      {imageUrl ? (
+        <div className={getBraceletImageFrameClass("pendant")}>
+          <img src={imageUrl} alt={label} className={getBraceletImageClass("pendant")} />
+        </div>
+      ) : (
+        <div className={`${getBraceletImageFrameClass("pendant")} text-sm text-stone-400`}>
+          ไม่มีรูป
+        </div>
+      )}
+      <figcaption className="mt-4 space-y-1">
+        <p className="text-base font-bold text-stone-900">{label}</p>
+        <p className="text-sm font-medium text-stone-900">{formatPrice(price)}</p>
+      </figcaption>
+    </figure>
+  );
+}
+
+function BraceletOptionsSection({ workshop }: { workshop: WorkshopData }) {
+  const stoneGroup = workshop.optionGroups.find((group) => group.groupType === "CUSTOM");
+  const pendantGroup = workshop.optionGroups.find((group) => group.groupType === "ADDON");
+  const visibleStones = stoneGroup?.options.filter((option) => option.imageUrl) ?? [];
+  const visiblePendants = pendantGroup?.options.filter((option) => option.imageUrl) ?? [];
+
+  if (!visibleStones.length && !visiblePendants.length) return null;
+
+  return (
+    <div className="border-t border-stone-100 pt-12">
+      <header className="mb-10 max-w-2xl">
+        <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-stone-400">
+          Stone Bracelet
+        </p>
+        <h3 className="mt-2 text-xl font-bold text-stone-900">ตัวเลือกกำไลและจี้</h3>
+        <p className="mt-3 text-sm leading-relaxed text-stone-500">
+          กำไลหินแต่ละชนิดราคาเดียวกัน · จี้มีแบบเลเซอร์และแบบฝังพลอย+เลเซอร์
+        </p>
+      </header>
+
+      <div className="space-y-12">
+        {visibleStones.length > 0 ? (
+          <section>
+            <SectionHeader
+              title="กำไลหิน"
+              description={`เลือกหินแต่ละชนิด ราคา ${formatPrice(BRACELET_STONE_PRICE)}`}
+            />
+            <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
+              {visibleStones.map((option) => (
+                <BraceletStoneCard
+                  key={option.id}
+                  label={option.label}
+                  price={option.price ?? BRACELET_STONE_PRICE}
+                  imageUrl={option.imageUrl}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {visiblePendants.length > 0 ? (
+          <section className="border-t border-stone-100 pt-10">
+            <SectionHeader title="จี้" description="แบบจี้เสริมสำหรับกำไล" />
+            <div className="mt-8 grid justify-items-center gap-10 sm:grid-cols-2">
+              {visiblePendants.map((option) => (
+                <BraceletPendantCard
+                  key={option.id}
+                  label={option.label}
+                  price={option.price ?? 0}
+                  imageUrl={option.imageUrl}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
+      </div>
+    </div>
   );
 }
 
@@ -229,10 +389,10 @@ function RingOptionsSection({
   if (!hasSizes && !hasPlating && !hasAddons) return null;
 
   return (
-    <div className="border-t border-stone-200 pt-12">
-      <header className="mb-10 max-w-3xl">
+    <div className="border-t border-stone-100 pt-12">
+      <header className="mb-10 max-w-2xl">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-stone-400">Ring Workshop</p>
-        <h3 className="mt-2 text-2xl font-light text-stone-900">{t("workshop.ring_options_title")}</h3>
+        <h3 className="mt-2 text-xl font-bold text-stone-900">{t("workshop.ring_options_title")}</h3>
         <p className="mt-3 text-sm leading-relaxed text-stone-500">{t("workshop.ring_options_intro")}</p>
       </header>
 
@@ -263,7 +423,7 @@ function WorkshopMetaSection({
   return (
     <div className="grid gap-10 lg:grid-cols-2">
       <article>
-        <h3 className="text-lg font-medium text-stone-900">{t("workshop.steps_title")}</h3>
+        <h3 className="text-lg font-bold text-stone-900">{t("workshop.steps_title")}</h3>
         <div className="mt-6 space-y-5">
           {visibleSteps.map((step, index) => (
             <div key={step.title} className="flex items-start gap-4">
@@ -281,7 +441,7 @@ function WorkshopMetaSection({
 
       <div className="space-y-8">
         <article>
-          <h3 className="text-sm font-medium uppercase tracking-wider text-stone-900">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-stone-900">
             {t("workshop.received_title")}
           </h3>
           <ul className="mt-4 space-y-3">
@@ -295,7 +455,7 @@ function WorkshopMetaSection({
         </article>
 
         <article className="border-t border-stone-200 pt-8">
-          <h3 className="text-sm font-medium uppercase tracking-wider text-stone-900">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-stone-900">
             {t("workshop.terms_title")}
           </h3>
           <ul className="mt-4 space-y-3">
@@ -314,17 +474,15 @@ function WorkshopMetaSection({
 
 function OptionCard({ option }: { option: WorkshopOptionView }) {
   return (
-    <article className="flex h-full flex-col">
+    <article className="flex h-full flex-col items-center text-center sm:items-start sm:text-left">
       {option.imageUrl ? (
-        <div className="mb-4 aspect-[4/3] overflow-hidden bg-stone-100">
-          <img src={option.imageUrl} alt={option.label} className="h-full w-full object-contain" />
-        </div>
-      ) : (
-        <div className="mb-4 flex aspect-[4/3] items-center justify-center bg-stone-50 text-xs text-stone-400">
-          รูปตัวอย่างเร็วๆ นี้
-        </div>
-      )}
-      <h4 className="text-base font-medium text-stone-900">{option.label}</h4>
+        <img
+          src={option.imageUrl}
+          alt={option.label}
+          className="mb-4 max-h-36 w-auto object-contain"
+        />
+      ) : null}
+      <h4 className="text-base font-bold text-stone-900">{option.label}</h4>
       {option.description && (
         <p className="mt-2 flex-1 text-sm leading-relaxed text-stone-500">{option.description}</p>
       )}
@@ -343,7 +501,7 @@ function OptionGroupSection({ group }: { group: WorkshopOptionGroupView }) {
           : "grid gap-6 sm:grid-cols-2";
 
   return (
-    <section className="border-t border-stone-200 py-10">
+    <section className="border-t border-stone-100 py-10">
       <div className="mb-6 max-w-2xl">
         <p className="text-[10px] font-medium uppercase tracking-[0.25em] text-stone-400">
           {group.groupType === "SIZE" && "Ring Size"}
@@ -352,7 +510,7 @@ function OptionGroupSection({ group }: { group: WorkshopOptionGroupView }) {
           {group.groupType === "ADDON" && "Add-on"}
           {group.groupType === "CUSTOM" && "Options"}
         </p>
-        <h3 className="mt-2 text-xl font-light text-stone-900">{group.title}</h3>
+        <h3 className="mt-2 text-xl font-bold text-stone-900">{group.title}</h3>
         {group.description && (
           <p className="mt-2 text-sm leading-relaxed text-stone-500">{group.description}</p>
         )}
@@ -395,9 +553,14 @@ function WorkshopDetail({
   }, [workshop.optionGroups]);
 
   const hasRingOptions =
-    workshop.ringSampleImages.length > 0 ||
-    workshop.ringPrices.length > 0 ||
-    workshop.addons.length > 0;
+    isRingWorkshop(workshop.slug, workshop.categorySlug) &&
+    (workshop.ringSampleImages.length > 0 ||
+      workshop.ringPrices.length > 0 ||
+      workshop.addons.length > 0);
+
+  const hasBraceletOptions =
+    isBraceletWorkshop(workshop.slug, workshop.categorySlug) &&
+    workshop.optionGroups.some((group) => group.options.some((option) => option.imageUrl));
 
   return (
     <div className="space-y-10">
@@ -415,7 +578,7 @@ function WorkshopDetail({
             <span className="text-[10px] font-medium uppercase tracking-[0.25em] text-stone-400">
               {workshop.categoryName}
             </span>
-            <h2 className="mt-2 text-3xl font-light tracking-tight text-stone-900 sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
               {workshop.title}
             </h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-stone-500">{workshop.summary}</p>
@@ -440,8 +603,8 @@ function WorkshopDetail({
           </div>
         </article>
 
-        <figure>
-          <div className="overflow-hidden bg-stone-100">
+        <figure className="overflow-hidden">
+          <div className="overflow-hidden rounded-2xl bg-stone-100">
             <div
               className="flex transition-transform duration-700 ease-out"
               style={{ transform: `translateX(-${featuredIndex * 100}%)` }}
@@ -449,7 +612,7 @@ function WorkshopDetail({
               {workshop.featuredImages.map((imagePath) => (
                 <img
                   key={imagePath}
-                  className="aspect-[4/3] w-full shrink-0 bg-stone-50 object-contain"
+                  className="aspect-[5/4] w-full shrink-0 object-cover"
                   src={imagePath}
                   alt={workshop.featuredTitle}
                 />
@@ -465,12 +628,14 @@ function WorkshopDetail({
         </figure>
       </div>
 
-      <div className="border-t border-stone-200 pt-10">
+      <div className="border-t border-stone-100 pt-10">
         <WorkshopMetaSection workshop={workshop} t={t} />
       </div>
 
       {hasRingOptions ? (
         <RingOptionsSection workshop={workshop} t={t} />
+      ) : hasBraceletOptions ? (
+        <BraceletOptionsSection workshop={workshop} />
       ) : (
         sortedGroups.length > 0 && (
           <div>
@@ -508,46 +673,38 @@ function WorkshopOverview({
     category.workshops.map((workshop) => ({ category, workshop }))
   );
   const fallbackImage = page.cards.map((card) => card.image).find(Boolean);
-  const heroImage = fallbackImage ?? workshops.map(({ workshop }) => getWorkshopImage(workshop)).find(Boolean);
 
   return (
-    <div className="mx-auto max-w-5xl px-6 pb-16">
-      <header className="mb-12">
-        {heroImage && (
-          <div className="mb-8 flex aspect-[16/7] items-center justify-center overflow-hidden bg-stone-100">
-            <img
-              src={heroImage}
-              alt={page.title}
-              className="max-h-full max-w-full object-contain"
-            />
-          </div>
-        )}
-        <div className="max-w-2xl border-b border-stone-200 pb-8">
-          <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-400">Workshop</p>
-          <h1 className="mt-3 text-3xl font-light tracking-tight text-stone-900 sm:text-4xl">
-            เลือกเวิร์คชอป
-          </h1>
-          <p className="mt-3 text-sm leading-relaxed text-stone-500">
-            เลือกคอร์สที่สนใจ แล้วกดดูรายละเอียดเพื่อดูขั้นตอน ราคา และตัวเลือกเพิ่มเติม
-          </p>
-        </div>
+    <div className="mx-auto max-w-4xl px-6 pb-16">
+      <header className="mb-12 max-w-2xl pt-2">
+        <p className="text-[10px] font-medium uppercase tracking-[0.3em] text-stone-400">Workshop</p>
+        <h1 className="mt-3 text-3xl font-bold tracking-tight text-stone-900 sm:text-4xl">
+          เลือกเวิร์คชอป
+        </h1>
+        <p className="mt-3 text-sm leading-relaxed text-stone-500">
+          เลือกคอร์สที่สนใจ แล้วกดดูรายละเอียดเพื่อดูขั้นตอน ราคา และตัวเลือกเพิ่มเติม
+        </p>
       </header>
 
-      <div className="space-y-16">
+      <div className="space-y-14">
         {workshops.map(({ category, workshop }, index) => {
           const image = getWorkshopImage(workshop, fallbackImage);
           const takeHome = getInfoValue(workshop, ["ได้รับ", "take-home", "take home"]);
           const duration = getInfoValue(workshop, ["ระยะเวลา", "duration", "time"]);
 
           return (
-            <article key={workshop.id} className="space-y-6 border-b border-dashed border-stone-300 pb-10 last:border-0">
+            <article key={workshop.id} className="space-y-6 border-b border-stone-100 pb-12 last:border-0">
               {image ? (
                 <button
                   type="button"
                   onClick={() => onSelect(category.slug, workshop.slug)}
-                  className="block w-full overflow-hidden bg-stone-100"
+                  className="block w-full overflow-hidden"
                 >
-                  <img src={image} alt={workshop.title} className="aspect-[16/9] w-full bg-stone-50 object-contain" />
+                  <img
+                    src={image}
+                    alt={workshop.title}
+                    className="h-56 w-full object-cover transition duration-500 hover:scale-[1.01] sm:h-72"
+                  />
                 </button>
               ) : null}
 
@@ -555,7 +712,7 @@ function WorkshopOverview({
                 <div>
                   <div className="flex items-baseline gap-3">
                     <span className="text-xs text-stone-400">{String(index + 1).padStart(2, "0")}</span>
-                    <h2 className="text-2xl font-light text-stone-900">{workshop.title}</h2>
+                    <h2 className="text-2xl font-bold text-stone-900">{workshop.title}</h2>
                   </div>
                   {workshop.summary && (
                     <p className="mt-4 text-sm leading-relaxed text-stone-500">{workshop.summary}</p>
@@ -564,18 +721,18 @@ function WorkshopOverview({
 
                 <div className="space-y-4 text-sm">
                   {(takeHome || duration) && (
-                    <div className="grid grid-cols-[120px_minmax(0,1fr)] border-y border-stone-200">
+                    <div className="flex flex-wrap gap-x-8 gap-y-2 text-stone-600">
                       {takeHome && (
-                        <>
-                          <div className="bg-stone-900 px-4 py-3 text-white">ผลงาน</div>
-                          <div className="px-4 py-3 text-stone-600">{takeHome}</div>
-                        </>
+                        <p>
+                          <span className="text-stone-400">ผลงาน · </span>
+                          {takeHome}
+                        </p>
                       )}
                       {duration && (
-                        <>
-                          <div className="bg-stone-900 px-4 py-3 text-white">เวลา</div>
-                          <div className="px-4 py-3 text-stone-600">{duration}</div>
-                        </>
+                        <p>
+                          <span className="text-stone-400">เวลา · </span>
+                          {duration}
+                        </p>
                       )}
                     </div>
                   )}
@@ -612,7 +769,8 @@ export function WorkshopView({
     initialCatalog[0]?.workshops[0]?.slug ?? ""
   );
   const [viewMode, setViewMode] = useState<"overview" | "detail">("overview");
-  const [bannerIndex, setBannerIndex] = useState(0);
+  const [overviewBannerIndex, setOverviewBannerIndex] = useState(0);
+  const [detailBannerIndex, setDetailBannerIndex] = useState(0);
 
   useEffect(() => {
     const locale = i18n.resolvedLanguage ?? "th";
@@ -650,13 +808,22 @@ export function WorkshopView({
   }, [activeCategory, activeWorkshopSlug]);
 
   useEffect(() => {
-    setBannerIndex(0);
+    setDetailBannerIndex(0);
   }, [activeWorkshop?.id]);
+
+  useEffect(() => {
+    if (page.cards.length <= 1) return;
+    const id = window.setInterval(
+      () => setOverviewBannerIndex((current) => (current + 1) % page.cards.length),
+      4000
+    );
+    return () => window.clearInterval(id);
+  }, [page.cards.length]);
 
   useEffect(() => {
     if (bannerImages.length <= 1) return;
     const id = window.setInterval(
-      () => setBannerIndex((current) => (current + 1) % bannerImages.length),
+      () => setDetailBannerIndex((current) => (current + 1) % bannerImages.length),
       4000
     );
     return () => window.clearInterval(id);
@@ -669,6 +836,13 @@ export function WorkshopView({
   if (viewMode === "overview") {
     return (
       <section className="pb-16">
+        {page.cards.length > 0 && (
+          <WorkshopBanner
+            page={page}
+            activeIndex={overviewBannerIndex}
+            onSelectIndex={setOverviewBannerIndex}
+          />
+        )}
         <WorkshopOverview
           catalog={catalog}
           page={page}
@@ -685,40 +859,15 @@ export function WorkshopView({
 
   return (
     <section className="pb-16">
-      <div className="mx-auto max-w-5xl px-6">
-        <div className="relative overflow-hidden bg-stone-100">
-          <div
-            className="flex transition-transform duration-700 ease-out"
-            style={{ transform: `translateX(-${bannerIndex * 100}%)` }}
-          >
-            {bannerImages.map((src) => (
-              <img
-                key={src}
-                className="aspect-[16/7] w-full shrink-0 bg-stone-50 object-contain"
-                src={src}
-                alt={activeWorkshop.title}
-              />
-            ))}
-          </div>
-          {bannerImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2">
-              {bannerImages.map((_, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => setBannerIndex(index)}
-                  className={`h-1.5 rounded-full transition ${
-                    bannerIndex === index ? "w-6 bg-white" : "w-1.5 bg-white/50"
-                  }`}
-                  aria-label={t("workshop.banner_slide_aria", { index: index + 1 })}
-                />
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+      <FullWidthCarousel
+        images={bannerImages}
+        alt={activeWorkshop.title}
+        activeIndex={detailBannerIndex}
+        onSelectIndex={setDetailBannerIndex}
+        slideAriaLabel={(index) => t("workshop.banner_slide_aria", { index })}
+      />
 
-      <div className="mx-auto mt-10 max-w-5xl space-y-10 px-6">
+      <div className="mx-auto mt-10 max-w-4xl space-y-10 px-6">
         <WorkshopDetail
           workshop={activeWorkshop}
           t={t}

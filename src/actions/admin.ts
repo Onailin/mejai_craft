@@ -10,6 +10,7 @@ import { uploadImage } from "@/lib/supabase-storage";
 import { revalidateWorkshopPaths } from "@/lib/revalidate-workshop";
 import { upsertTranslations } from "@/lib/translate";
 import { uniqueSlug } from "@/lib/slug";
+import { birthstoneDaySortOrder, BIRTHSTONE_DAY_OPTIONS, isBirthstoneDay } from "@/lib/birthstone-days";
 import { DisplayMode, WorkshopAddonType, WorkshopRingSampleType } from "@prisma/client";
 
 const boolField = z.preprocess(
@@ -170,7 +171,7 @@ export async function deleteLuckyStone(id: string) {
 
 const birthstoneSchema = z.object({
   day: z.string().min(1),
-  gemName: z.string().min(1),
+  gemName: z.string().optional(),
   gemNameEn: z.string().optional(),
   color: z.string().optional(),
   origin: z.string().optional(),
@@ -184,7 +185,8 @@ export async function createBirthstone(formData: FormData) {
   await requireEditorOrAdmin();
   const data = birthstoneSchema.parse(Object.fromEntries(formData.entries()));
   const image = getFormDataFile(formData, "image");
-  const slug = await uniqueSlug(`${data.day}-${data.gemName}`, (s) =>
+  const gemName = data.gemName?.trim() || data.day;
+  const slug = await uniqueSlug(data.day, (s) =>
     prisma.birthstone.findUnique({ where: { slug: s } }).then(Boolean)
   );
 
@@ -197,13 +199,13 @@ export async function createBirthstone(formData: FormData) {
   const stone = await prisma.birthstone.create({
     data: {
       month: data.day,
-      gemName: data.gemName,
+      gemName,
       gemNameEn: data.gemNameEn,
       color: data.color,
       origin: data.origin,
       hardness: data.hardness,
       detail: data.detail,
-      sortOrder: data.sortOrder,
+      sortOrder: birthstoneDaySortOrder(data.day),
       isActive: data.isActive,
       slug,
       imageUrl,
@@ -231,6 +233,7 @@ export async function updateBirthstone(id: string, formData: FormData) {
   const data = birthstoneSchema.parse(Object.fromEntries(formData.entries()));
   const image = getFormDataFile(formData, "image");
   let imageUrl = existing.imageUrl;
+  const gemName = data.gemName?.trim() || data.day;
 
   if (image) {
     const uploaded = await uploadImage(image, "birthstones");
@@ -241,7 +244,7 @@ export async function updateBirthstone(id: string, formData: FormData) {
     where: { id },
     data: {
       month: data.day,
-      gemName: data.gemName,
+      gemName,
       gemNameEn: data.gemNameEn,
       color: data.color,
       origin: data.origin,
@@ -273,19 +276,11 @@ export async function deleteBirthstone(id: string) {
   revalidatePath("/admin/birthstones");
 }
 
-const birthstoneDays = [
-  "วันอาทิตย์",
-  "วันจันทร์",
-  "วันอังคาร",
-  "วันพุธ",
-  "วันพฤหัสบดี",
-  "วันศุกร์",
-  "วันเสาร์",
-] as const;
+const birthstoneDays = BIRTHSTONE_DAY_OPTIONS;
 
 export async function uploadBirthstoneDayImage(day: string, formData: FormData) {
   await requireEditorOrAdmin();
-  if (!birthstoneDays.includes(day as (typeof birthstoneDays)[number])) {
+  if (!isBirthstoneDay(day)) {
     throw new Error("วันเกิดไม่ถูกต้อง");
   }
 
@@ -294,7 +289,7 @@ export async function uploadBirthstoneDayImage(day: string, formData: FormData) 
 
   const { publicUrl } = await uploadImage(image, "birthstones");
   const existing = await prisma.birthstone.findFirst({ where: { month: day } });
-  const sortOrder = birthstoneDays.indexOf(day as (typeof birthstoneDays)[number]);
+  const sortOrder = birthstoneDaySortOrder(day);
 
   const stone = existing
     ? await prisma.birthstone.update({
@@ -389,9 +384,7 @@ const productFieldsSchema = z.object({
   title: z.string().min(1, "กรุณากรอกชื่อสินค้า"),
   subtitle: z.string().optional(),
   description: z.string().optional(),
-  accent: z.string().optional(),
   price: z.number().int().min(0).nullable().optional(),
-  sortOrder: z.coerce.number().default(0),
   isActive: boolField.default(true),
 });
 
@@ -418,9 +411,7 @@ function parseProductFields(formData: FormData) {
     title: formData.get("title"),
     subtitle: formData.get("subtitle") || undefined,
     description: formData.get("description") || undefined,
-    accent: formData.get("accent") || undefined,
     price,
-    sortOrder: formData.get("sortOrder") ?? "0",
     isActive: formData.get("isActive"),
   });
 }
@@ -438,7 +429,6 @@ function formatActionError(error: unknown) {
 async function attachProductImages(productId: string, formData: FormData, existingCount = 0) {
   const warnings: string[] = [];
   const files = formData.getAll("images") as File[];
-  const imageUrlField = String(formData.get("imageUrl") ?? "").trim();
   let sortOrder = existingCount;
   let isFirst = existingCount === 0;
 
@@ -459,24 +449,6 @@ async function attachProductImages(productId: string, formData: FormData, existi
     } catch (error) {
       warnings.push(error instanceof Error ? error.message : "อัปโหลดรูปล้มเหลว");
     }
-  }
-
-  const manualUrls = imageUrlField
-    .split(/[\n,]+/)
-    .map((value) => value.trim())
-    .filter(Boolean);
-
-  for (const imageUrl of manualUrls) {
-    await prisma.jewelryProductImage.create({
-      data: {
-        productId,
-        imageUrl,
-        sortOrder,
-        isPrimary: isFirst,
-      },
-    });
-    sortOrder += 1;
-    isFirst = false;
   }
 
   return warnings;
@@ -688,6 +660,18 @@ export async function deleteWorkshopFeaturedImage(imageId: string) {
   revalidateWorkshopPaths(image.workshopId);
 }
 
+export async function deleteWorkshopBannerImage(imageId: string) {
+  await requireEditorOrAdmin();
+  const image = await prisma.workshopBannerImage.findUnique({
+    where: { id: imageId },
+    select: { workshopId: true },
+  });
+  if (!image) throw new Error("ไม่พบรูป");
+
+  await prisma.workshopBannerImage.delete({ where: { id: imageId } });
+  revalidateWorkshopPaths(image.workshopId);
+}
+
 export async function deleteWorkshopRingSampleImage(workshopId: string, sampleType: string) {
   await requireEditorOrAdmin();
   await prisma.workshopRingSampleImage.deleteMany({
@@ -705,6 +689,18 @@ export async function deleteWorkshopAddonImage(workshopId: string, addonType: st
     where: {
       workshopId,
       addonType: addonType as WorkshopAddonType,
+    },
+    data: { imageUrl: null },
+  });
+  revalidateWorkshopPaths(workshopId);
+}
+
+export async function deleteWorkshopOptionImage(workshopId: string, optionId: string) {
+  await requireEditorOrAdmin();
+  await prisma.workshopOption.updateMany({
+    where: {
+      id: optionId,
+      group: { workshopId },
     },
     data: { imageUrl: null },
   });

@@ -19,7 +19,7 @@ export default async function AdminJewelryProductsPage({
 
   const products = await prisma.jewelryProduct.findMany({
     where: categoryFilter ? { categoryId: categoryFilter } : undefined,
-    orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
+    orderBy: { createdAt: "desc" },
     include: {
       category: true,
       images: { orderBy: { sortOrder: "asc" } },
@@ -94,7 +94,6 @@ export default async function AdminJewelryProductsPage({
                 <th className="px-4 py-3 font-medium">หมวดหมู่</th>
                 <th className="px-4 py-3 font-medium">ราคา</th>
                 <th className="px-4 py-3 font-medium">จำนวนรูป</th>
-                <th className="px-4 py-3 font-medium">ลำดับ</th>
                 <th className="px-4 py-3 font-medium">สถานะ</th>
                 <th className="px-4 py-3 font-medium text-right">จัดการ</th>
               </tr>
@@ -102,7 +101,7 @@ export default async function AdminJewelryProductsPage({
             <tbody className="divide-y divide-stone-100">
               {products.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-14 text-center">
+                  <td colSpan={7} className="px-4 py-14 text-center">
                     <p className="text-stone-500">ยังไม่มีสินค้า</p>
                     <Link
                       href="/admin/jewelry/products/new"
@@ -145,7 +144,6 @@ export default async function AdminJewelryProductsPage({
                         {formatPrice(product.price)}
                       </td>
                       <td className="px-4 py-3 text-stone-600">{product.images.length}</td>
-                      <td className="px-4 py-3 text-stone-600">{product.sortOrder}</td>
                       <td className="px-4 py-3">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${

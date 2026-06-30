@@ -26,7 +26,7 @@ export function HomeBanner({ page }: { page: PageContent }) {
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-gray-500">
             {page.eyebrow}
           </p>
-          <h1 className="font-sans text-5xl font-semibold leading-tight text-luxury-ink sm:text-6xl lg:text-7xl">
+          <h1 className="text-5xl font-bold leading-tight text-luxury-ink sm:text-6xl lg:text-7xl">
             {page.title}
           </h1>
           <p className="mt-6 max-w-xl text-base leading-8 text-luxury-muted sm:text-lg">
