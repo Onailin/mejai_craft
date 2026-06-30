@@ -84,6 +84,44 @@ async function uploadImageLocal(file: File, folder: string) {
   return { path: publicUrl.slice(1), publicUrl };
 }
 
+export function isCloudImageUrl(url: string | null | undefined) {
+  if (!url) return false;
+  return url.includes("supabase.co/storage") || url.includes("supabase.in/storage");
+}
+
+export function isLocalPublicImageUrl(url: string | null | undefined) {
+  if (!url) return false;
+  return url.startsWith("/images/") || url.startsWith("/uploads/");
+}
+
+function mimeTypeFromFileName(fileName: string) {
+  const lower = fileName.toLowerCase();
+  if (lower.endsWith(".png")) return "image/png";
+  if (lower.endsWith(".webp")) return "image/webp";
+  return "image/jpeg";
+}
+
+export async function uploadBufferToSupabase(
+  buffer: Buffer,
+  fileName: string,
+  folder: string
+): Promise<string> {
+  const mimeType = mimeTypeFromFileName(fileName);
+  const file = new File([new Uint8Array(buffer)], fileName, { type: mimeType });
+  const normalized = normalizeMimeType(file);
+  validateImageFile(normalized);
+  const uploaded = await uploadImageSupabase(normalized, folder);
+  return uploaded.publicUrl;
+}
+
+export async function uploadPublicPathToSupabase(publicPath: string, folder: string) {
+  const normalizedPath = publicPath.startsWith("/") ? publicPath : `/${publicPath}`;
+  const absPath = path.join(process.cwd(), "public", normalizedPath.replace(/^\//, ""));
+  const { readFile } = await import("fs/promises");
+  const buffer = await readFile(absPath);
+  return uploadBufferToSupabase(buffer, path.basename(normalizedPath), folder);
+}
+
 async function uploadImageSupabase(file: File, folder: string) {
   const supabase = getSupabaseAdmin();
   const bucket = getBucket();
@@ -98,7 +136,13 @@ async function uploadImageSupabase(file: File, folder: string) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    const message = error.message || "อัปโหลดรูปไม่สำเร็จ";
+    if (message.toLowerCase().includes("bucket")) {
+      throw new Error(
+        `Supabase bucket "${bucket}" ไม่พบหรือไม่มีสิทธิ์ — ตรวจสอบ SUPABASE_STORAGE_BUCKET และสร้าง bucket ใน Supabase Storage`
+      );
+    }
+    throw new Error(message);
   }
 
   const { data } = supabase.storage.from(bucket).getPublicUrl(storagePath);

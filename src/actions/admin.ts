@@ -11,6 +11,10 @@ import { revalidateWorkshopPaths } from "@/lib/revalidate-workshop";
 import { upsertTranslations } from "@/lib/translate";
 import { uniqueSlug } from "@/lib/slug";
 import { birthstoneDaySortOrder, BIRTHSTONE_DAY_OPTIONS, isBirthstoneDay } from "@/lib/birthstone-days";
+import {
+  createBirthstoneRecord,
+  updateBirthstoneRecord,
+} from "@/lib/birthstone-admin-service";
 import { DisplayMode, WorkshopAddonType, WorkshopRingSampleType } from "@prisma/client";
 
 const boolField = z.preprocess(
@@ -169,105 +173,16 @@ export async function deleteLuckyStone(id: string) {
   revalidatePath("/admin/lucky-stones");
 }
 
-const birthstoneSchema = z.object({
-  day: z.string().min(1),
-  gemName: z.string().optional(),
-  gemNameEn: z.string().optional(),
-  color: z.string().optional(),
-  origin: z.string().optional(),
-  hardness: z.string().optional(),
-  detail: z.string().optional(),
-  sortOrder: z.coerce.number().default(0),
-  isActive: boolField.default(true),
-});
+const birthstoneDays = BIRTHSTONE_DAY_OPTIONS;
 
 export async function createBirthstone(formData: FormData) {
   await requireEditorOrAdmin();
-  const data = birthstoneSchema.parse(Object.fromEntries(formData.entries()));
-  const image = getFormDataFile(formData, "image");
-  const gemName = data.gemName?.trim() || data.day;
-  const slug = await uniqueSlug(data.day, (s) =>
-    prisma.birthstone.findUnique({ where: { slug: s } }).then(Boolean)
-  );
-
-  let imageUrl: string | undefined;
-  if (image) {
-    const uploaded = await uploadImage(image, "birthstones");
-    imageUrl = uploaded.publicUrl;
-  }
-
-  const stone = await prisma.birthstone.create({
-    data: {
-      month: data.day,
-      gemName,
-      gemNameEn: data.gemNameEn,
-      color: data.color,
-      origin: data.origin,
-      hardness: data.hardness,
-      detail: data.detail,
-      sortOrder: birthstoneDaySortOrder(data.day),
-      isActive: data.isActive,
-      slug,
-      imageUrl,
-    },
-  });
-
-  await upsertTranslations("birthstone", stone.id, {
-    month: stone.month,
-    gemName: stone.gemName,
-    color: stone.color ?? "",
-    origin: stone.origin ?? "",
-    hardness: stone.hardness ?? "",
-    detail: stone.detail ?? "",
-  });
-
-  revalidatePath("/");
-  revalidatePath("/admin/birthstones");
+  await createBirthstoneRecord(formData);
 }
 
 export async function updateBirthstone(id: string, formData: FormData) {
   await requireEditorOrAdmin();
-  const existing = await prisma.birthstone.findUnique({ where: { id } });
-  if (!existing) throw new Error("Birthstone not found");
-
-  const data = birthstoneSchema.parse(Object.fromEntries(formData.entries()));
-  const image = getFormDataFile(formData, "image");
-  let imageUrl = existing.imageUrl;
-  const gemName = data.gemName?.trim() || data.day;
-
-  if (image) {
-    const uploaded = await uploadImage(image, "birthstones");
-    imageUrl = uploaded.publicUrl;
-  }
-
-  const stone = await prisma.birthstone.update({
-    where: { id },
-    data: {
-      month: data.day,
-      gemName,
-      gemNameEn: data.gemNameEn,
-      color: data.color,
-      origin: data.origin,
-      hardness: data.hardness,
-      detail: data.detail,
-      sortOrder: birthstoneDaySortOrder(data.day),
-      isActive: data.isActive,
-      imageUrl,
-    },
-  });
-
-  await upsertTranslations("birthstone", stone.id, {
-    month: stone.month,
-    gemName: stone.gemName,
-    color: stone.color ?? "",
-    origin: stone.origin ?? "",
-    hardness: stone.hardness ?? "",
-    detail: stone.detail ?? "",
-  });
-
-  revalidatePath("/");
-  revalidatePath("/admin/birthstones");
-  revalidatePath(`/admin/birthstones/${id}`);
+  await updateBirthstoneRecord(id, formData);
 }
 
 export async function deleteBirthstone(id: string) {
@@ -276,8 +191,6 @@ export async function deleteBirthstone(id: string) {
   revalidatePath("/");
   revalidatePath("/admin/birthstones");
 }
-
-const birthstoneDays = BIRTHSTONE_DAY_OPTIONS;
 
 export async function uploadBirthstoneDayImage(day: string, formData: FormData) {
   await requireEditorOrAdmin();
@@ -380,42 +293,14 @@ export async function deleteJewelryCategory(id: string) {
   revalidatePath("/admin/jewelry/categories");
 }
 
-const productFieldsSchema = z.object({
-  categoryId: z.string().min(1, "กรุณาเลือกหมวดหมู่"),
-  title: z.string().min(1, "กรุณากรอกชื่อสินค้า"),
-  subtitle: z.string().optional(),
-  description: z.string().optional(),
-  price: z.number().int().min(0).nullable().optional(),
-  isActive: boolField.default(true),
-});
+import {
+  createJewelryProductRecord,
+  formatJewelryProductError,
+  type ProductFormState,
+  updateJewelryProductRecord,
+} from "@/lib/jewelry-product-admin-service";
 
-export type ProductFormState = {
-  error?: string;
-  success?: boolean;
-  message?: string;
-};
-
-function parseProductFields(formData: FormData) {
-  const priceRaw = formData.get("price");
-  let price: number | null = null;
-
-  if (typeof priceRaw === "string" && priceRaw.trim() !== "") {
-    const parsed = Number(priceRaw);
-    if (!Number.isFinite(parsed) || parsed < 0) {
-      throw new Error("ราคาไม่ถูกต้อง");
-    }
-    price = Math.floor(parsed);
-  }
-
-  return productFieldsSchema.parse({
-    categoryId: formData.get("categoryId"),
-    title: formData.get("title"),
-    subtitle: formData.get("subtitle") || undefined,
-    description: formData.get("description") || undefined,
-    price,
-    isActive: formData.get("isActive"),
-  });
-}
+export type { ProductFormState };
 
 function formatActionError(error: unknown) {
   if (error instanceof z.ZodError) {
@@ -427,77 +312,16 @@ function formatActionError(error: unknown) {
   return "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง";
 }
 
-async function attachProductImages(productId: string, formData: FormData, existingCount = 0) {
-  const warnings: string[] = [];
-  const files = formData.getAll("images") as File[];
-  let sortOrder = existingCount;
-  let isFirst = existingCount === 0;
-
-  for (const file of files) {
-    if (!file || file.size === 0) continue;
-    try {
-      const { publicUrl } = await uploadImage(file, "jewelry");
-      await prisma.jewelryProductImage.create({
-        data: {
-          productId,
-          imageUrl: publicUrl,
-          sortOrder,
-          isPrimary: isFirst,
-        },
-      });
-      sortOrder += 1;
-      isFirst = false;
-    } catch (error) {
-      warnings.push(error instanceof Error ? error.message : "อัปโหลดรูปล้มเหลว");
-    }
-  }
-
-  return warnings;
-}
-
-async function saveJewelryProductTranslations(product: {
-  id: string;
-  title: string;
-  subtitle: string | null;
-  description: string | null;
-  accent: string | null;
-}) {
-  await upsertTranslations("jewelry_product", product.id, {
-    title: product.title,
-    subtitle: product.subtitle ?? "",
-    description: product.description ?? "",
-    accent: product.accent ?? "",
-  });
-}
-
-function revalidateJewelryProductPaths(productId: string) {
-  revalidatePath("/jewelry");
-  revalidatePath(`/product/${productId}`);
-  revalidatePath("/admin/jewelry/products");
-}
-
 export async function createJewelryProductFormAction(
   _prev: ProductFormState,
   formData: FormData
 ): Promise<ProductFormState> {
   try {
     await requireEditorOrAdmin();
-    const data = parseProductFields(formData);
-    const product = await prisma.jewelryProduct.create({ data });
-    const warnings = await attachProductImages(product.id, formData);
-    await saveJewelryProductTranslations(product);
-    revalidateJewelryProductPaths(product.id);
-
-    if (warnings.length > 0) {
-      return {
-        success: true,
-        message: `บันทึกสินค้าแล้ว แต่บางรูปอัปโหลดไม่สำเร็จ: ${warnings.join(" · ")}`,
-      };
-    }
-
-    return { success: true, message: "เพิ่มสินค้าเรียบร้อยแล้ว" };
+    const { message } = await createJewelryProductRecord(formData);
+    return { success: true, message };
   } catch (error) {
-    return { error: formatActionError(error) };
+    return { error: formatJewelryProductError(error) };
   }
 }
 
@@ -508,23 +332,10 @@ export async function updateJewelryProductFormAction(
 ): Promise<ProductFormState> {
   try {
     await requireEditorOrAdmin();
-    const data = parseProductFields(formData);
-    const product = await prisma.jewelryProduct.update({ where: { id }, data });
-    const existingCount = await prisma.jewelryProductImage.count({ where: { productId: id } });
-    const warnings = await attachProductImages(id, formData, existingCount);
-    await saveJewelryProductTranslations(product);
-    revalidateJewelryProductPaths(product.id);
-
-    if (warnings.length > 0) {
-      return {
-        success: true,
-        message: `บันทึกแล้ว แต่บางรูปอัปโหลดไม่สำเร็จ: ${warnings.join(" · ")}`,
-      };
-    }
-
-    return { success: true, message: "บันทึกการเปลี่ยนแปลงเรียบร้อยแล้ว" };
+    const { message } = await updateJewelryProductRecord(id, formData);
+    return { success: true, message };
   } catch (error) {
-    return { error: formatActionError(error) };
+    return { error: formatJewelryProductError(error) };
   }
 }
 

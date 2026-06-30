@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type ChangeEvent, type DragEvent } from "react";
 import { ImagePlus, Loader2, Sparkles, X } from "lucide-react";
-import { createBirthstone } from "@/actions/admin";
+import { createBirthstoneViaApi } from "@/lib/upload-birthstone-client";
 import { BIRTHSTONE_DAY_OPTIONS } from "@/lib/birthstone-days";
 
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 const ACCEPT = "image/jpeg,image/png,image/webp";
 
 function formatFileSize(bytes: number) {
@@ -40,7 +40,7 @@ export function BirthstoneCreateForm() {
 
   function applyFile(file: File) {
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError("รูปใหญ่เกินไป (สูงสุด 5 MB)");
+      setError("รูปใหญ่เกินไป (สูงสุด 4 MB)");
       return;
     }
     if (!ACCEPT.split(",").includes(file.type)) {
@@ -80,15 +80,18 @@ export function BirthstoneCreateForm() {
     }
 
     const formData = new FormData(form);
+    const file = inputRef.current.files[0];
+    if (file) formData.set("image", file);
+
     startTransition(async () => {
-      try {
-        await createBirthstone(formData);
-        clearPreview();
-        form.reset();
-        router.refresh();
-      } catch {
-        setError("บันทึกไม่สำเร็จ กรุณาลองใหม่");
+      const result = await createBirthstoneViaApi(formData);
+      if (!result.ok) {
+        setError(result.error);
+        return;
       }
+      clearPreview();
+      form.reset();
+      router.refresh();
     });
   }
 
@@ -150,7 +153,7 @@ export function BirthstoneCreateForm() {
                 </span>
                 <div>
                   <p className="text-sm font-medium text-stone-800">ลากรูปมาวาง หรือคลิกเพื่อเลือก</p>
-                  <p className="mt-1 text-xs text-stone-500">JPG, PNG, WebP · สูงสุด 5 MB</p>
+                  <p className="mt-1 text-xs text-stone-500">JPG, PNG, WebP · สูงสุด 4 MB</p>
                 </div>
               </div>
             )}

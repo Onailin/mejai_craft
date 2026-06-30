@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import { createJewelryProductFormAction } from "@/actions/admin";
 import { JewelryProductForm } from "@/components/admin/JewelryProductForm";
 
 export const dynamic = "force-dynamic";
@@ -13,7 +12,6 @@ export default async function AdminJewelryProductNewPage() {
   return (
     <JewelryProductForm
       categories={categories}
-      action={createJewelryProductFormAction}
       pageTitle="เพิ่มสินค้าใหม่"
       pageDescription="กรอกข้อมูลสินค้าและอัปโหลดรูปภาพ"
       submitLabel="บันทึกสินค้า"

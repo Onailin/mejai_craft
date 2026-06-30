@@ -33,7 +33,7 @@ async function main() {
     },
     { key: "brand_name", value: "มีใจ คราฟต์" },
     { key: "brand_tagline", value: "เครื่องประดับ & อัญมณีคัดพิเศษ" },
-    { key: "qrcode_url", value: "" },
+    { key: "qrcode_url", value: "/images/qrcode/qrcode.jpg" },
     { key: "studio_image_url", value: "" },
   ];
 
@@ -428,13 +428,13 @@ async function main() {
 
   await prisma.workshopBannerImage.deleteMany({ where: { workshopId: workshop.id } });
   const bannerImages = [
-    "/images/workshop/workshop2.jpg",
-    "/images/workshop/workshop3.jpg",
-    "/images/banner/banner1.jpg",
+    "/images/banner/banner.jpg",
     "/images/banner/banner5.jpg",
     "/images/banner/banner7.jpg",
     "/images/banner/banner8.jpg",
     "/images/banner/banner14.jpg",
+    "/images/banner/banner19.jpg",
+    "/images/banner/banner20.jpg",
   ];
   for (const [index, imageUrl] of bannerImages.entries()) {
     await prisma.workshopBannerImage.create({
@@ -598,12 +598,12 @@ async function main() {
   await prisma.workshopListItem.deleteMany({ where: { workshopId: braceletWorkshop.id } });
   await prisma.workshopOptionGroup.deleteMany({ where: { workshopId: braceletWorkshop.id } });
 
-  for (const [index, imageUrl] of ["/images/workshop/workshop1.jpg"].entries()) {
+  for (const [index, imageUrl] of ["/images/banner/banner19.jpg"].entries()) {
     await prisma.workshopBannerImage.create({
       data: { workshopId: braceletWorkshop.id, imageUrl, sortOrder: index },
     });
   }
-  for (const [index, imageUrl] of ["/images/workshop/workshop3.jpg"].entries()) {
+  for (const [index, imageUrl] of ["/images/banner/banner20.jpg"].entries()) {
     await prisma.workshopFeaturedImage.create({
       data: { workshopId: braceletWorkshop.id, imageUrl, sortOrder: index },
     });

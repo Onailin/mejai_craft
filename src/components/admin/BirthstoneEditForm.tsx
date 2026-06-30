@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type ChangeEvent, type DragEvent } from "react";
 import { ImagePlus, Loader2, Pencil, X } from "lucide-react";
-import { updateBirthstone } from "@/actions/admin";
+import { updateBirthstoneViaApi } from "@/lib/upload-birthstone-client";
 import { BIRTHSTONE_DAY_OPTIONS } from "@/lib/birthstone-days";
 
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
 const ACCEPT = "image/jpeg,image/png,image/webp";
 
 function formatFileSize(bytes: number) {
@@ -57,7 +57,7 @@ export function BirthstoneEditForm({
 
   function applyFile(file: File) {
     if (file.size > MAX_UPLOAD_BYTES) {
-      setError("รูปใหญ่เกินไป (สูงสุด 5 MB)");
+      setError("รูปใหญ่เกินไป (สูงสุด 4 MB)");
       return;
     }
     if (!ACCEPT.split(",").includes(file.type)) {
@@ -92,15 +92,19 @@ export function BirthstoneEditForm({
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const file = inputRef.current?.files?.[0];
+    if (file) {
+      formData.set("image", file);
+    }
 
     startTransition(async () => {
-      try {
-        await updateBirthstone(stoneId, formData);
-        router.push("/admin/birthstones");
-        router.refresh();
-      } catch {
-        setError("บันทึกไม่สำเร็จ กรุณาลองใหม่");
+      const result = await updateBirthstoneViaApi(stoneId, formData);
+      if (!result.ok) {
+        setError(result.error);
+        return;
       }
+      router.push("/admin/birthstones");
+      router.refresh();
     });
   }
 
@@ -162,7 +166,7 @@ export function BirthstoneEditForm({
                 </span>
                 <div>
                   <p className="text-sm font-medium text-stone-800">ลากรูปมาวาง หรือคลิกเพื่อเลือก</p>
-                  <p className="mt-1 text-xs text-stone-500">JPG, PNG, WebP · สูงสุด 5 MB</p>
+                  <p className="mt-1 text-xs text-stone-500">JPG, PNG, WebP · สูงสุด 4 MB</p>
                 </div>
               </div>
             )}
@@ -206,6 +210,7 @@ export function BirthstoneEditForm({
           </label>
 
           <label className="flex items-center gap-2 text-sm text-stone-700">
+            <input type="hidden" name="isActive" value="false" />
             <input
               name="isActive"
               type="checkbox"

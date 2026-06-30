@@ -1,12 +1,14 @@
 "use client";
 
-import { useActionState, useEffect, useState, type ChangeEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, useTransition, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
 import { AlertCircle, CheckCircle2, Save } from "lucide-react";
-import type { ProductFormState } from "@/actions/admin";
 import { GemDeleteButton } from "@/components/admin/GemDeleteButton";
+import {
+  createJewelryProductViaApi,
+  updateJewelryProductViaApi,
+} from "@/lib/upload-jewelry-product-client";
 
 export type JewelryCategoryOption = {
   id: string;
@@ -29,43 +31,21 @@ export type JewelryProductFormValues = {
   images: JewelryProductImage[];
 };
 
+const MAX_IMAGE_BYTES = 4 * 1024 * 1024;
+
 const inputClass =
   "w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 outline-none transition placeholder:text-stone-400 focus:border-stone-500 focus:ring-2 focus:ring-stone-200";
 
 type JewelryProductFormProps = {
   categories: JewelryCategoryOption[];
   product?: JewelryProductFormValues;
-  action: (prevState: ProductFormState, formData: FormData) => Promise<ProductFormState>;
+  productId?: string;
   deleteAction?: () => Promise<void>;
   backHref?: string;
   pageTitle: string;
   pageDescription?: string;
   submitLabel: string;
 };
-
-function SubmitButton({ label }: { label: string }) {
-  const { pending } = useFormStatus();
-
-  return (
-    <button
-      type="submit"
-      disabled={pending}
-      className="inline-flex items-center justify-center gap-2 rounded-lg bg-stone-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      {pending ? (
-        <>
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-          กำลังบันทึก...
-        </>
-      ) : (
-        <>
-          <Save className="h-4 w-4" />
-          {label}
-        </>
-      )}
-    </button>
-  );
-}
 
 function Field({
   label,
@@ -97,7 +77,7 @@ function Field({
 export function JewelryProductForm({
   categories,
   product,
-  action,
+  productId,
   deleteAction,
   backHref = "/admin/jewelry/products",
   pageTitle,
@@ -105,8 +85,11 @@ export function JewelryProductForm({
   submitLabel,
 }: JewelryProductFormProps) {
   const router = useRouter();
-  const [state, formAction] = useActionState(action, {});
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [newPreviews, setNewPreviews] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
 
   const values = product ?? {
     categoryId: "",
@@ -121,16 +104,16 @@ export function JewelryProductForm({
   const coverImage =
     values.images.find((image) => image.isPrimary)?.imageUrl ?? values.images[0]?.imageUrl ?? "";
   const previewSrc = newPreviews[0] ?? coverImage;
+  const hasLocalOnlyImages = values.images.some((image) => image.imageUrl.startsWith("/uploads/"));
 
   useEffect(() => {
-    if (state.success) {
-      const timer = window.setTimeout(() => {
-        router.push(backHref);
-        router.refresh();
-      }, 900);
-      return () => window.clearTimeout(timer);
-    }
-  }, [state.success, backHref, router]);
+    if (!successMessage) return;
+    const timer = window.setTimeout(() => {
+      router.push(backHref);
+      router.refresh();
+    }, 900);
+    return () => window.clearTimeout(timer);
+  }, [successMessage, backHref, router]);
 
   useEffect(() => {
     return () => {
@@ -146,6 +129,39 @@ export function JewelryProductForm({
       URL.revokeObjectURL(url);
     }
     setNewPreviews(files.map((file) => URL.createObjectURL(file)));
+    setError(null);
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    formData.delete("images");
+    const files = Array.from(fileInputRef.current?.files ?? []);
+    for (const file of files) {
+      if (file.size > MAX_IMAGE_BYTES) {
+        setError(`รูป ${file.name} ใหญ่เกินไป (สูงสุด 4 MB)`);
+        return;
+      }
+      formData.append("images", file);
+    }
+
+    startTransition(async () => {
+      setError(null);
+      setSuccessMessage(null);
+
+      const result = productId
+        ? await updateJewelryProductViaApi(productId, formData)
+        : await createJewelryProductViaApi(formData);
+
+      if (!result.ok) {
+        setError(result.error);
+        return;
+      }
+
+      setSuccessMessage(result.message);
+    });
   }
 
   return (
@@ -161,25 +177,31 @@ export function JewelryProductForm({
         {deleteAction && <GemDeleteButton deleteAction={deleteAction} label="ลบสินค้า" />}
       </div>
 
-      {state.error && (
+      {error && (
         <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">บันทึกไม่สำเร็จ</p>
-            <p className="mt-1">{state.error}</p>
+            <p className="mt-1">{error}</p>
           </div>
         </div>
       )}
 
-      {state.success && (
+      {successMessage && (
         <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold">บันทึกสำเร็จ</p>
-            <p className="mt-1">{state.message ?? "กำลังกลับไปหน้ารายการ..."}</p>
+            <p className="mt-1">{successMessage}</p>
           </div>
         </div>
       )}
+
+      {hasLocalOnlyImages ? (
+        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
+          รูปเดิมบางรูปเก็บบนเครื่อง dev เท่านั้น — production จะเปิดไม่ได้ กรุณาเลือกรูปใหม่แล้วบันทึกอีกครั้ง
+        </div>
+      ) : null}
 
       {categories.length === 0 && (
         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
@@ -191,7 +213,7 @@ export function JewelryProductForm({
       )}
 
       <form
-        action={formAction}
+        onSubmit={handleSubmit}
         encType="multipart/form-data"
         className="space-y-5 rounded-2xl border border-stone-200 bg-white p-5 shadow-sm sm:p-6"
       >
@@ -228,6 +250,7 @@ export function JewelryProductForm({
           )}
 
           <input
+            ref={fileInputRef}
             name="images"
             type="file"
             accept="image/jpeg,image/png,image/webp"
@@ -236,7 +259,7 @@ export function JewelryProductForm({
             onChange={handleImageChange}
           />
           <span className="block text-xs text-stone-500">
-            รองรับ JPG, PNG, WebP — เลือกได้หลายรูป รูปแรกจะเป็นภาพหลัก
+            รองรับ JPG, PNG, WebP — เลือกได้หลายรูป สูงสุด 4 MB ต่อรูป รูปแรกจะเป็นภาพหลัก
           </span>
         </Field>
 
@@ -292,6 +315,7 @@ export function JewelryProductForm({
         </Field>
 
         <label className="flex items-center gap-2 text-sm text-stone-700">
+          <input type="hidden" name="isActive" value="false" />
           <input
             name="isActive"
             type="checkbox"
@@ -314,7 +338,23 @@ export function JewelryProductForm({
         </Field>
 
         <div className="flex flex-wrap items-center justify-start gap-2 border-t border-stone-100 pt-5">
-          <SubmitButton label={submitLabel} />
+          <button
+            type="submit"
+            disabled={pending}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-stone-900 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-stone-800 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {pending ? (
+              <>
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                กำลังบันทึก...
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                {submitLabel}
+              </>
+            )}
+          </button>
           <Link
             href={backHref}
             className="rounded-lg border border-stone-200 px-5 py-2.5 text-sm text-stone-700 no-underline transition hover:bg-stone-50"

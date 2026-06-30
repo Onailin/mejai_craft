@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { deleteJewelryProduct, updateJewelryProductFormAction } from "@/actions/admin";
+import { deleteJewelryProduct } from "@/actions/admin";
 import { JewelryProductForm } from "@/components/admin/JewelryProductForm";
 
 export const dynamic = "force-dynamic";
@@ -41,7 +41,7 @@ export default async function AdminJewelryProductEditPage({
           isPrimary: image.isPrimary,
         })),
       }}
-      action={updateJewelryProductFormAction.bind(null, product.id)}
+      productId={product.id}
       deleteAction={deleteJewelryProduct.bind(null, product.id)}
       pageTitle="แก้ไขสินค้า"
       pageDescription={product.title}
