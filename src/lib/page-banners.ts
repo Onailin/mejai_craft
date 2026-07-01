@@ -6,6 +6,10 @@ export const PAGE_BANNER_WORKSHOP_KEY = "page_banner_workshop";
 
 export { DEFAULT_WORKSHOP_PAGE_BANNERS };
 
+function isDatabaseConfigured() {
+  return Boolean(process.env.DATABASE_URL?.trim());
+}
+
 function parseJsonArray(value: string): string[] {
   try {
     const parsed = JSON.parse(value);
@@ -28,14 +32,26 @@ export function getDefaultWorkshopBannerImages() {
 }
 
 export async function getHomeBannerImage() {
-  const setting = await prisma.siteSetting.findUnique({ where: { key: PAGE_BANNER_HOME_KEY } });
-  if (!setting) return getDefaultHomeBannerImage();
-  if (setting.value === "") return "";
-  return setting.value;
+  if (!isDatabaseConfigured()) return getDefaultHomeBannerImage();
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key: PAGE_BANNER_HOME_KEY } });
+    if (!setting) return getDefaultHomeBannerImage();
+    if (setting.value === "") return "";
+    return setting.value;
+  } catch (error) {
+    console.error("Failed to load home banner:", error);
+    return getDefaultHomeBannerImage();
+  }
 }
 
 export async function getWorkshopPageBannerImages() {
-  const setting = await prisma.siteSetting.findUnique({ where: { key: PAGE_BANNER_WORKSHOP_KEY } });
-  if (!setting) return getDefaultWorkshopBannerImages();
-  return parseJsonArray(setting.value);
+  if (!isDatabaseConfigured()) return getDefaultWorkshopBannerImages();
+  try {
+    const setting = await prisma.siteSetting.findUnique({ where: { key: PAGE_BANNER_WORKSHOP_KEY } });
+    if (!setting) return getDefaultWorkshopBannerImages();
+    return parseJsonArray(setting.value);
+  } catch (error) {
+    console.error("Failed to load workshop banners:", error);
+    return getDefaultWorkshopBannerImages();
+  }
 }
