@@ -1,6 +1,8 @@
 import { prisma } from "./prisma";
 import { applyTranslations } from "./translate";
 import { isDisplayableImageUrl } from "./image-urls";
+import { ensureBraceletWorkshopPublicOptions } from "./ensure-bracelet-workshop-options";
+import { isBraceletWorkshop } from "./workshop-bracelet-pricing";
 import type { Prisma } from "@prisma/client";
 
 export async function getActiveGems(locale = "th") {
@@ -188,6 +190,17 @@ async function translateWorkshops(workshops: WorkshopWithRelations[], locale: st
 }
 
 export async function getWorkshopCatalog(locale = "th") {
+  const braceletWorkshops = await prisma.workshop.findMany({
+    where: { isActive: true },
+    select: { id: true, slug: true, category: { select: { slug: true } } },
+  });
+
+  await Promise.all(
+    braceletWorkshops
+      .filter((workshop) => isBraceletWorkshop(workshop.slug, workshop.category?.slug))
+      .map((workshop) => ensureBraceletWorkshopPublicOptions(workshop.id))
+  );
+
   const categories = await prisma.workshopCategory.findMany({
     where: { isActive: true },
     orderBy: { sortOrder: "asc" },

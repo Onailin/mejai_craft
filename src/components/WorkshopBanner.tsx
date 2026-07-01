@@ -19,8 +19,8 @@ export function WorkshopBanner({
           className="flex transition-transform duration-700 ease-out"
           style={{ transform: `translateX(-${activeIndex * 100}%)` }}
         >
-          {page.cards.map((card) => (
-            <div key={card.title} className="h-[430px] w-full shrink-0 sm:h-[560px]">
+          {page.cards.map((card, index) => (
+            <div key={`${card.image}-${index}`} className="h-[430px] w-full shrink-0 sm:h-[560px]">
               <img className="h-full w-full object-cover" src={card.image} alt={card.title} />
             </div>
           ))}
@@ -43,11 +43,12 @@ export function WorkshopBanner({
         </div>
       </div>
 
-      <div className="mt-4 flex justify-center gap-2">
+      {page.cards.length > 1 ? (
+        <div className="mt-4 flex justify-center gap-2">
         {page.cards.map((card, index) => (
           <button
             type="button"
-            key={card.title}
+            key={`${card.image}-${index}`}
             onClick={() => onSelectIndex(index)}
             className={`h-2 rounded-full transition ${
               activeIndex === index ? "w-8 bg-gray-900" : "w-2 bg-gray-300"
@@ -55,7 +56,8 @@ export function WorkshopBanner({
             aria-label={t("workshop.banner_slide_aria", { index: index + 1 })}
           />
         ))}
-      </div>
+        </div>
+      ) : null}
     </>
   );
 }

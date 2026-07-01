@@ -4,9 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BRACELET_STONE_PRICE, getBraceletImageClass, getBraceletImageFrameClass, isBraceletWorkshop } from "@/lib/workshop-bracelet-pricing";
 import type { BraceletJewelryProductView } from "@/lib/bracelet-jewelry-products";
+import { displayPendantDescription } from "@/lib/workshop-pendant-utils";
 import {
   WORKSHOP_PLATING_OPTIONS,
   WORKSHOP_RING_SIZES,
+  RING_PLATING_SAMPLE_IMAGE_CLASS,
+  RING_SAMPLE_IMAGE_CLASS,
   isRingWorkshop,
   platingToSampleType,
   sizeToSampleType,
@@ -22,6 +25,7 @@ import type {
   WorkshopAddonView,
   WorkshopView as WorkshopData,
 } from "@/types";
+import { WorkshopBanner } from "@/components/WorkshopBanner";
 
 function formatPrice(value: number) {
   return `฿${value.toLocaleString("th-TH")}`;
@@ -76,7 +80,7 @@ function SizeSamplesSection({
   return (
     <section>
       <SectionHeader title="ขนาดหน้ากว้าง" description={t("workshop.ring_size_desc")} />
-      <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 xl:grid-cols-4">
         {sizes.map((sizeMm) => {
           const src = sampleMap.get(sizeToSampleType(sizeMm));
           const priceInfo = getSizePriceInfo(ringPrices, sizeMm);
@@ -87,10 +91,10 @@ function SizeSamplesSection({
                 <img
                   src={src}
                   alt={`ขนาด ${sizeMm} มม.`}
-                  className="mx-auto max-h-40 w-auto object-contain"
+                  className={RING_SAMPLE_IMAGE_CLASS}
                 />
               ) : (
-                <div className="mx-auto flex h-32 max-w-[160px] items-center justify-center text-sm text-stone-400">
+                <div className="mx-auto flex h-40 w-full max-w-[min(88vw,300px)] items-center justify-center text-sm text-stone-400 sm:max-w-[220px]">
                   ไม่มีรูป
                 </div>
               )}
@@ -132,19 +136,19 @@ function PlatingSamplesSection({
   return (
     <section className="border-t border-stone-100 pt-12">
       <SectionHeader title="ชุบสี" description={t("workshop.ring_plating_desc")} />
-      <div className="mt-8 flex flex-wrap justify-center gap-10 sm:gap-14">
+      <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-3">
         {platings.map((plating) => {
           const src = sampleMap.get(platingToSampleType(plating.value));
           return (
-            <figure key={plating.value} className="w-28 text-center sm:w-32">
+            <figure key={plating.value} className="text-center">
               {src ? (
                 <img
                   src={src}
                   alt={plating.label}
-                  className="mx-auto max-h-28 w-auto object-contain"
+                  className={RING_PLATING_SAMPLE_IMAGE_CLASS}
                 />
               ) : (
-                <div className="mx-auto flex h-24 items-center justify-center text-sm text-stone-400">
+                <div className="mx-auto flex h-36 w-full max-w-[min(72vw,220px)] items-center justify-center text-sm text-stone-400">
                   ไม่มีรูป
                 </div>
               )}
@@ -233,11 +237,13 @@ function BraceletStoneCard({
 
 function BraceletPendantCard({
   label,
+  description,
   price,
   imageUrl,
 }: {
   label: string;
-  price: number;
+  description: string;
+  price: number | null;
   imageUrl: string;
 }) {
   return (
@@ -251,12 +257,21 @@ function BraceletPendantCard({
           ไม่มีรูป
         </div>
       )}
-      <figcaption className="mt-4 space-y-1">
+      <figcaption className="mt-4 max-w-sm space-y-1">
         <p className="text-base font-bold text-stone-900">{label}</p>
-        <p className="text-sm font-medium text-stone-900">{formatPrice(price)}</p>
+        {description ? (
+          <p className="text-sm leading-relaxed text-stone-500">{description}</p>
+        ) : null}
+        <p className="text-sm font-medium text-stone-900">
+          {price != null ? formatPrice(price) : "สอบถามราคา"}
+        </p>
       </figcaption>
     </figure>
   );
+}
+
+function getBraceletPendantOptions(workshop: WorkshopData) {
+  return workshop.optionGroups.find((group) => group.groupType === "ADDON")?.options ?? [];
 }
 
 function BraceletOptionsSection({
@@ -267,10 +282,8 @@ function BraceletOptionsSection({
   braceletProducts: BraceletJewelryProductView[];
 }) {
   const pendantGroup = workshop.optionGroups.find((group) => group.groupType === "ADDON");
-  const visiblePendants = pendantGroup?.options.filter((option) => option.imageUrl) ?? [];
+  const visiblePendants = pendantGroup?.options ?? [];
   const visibleStones = braceletProducts.filter((product) => product.imageUrl);
-
-  if (!visibleStones.length && !visiblePendants.length) return null;
 
   return (
     <div className="border-t border-stone-100 pt-12">
@@ -280,7 +293,7 @@ function BraceletOptionsSection({
         </p>
         <h3 className="mt-2 text-xl font-bold text-stone-900">ตัวเลือกกำไลและจี้</h3>
         <p className="mt-3 text-sm leading-relaxed text-stone-500">
-          กำไลหินแต่ละชนิดราคาเดียวกัน · จี้มีแบบเลเซอร์และแบบฝังพลอย+เลเซอร์
+          เลือกหินและจี้เสริมตามที่ร้านเปิดให้บริการ
         </p>
       </header>
 
@@ -304,21 +317,27 @@ function BraceletOptionsSection({
           </section>
         ) : null}
 
-        {visiblePendants.length > 0 ? (
-          <section className="border-t border-stone-100 pt-10">
-            <SectionHeader title="จี้" description="แบบจี้เสริมสำหรับกำไล" />
-            <div className="mt-8 grid justify-items-center gap-10 sm:grid-cols-2">
+        <section className={visibleStones.length > 0 ? "border-t border-stone-100 pt-10" : undefined}>
+          <SectionHeader
+            title={pendantGroup?.title || "จี้"}
+            description={pendantGroup?.description || "เลือกจี้เสริมสำหรับกำไล"}
+          />
+          {visiblePendants.length > 0 ? (
+            <div className="mt-8 grid gap-x-6 gap-y-10 sm:grid-cols-2 xl:grid-cols-3">
               {visiblePendants.map((option) => (
                 <BraceletPendantCard
                   key={option.id}
                   label={option.label}
-                  price={option.price ?? 0}
+                  description={displayPendantDescription(option.description)}
+                  price={option.price}
                   imageUrl={option.imageUrl}
                 />
               ))}
             </div>
-          </section>
-        ) : null}
+          ) : (
+            <p className="mt-6 text-sm text-stone-500">ยังไม่มีรายการจี้</p>
+          )}
+        </section>
       </div>
     </div>
   );
@@ -509,19 +528,17 @@ function WorkshopDetail({
     );
   }, [workshop.optionGroups]);
 
+  const isBracelet = isBraceletWorkshop(workshop.slug, workshop.categorySlug);
+
   const hasRingOptions =
     isRingWorkshop(workshop.slug, workshop.categorySlug) &&
     (workshop.ringSampleImages.length > 0 ||
       workshop.ringPrices.length > 0 ||
       workshop.addons.length > 0);
 
-  const hasBraceletOptions =
-    isBraceletWorkshop(workshop.slug, workshop.categorySlug) &&
-    (braceletProducts.some((product) => product.imageUrl) ||
-      workshop.optionGroups.some(
-        (group) =>
-          group.groupType === "ADDON" && group.options.some((option) => option.imageUrl)
-      ));
+  const nonBraceletGroups = sortedGroups.filter(
+    (group) => !(isBracelet && (group.groupType === "ADDON" || group.groupType === "CUSTOM"))
+  );
 
   return (
     <div className="space-y-10">
@@ -595,12 +612,12 @@ function WorkshopDetail({
 
       {hasRingOptions ? (
         <RingOptionsSection workshop={workshop} t={t} />
-      ) : hasBraceletOptions ? (
+      ) : isBracelet ? (
         <BraceletOptionsSection workshop={workshop} braceletProducts={braceletProducts} />
       ) : (
-        sortedGroups.length > 0 && (
+        nonBraceletGroups.length > 0 && (
           <div>
-            {sortedGroups.map((group) => (
+            {nonBraceletGroups.map((group) => (
               <OptionGroupSection key={group.id} group={group} />
             ))}
           </div>
@@ -720,14 +737,17 @@ export function WorkshopView({
   page,
   initialCatalog,
   initialBraceletProducts,
+  bannerImages = [],
 }: {
   page: PageContent;
   initialCatalog: WorkshopCatalogView[];
   initialBraceletProducts: BraceletJewelryProductView[];
+  bannerImages?: string[];
 }) {
   const { t, i18n } = useTranslation();
   const [catalog, setCatalog] = useState(initialCatalog);
   const [braceletProducts, setBraceletProducts] = useState(initialBraceletProducts);
+  const [bannerActiveIndex, setBannerActiveIndex] = useState(0);
   const [activeCategorySlug, setActiveCategorySlug] = useState(initialCatalog[0]?.slug ?? "");
   const [activeWorkshopSlug, setActiveWorkshopSlug] = useState(
     initialCatalog[0]?.workshops[0]?.slug ?? ""
@@ -769,13 +789,43 @@ export function WorkshopView({
     }
   }, [activeCategory, activeWorkshopSlug]);
 
+  useEffect(() => {
+    if (viewMode !== "overview" || bannerImages.length <= 1) return;
+    const id = window.setInterval(
+      () => setBannerActiveIndex((current) => (current + 1) % bannerImages.length),
+      4000,
+    );
+    return () => window.clearInterval(id);
+  }, [viewMode, bannerImages.length]);
+
   if (!catalog.length || !activeCategory || !activeWorkshop) {
     return <p className="px-6 text-sm text-stone-500">ยังไม่มีข้อมูลเวิร์คชอป</p>;
   }
 
   if (viewMode === "overview") {
+    const bannerPage: PageContent =
+      bannerImages.length > 0
+        ? {
+            ...page,
+            cards: bannerImages.map((image, index) => ({
+              title: `${page.title} ${index + 1}`,
+              subtitle: page.cards[0]?.subtitle ?? "",
+              description: page.cards[0]?.description ?? page.description,
+              image,
+              accent: page.cards[0]?.accent ?? "Workshop",
+            })),
+          }
+        : page;
+
     return (
       <section className="pb-16">
+        {bannerImages.length > 0 ? (
+          <WorkshopBanner
+            page={bannerPage}
+            activeIndex={bannerActiveIndex}
+            onSelectIndex={setBannerActiveIndex}
+          />
+        ) : null}
         <WorkshopOverview
           catalog={catalog}
           page={page}

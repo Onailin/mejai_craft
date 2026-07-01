@@ -1,44 +1,17 @@
-import { prisma } from "@/lib/prisma";
 import {
-  WORKSHOP_BRACELET_PENDANTS,
-  braceletPendantDescription,
-} from "@/lib/workshop-bracelet-pricing";
+  ensurePendantOptionGroup,
+  removeLegacyBraceletStoneOptions,
+  removeLegacyPendantTemplates,
+} from "@/lib/workshop-pendant-admin-service";
 
+/** ใช้ตอนโหลดหน้าเว็บ — สร้างกลุ่มจี้ถ้ายังไม่มี */
+export async function ensureBraceletWorkshopPublicOptions(workshopId: string) {
+  await ensurePendantOptionGroup(workshopId);
+}
+
+/** ใช้ตอนเปิดหน้าแอดมิน — ลบเทมเพลตเก่าและข้อมูลซ้ำ */
 export async function ensureBraceletWorkshopOptions(workshopId: string) {
-  const existing = await prisma.workshopOptionGroup.findMany({
-    where: { workshopId },
-    include: { options: true },
-    orderBy: { sortOrder: "asc" },
-  });
-
-  let pendantGroup = existing.find((group) => group.groupType === "ADDON");
-
-  if (!pendantGroup) {
-    pendantGroup = await prisma.workshopOptionGroup.create({
-      data: {
-        workshopId,
-        groupType: "ADDON",
-        title: "จี้",
-        description: "แบบจี้เสริม",
-        sortOrder: 1,
-      },
-      include: { options: true },
-    });
-  }
-
-  for (const [index, pendant] of WORKSHOP_BRACELET_PENDANTS.entries()) {
-    const description = braceletPendantDescription(pendant.key);
-    const exists = pendantGroup.options.some((option) => option.description === description);
-    if (!exists) {
-      await prisma.workshopOption.create({
-        data: {
-          groupId: pendantGroup.id,
-          label: pendant.label,
-          description,
-          price: pendant.price,
-          sortOrder: index,
-        },
-      });
-    }
-  }
+  await ensurePendantOptionGroup(workshopId);
+  await removeLegacyPendantTemplates(workshopId);
+  await removeLegacyBraceletStoneOptions(workshopId);
 }

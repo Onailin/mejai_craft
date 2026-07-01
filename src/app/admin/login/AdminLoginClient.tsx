@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import type { LoginSetupStatus } from "@/lib/db-setup-status";
 import { BrandLogo } from "@/components/brand/BrandLogo";
+import { AdminNotice } from "@/components/admin/AdminNotice";
 
 const SETUP_MESSAGES: Record<Exclude<LoginSetupStatus, { ok: true }>["reason"], string> = {
   placeholder_password:
@@ -113,9 +114,12 @@ export default function AdminLoginPage({ setup }: { setup: LoginSetupStatus }) {
           </label>
 
           {error && (
-            <div className="rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
+            <AdminNotice
+              variant="error"
+              title="เข้าสู่ระบบไม่สำเร็จ"
+              message={error}
+              onDismiss={() => setError("")}
+            />
           )}
 
           <button

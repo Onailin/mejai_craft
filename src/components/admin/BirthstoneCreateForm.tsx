@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type ChangeEvent, type DragEvent } from "react";
 import { ImagePlus, Loader2, Sparkles, X } from "lucide-react";
+import { AdminNotice } from "@/components/admin/AdminNotice";
 import { createBirthstoneViaApi } from "@/lib/upload-birthstone-client";
 import { BIRTHSTONE_DAY_OPTIONS } from "@/lib/birthstone-days";
 
@@ -198,9 +199,12 @@ export function BirthstoneCreateForm() {
           </label>
 
           {error ? (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
+            <AdminNotice
+              variant="error"
+              title="บันทึกไม่สำเร็จ"
+              message={error}
+              onDismiss={() => setError(null)}
+            />
           ) : (
             <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm leading-relaxed text-stone-600">
               รูปที่บันทึกแล้วจะแสดงบนหน้า Home ภายใต้ชื่อวันที่เลือก

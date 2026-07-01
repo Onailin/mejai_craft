@@ -15,7 +15,14 @@ import {
   createBirthstoneRecord,
   updateBirthstoneRecord,
 } from "@/lib/birthstone-admin-service";
-import { DisplayMode, WorkshopAddonType, WorkshopRingSampleType } from "@prisma/client";
+import {
+  createLuckyStoneRecord,
+  updateLuckyStoneRecord,
+} from "@/lib/lucky-stone-admin-service";
+import { formatActionError } from "@/lib/format-action-error";
+import type { WorkshopFormState, WorkshopRingPricingState } from "@/types/workshop-admin";
+
+export type { WorkshopFormState, WorkshopRingPricingState } from "@/types/workshop-admin";
 
 const boolField = z.preprocess(
   (v) => v === "true" || v === "on" || v === true,
@@ -104,66 +111,14 @@ export async function deleteGem(id: string) {
   redirect("/admin/gems");
 }
 
-const luckyStoneSchema = z.object({
-  name: z.string().min(1),
-  meaning: z.string().optional(),
-  description: z.string().optional(),
-  sortOrder: z.coerce.number().default(0),
-  isActive: boolField.default(true),
-});
-
 export async function createLuckyStone(formData: FormData) {
   await requireEditorOrAdmin();
-  const image = formData.get("image") as File | null;
-  if (!image || image.size === 0) throw new Error("Image is required");
-
-  const data = luckyStoneSchema.parse(Object.fromEntries(formData.entries()));
-  const slug = await uniqueSlug(data.name, (s) =>
-    prisma.luckyStone.findUnique({ where: { slug: s } }).then(Boolean)
-  );
-  const { publicUrl } = await uploadImage(image, "lucky-stones");
-
-  const stone = await prisma.luckyStone.create({
-    data: { ...data, slug, imageUrl: publicUrl },
-  });
-
-  await upsertTranslations("lucky_stone", stone.id, {
-    name: stone.name,
-    meaning: stone.meaning ?? "",
-    description: stone.description ?? "",
-  });
-
-  revalidatePath("/");
-  revalidatePath("/admin/lucky-stones");
+  await createLuckyStoneRecord(formData);
 }
 
 export async function updateLuckyStone(id: string, formData: FormData) {
   await requireEditorOrAdmin();
-  const existing = await prisma.luckyStone.findUnique({ where: { id } });
-  if (!existing) throw new Error("Lucky stone not found");
-
-  const data = luckyStoneSchema.parse(Object.fromEntries(formData.entries()));
-  const image = formData.get("image") as File | null;
-  let imageUrl = existing.imageUrl;
-
-  if (image && image.size > 0) {
-    const uploaded = await uploadImage(image, "lucky-stones");
-    imageUrl = uploaded.publicUrl;
-  }
-
-  const stone = await prisma.luckyStone.update({
-    where: { id },
-    data: { ...data, imageUrl },
-  });
-
-  await upsertTranslations("lucky_stone", stone.id, {
-    name: stone.name,
-    meaning: stone.meaning ?? "",
-    description: stone.description ?? "",
-  });
-
-  revalidatePath("/");
-  revalidatePath("/admin/lucky-stones");
+  await updateLuckyStoneRecord(id, formData);
 }
 
 export async function deleteLuckyStone(id: string) {
@@ -171,6 +126,7 @@ export async function deleteLuckyStone(id: string) {
   await prisma.luckyStone.delete({ where: { id } });
   revalidatePath("/");
   revalidatePath("/admin/lucky-stones");
+  redirect("/admin/lucky-stones");
 }
 
 const birthstoneDays = BIRTHSTONE_DAY_OPTIONS;
@@ -254,10 +210,7 @@ export async function clearBirthstoneDayImage(day: string) {
 }
 
 const categorySchema = z.object({
-  name: z.string().min(1),
-  displayMode: z.nativeEnum(DisplayMode),
-  sortOrder: z.coerce.number().default(0),
-  isActive: boolField.default(true),
+  name: z.string().min(1, "กรุณากรอกชื่อหมวด"),
 });
 
 export async function createJewelryCategory(formData: FormData) {
@@ -266,8 +219,17 @@ export async function createJewelryCategory(formData: FormData) {
   const slug = await uniqueSlug(data.name, (s) =>
     prisma.jewelryCategory.findUnique({ where: { slug: s } }).then(Boolean)
   );
+  const sortOrder = await prisma.jewelryCategory.count();
 
-  const category = await prisma.jewelryCategory.create({ data: { ...data, slug } });
+  const category = await prisma.jewelryCategory.create({
+    data: {
+      name: data.name,
+      slug,
+      displayMode: "GRID",
+      sortOrder,
+      isActive: true,
+    },
+  });
   await upsertTranslations("jewelry_category", category.id, { name: category.name });
 
   revalidatePath("/jewelry");
@@ -278,7 +240,10 @@ export async function createJewelryCategory(formData: FormData) {
 export async function updateJewelryCategory(id: string, formData: FormData) {
   await requireEditorOrAdmin();
   const data = categorySchema.parse(Object.fromEntries(formData.entries()));
-  const category = await prisma.jewelryCategory.update({ where: { id }, data });
+  const category = await prisma.jewelryCategory.update({
+    where: { id },
+    data: { name: data.name },
+  });
   await upsertTranslations("jewelry_category", category.id, { name: category.name });
 
   revalidatePath("/jewelry");
@@ -301,16 +266,6 @@ import {
 } from "@/lib/jewelry-product-admin-service";
 
 export type { ProductFormState };
-
-function formatActionError(error: unknown) {
-  if (error instanceof z.ZodError) {
-    return error.errors.map((issue) => issue.message).join(" · ");
-  }
-  if (error instanceof Error) {
-    return error.message;
-  }
-  return "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง";
-}
 
 export async function createJewelryProductFormAction(
   _prev: ProductFormState,
@@ -368,18 +323,6 @@ const workshopSchema = z.object({
   sortOrder: z.coerce.number().default(0),
   isActive: boolField.default(true),
 });
-
-export type WorkshopFormState = {
-  success?: boolean;
-  error?: string;
-  message?: string;
-};
-
-export type WorkshopRingPricingState = {
-  ok?: boolean;
-  error?: string;
-  message?: string;
-};
 
 export async function updateWorkshopFormAction(
   _prev: WorkshopFormState,
@@ -458,65 +401,6 @@ export async function deleteWorkshop(id: string) {
   await prisma.workshop.delete({ where: { id } });
   revalidatePath("/workshop");
   revalidatePath("/admin/workshops");
-}
-
-export async function deleteWorkshopFeaturedImage(imageId: string) {
-  await requireEditorOrAdmin();
-  const image = await prisma.workshopFeaturedImage.findUnique({
-    where: { id: imageId },
-    select: { workshopId: true },
-  });
-  if (!image) throw new Error("ไม่พบรูป");
-
-  await prisma.workshopFeaturedImage.delete({ where: { id: imageId } });
-  revalidateWorkshopPaths(image.workshopId);
-}
-
-export async function deleteWorkshopBannerImage(imageId: string) {
-  await requireEditorOrAdmin();
-  const image = await prisma.workshopBannerImage.findUnique({
-    where: { id: imageId },
-    select: { workshopId: true },
-  });
-  if (!image) throw new Error("ไม่พบรูป");
-
-  await prisma.workshopBannerImage.delete({ where: { id: imageId } });
-  revalidateWorkshopPaths(image.workshopId);
-}
-
-export async function deleteWorkshopRingSampleImage(workshopId: string, sampleType: string) {
-  await requireEditorOrAdmin();
-  await prisma.workshopRingSampleImage.deleteMany({
-    where: {
-      workshopId,
-      sampleType: sampleType as WorkshopRingSampleType,
-    },
-  });
-  revalidateWorkshopPaths(workshopId);
-}
-
-export async function deleteWorkshopAddonImage(workshopId: string, addonType: string) {
-  await requireEditorOrAdmin();
-  await prisma.workshopAddon.updateMany({
-    where: {
-      workshopId,
-      addonType: addonType as WorkshopAddonType,
-    },
-    data: { imageUrl: null },
-  });
-  revalidateWorkshopPaths(workshopId);
-}
-
-export async function deleteWorkshopOptionImage(workshopId: string, optionId: string) {
-  await requireEditorOrAdmin();
-  await prisma.workshopOption.updateMany({
-    where: {
-      id: optionId,
-      group: { workshopId },
-    },
-    data: { imageUrl: null },
-  });
-  revalidateWorkshopPaths(workshopId);
 }
 
 export async function addWorkshopBannerImage(workshopId: string, formData: FormData) {

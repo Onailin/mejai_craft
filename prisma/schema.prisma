@@ -391,3 +391,10 @@ model SiteSetting {
   value     String   @db.Text
   updatedAt DateTime @updatedAt
 }
+
+model SiteVisitDay {
+  date      DateTime @id @db.Date
+  pageViews Int      @default(0)
+  visitors  Int      @default(0)
+  updatedAt DateTime @updatedAt
+}

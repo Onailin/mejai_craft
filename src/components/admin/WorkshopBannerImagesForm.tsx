@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, type ChangeEvent } from "react";
-import { deleteWorkshopBannerImage } from "@/actions/admin";
+import { deleteWorkshopBannerImage } from "@/actions/workshop-images";
+import { AdminNoticeStack } from "@/components/admin/AdminNotice";
 import { uploadWorkshopImage } from "@/lib/upload-workshop-image-client";
 
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
@@ -98,10 +99,12 @@ export function WorkshopBannerImagesForm({ workshopId, images }: WorkshopBannerI
         </p>
       </div>
 
-      {error ? <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div> : null}
-      {success ? (
-        <div className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{success}</div>
-      ) : null}
+      <AdminNoticeStack
+        error={error}
+        success={success}
+        onDismissError={() => setError(null)}
+        onDismissSuccess={() => setSuccess(null)}
+      />
 
       {gallery.length > 0 ? (
         <div className="flex flex-wrap gap-3">

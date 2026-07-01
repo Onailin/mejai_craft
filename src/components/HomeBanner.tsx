@@ -3,10 +3,10 @@
 import type { PageContent } from "@/types";
 import { useTranslation } from "react-i18next";
 
-export function HomeBanner({ page }: { page: PageContent }) {
+export function HomeBanner({ page, bannerImage }: { page: PageContent; bannerImage?: string }) {
   const { t } = useTranslation();
   const heroCard = page.cards[0];
-  const imageSrc = heroCard?.image;
+  const imageSrc = bannerImage || heroCard?.image;
 
   return (
     <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden bg-gray-100">

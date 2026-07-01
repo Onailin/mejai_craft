@@ -138,3 +138,10 @@ export function parseOptionalPrice(raw: FormDataEntryValue | null): number | nul
 export function isRingWorkshop(slug: string, categorySlug?: string | null) {
   return slug === "silver-ring" || categorySlug === "silver-ring";
 }
+
+/** รูปตัวอย่างแหวนบนหน้าเวิร์คชอป — ใหญ่พอดีมือถือ */
+export const RING_SAMPLE_IMAGE_CLASS =
+  "mx-auto w-full max-w-[min(88vw,300px)] h-auto max-h-[min(72vw,280px)] object-contain sm:max-h-56 sm:max-w-[220px]";
+
+export const RING_PLATING_SAMPLE_IMAGE_CLASS =
+  "mx-auto w-full max-w-[min(72vw,220px)] h-auto max-h-[min(60vw,220px)] object-contain sm:max-h-48 sm:max-w-[180px]";

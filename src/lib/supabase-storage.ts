@@ -160,7 +160,7 @@ export async function uploadImage(
   const cloudStorageRequired = requiresCloudStorage();
 
   if (!hasSupabase) {
-    if (cloudStorageRequired) {
+    if (cloudStorageRequired && process.env.NODE_ENV === "production") {
       throw new Error(
         "ต้องตั้งค่า SUPABASE_URL และ SUPABASE_SERVICE_ROLE_KEY เมื่อใช้ database บน cloud หรือ deploy production"
       );
@@ -171,7 +171,8 @@ export async function uploadImage(
   try {
     return await uploadImageSupabase(normalized, folder);
   } catch (error) {
-    if (cloudStorageRequired) {
+    const isDev = process.env.NODE_ENV !== "production" && !process.env.VERCEL;
+    if (cloudStorageRequired && !isDev) {
       throw error;
     }
     console.error("Supabase upload failed, falling back to local storage:", error);

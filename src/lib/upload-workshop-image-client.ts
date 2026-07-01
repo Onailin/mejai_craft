@@ -1,12 +1,24 @@
+import type { WorkshopImageUploadResult } from "@/types/workshop-admin";
+
 export type WorkshopImageUploadKind = "sample" | "addon" | "option" | "featured" | "banner";
 
-export type WorkshopImageUploadResult =
-  | { ok: true; imageUrl: string; id?: string }
-  | { ok: false; error: string };
+export type { WorkshopImageUploadResult };
+
+async function parseUploadResponse(response: Response): Promise<WorkshopImageUploadResult> {
+  const payload = (await response.json().catch(() => null)) as
+    | { ok?: boolean; imageUrl?: string; id?: string; error?: string }
+    | null;
+
+  if (!response.ok || !payload?.imageUrl) {
+    return { ok: false, error: payload?.error ?? "อัปโหลดรูปไม่สำเร็จ" };
+  }
+
+  return { ok: true, imageUrl: payload.imageUrl, id: payload.id };
+}
 
 export async function uploadWorkshopImage(
   formData: FormData,
-  kind: WorkshopImageUploadKind
+  kind: WorkshopImageUploadKind,
 ): Promise<WorkshopImageUploadResult> {
   formData.set("kind", kind);
 
@@ -22,13 +34,5 @@ export async function uploadWorkshopImage(
     };
   }
 
-  const payload = (await response.json().catch(() => null)) as
-    | { ok?: boolean; imageUrl?: string; id?: string; error?: string }
-    | null;
-
-  if (!response.ok || !payload?.imageUrl) {
-    return { ok: false, error: payload?.error ?? "อัปโหลดรูปไม่สำเร็จ" };
-  }
-
-  return { ok: true, imageUrl: payload.imageUrl, id: payload.id };
+  return parseUploadResponse(response);
 }

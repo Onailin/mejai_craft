@@ -1,157 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, type ChangeEvent } from "react";
-import { deleteWorkshopOptionImage } from "@/actions/admin";
-import { uploadWorkshopImage } from "@/lib/upload-workshop-image-client";
+import { useMemo, useState } from "react";
 import type { BraceletJewelryProductView } from "@/lib/bracelet-jewelry-products";
-import {
-  BRACELET_STONE_PRICE,
-  getBraceletImageClass,
-  getBraceletImageFrameClass,
-  type BraceletImageVariant,
-} from "@/lib/workshop-bracelet-pricing";
+import { BRACELET_STONE_PRICE } from "@/lib/workshop-bracelet-pricing";
 import type { WorkshopOptionGroupView } from "@/types";
-
-const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
-
-function validateFileSize(file: File) {
-  if (file.size > MAX_UPLOAD_BYTES) {
-    return "รูปใหญ่เกินไป (สูงสุด 5 MB)";
-  }
-  return null;
-}
+import { WorkshopPendantsTable } from "@/components/admin/WorkshopPendantsTable";
+import { AdminNotice, AdminNoticeStack } from "@/components/admin/AdminNotice";
 
 function formatPrice(value: number) {
   return `฿${value.toLocaleString("th-TH")}`;
-}
-
-function OptionUploadField({
-  optionId,
-  label,
-  price,
-  imageUrl,
-  workshopId,
-  variant,
-  onPreview,
-  onError,
-  onSuccess,
-}: {
-  optionId: string;
-  label: string;
-  price: number | null;
-  imageUrl: string;
-  workshopId: string;
-  variant: BraceletImageVariant;
-  onPreview: (key: string, url: string) => void;
-  onError: (message: string | null) => void;
-  onSuccess: (message: string) => void;
-}) {
-  const [uploading, setUploading] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-
-  async function handleDelete() {
-    if (!imageUrl) return;
-    if (!confirm(`ยืนยันการลบรูป ${label}?`)) return;
-
-    setDeleting(true);
-    onError(null);
-
-    try {
-      await deleteWorkshopOptionImage(workshopId, optionId);
-      onPreview(optionId, "");
-      onSuccess(`ลบรูป ${label} แล้ว`);
-    } catch {
-      onError("ลบรูปไม่สำเร็จ กรุณาลองใหม่");
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  async function handleChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const sizeError = validateFileSize(file);
-    if (sizeError) {
-      onError(sizeError);
-      event.target.value = "";
-      return;
-    }
-
-    const previousUrl = imageUrl;
-    const localUrl = URL.createObjectURL(file);
-    onPreview(optionId, localUrl);
-    setUploading(true);
-    onError(null);
-
-    const formData = new FormData();
-    formData.set("workshopId", workshopId);
-    formData.set("optionId", optionId);
-    formData.set("file", file);
-
-    try {
-      const result = await uploadWorkshopImage(formData, "option");
-
-      if (!result.ok) {
-        onPreview(optionId, previousUrl);
-        onError(result.error);
-        return;
-      }
-
-      onPreview(optionId, result.imageUrl);
-      onSuccess(`อัปโหลดรูป ${label} สำเร็จ`);
-    } catch {
-      onPreview(optionId, previousUrl);
-      onError("อัปโหลดรูปไม่สำเร็จ กรุณาลองใหม่");
-    } finally {
-      URL.revokeObjectURL(localUrl);
-      setUploading(false);
-      event.target.value = "";
-    }
-  }
-
-  return (
-    <div className="flex flex-col items-center gap-3 rounded-2xl border border-stone-200 bg-white p-4 text-center">
-      {imageUrl ? (
-        <div className={getBraceletImageFrameClass(variant)}>
-          <img src={imageUrl} alt={label} className={getBraceletImageClass(variant)} />
-        </div>
-      ) : (
-        <div className={`${getBraceletImageFrameClass(variant)} text-xs text-stone-400`}>
-          ยังไม่มีรูป
-        </div>
-      )}
-      <div>
-        <p className="text-sm font-semibold text-stone-900">{label}</p>
-        {price != null ? (
-          <p className="mt-1 text-sm font-medium text-stone-700">{formatPrice(price)}</p>
-        ) : null}
-      </div>
-      <label className="w-full cursor-pointer">
-        <span className="inline-flex w-full items-center justify-center rounded-md bg-stone-100 px-2 py-1.5 text-xs font-medium text-stone-700 hover:bg-stone-200">
-          {uploading ? "กำลังอัปโหลด..." : "เลือกรูป"}
-        </span>
-        <input
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="sr-only"
-          disabled={uploading || deleting}
-          onChange={handleChange}
-        />
-      </label>
-      {imageUrl ? (
-        <button
-          type="button"
-          onClick={handleDelete}
-          disabled={uploading || deleting}
-          className="text-xs font-medium text-red-600 hover:text-red-700 disabled:opacity-60"
-        >
-          {deleting ? "กำลังลบ..." : "ลบรูป"}
-        </button>
-      ) : null}
-    </div>
-  );
 }
 
 type WorkshopBraceletPricingFormProps = {
@@ -169,48 +27,38 @@ export function WorkshopBraceletPricingForm({
   manageProductsHref,
   braceletCategoryName,
 }: WorkshopBraceletPricingFormProps) {
-  const [previews, setPreviews] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
   const pendantGroup = useMemo(
     () => optionGroups.find((group) => group.groupType === "ADDON"),
-    [optionGroups]
+    [optionGroups],
   );
 
-  const visibleBraceletProducts = braceletProducts.filter((product) => product.imageUrl);
+  const pendants = pendantGroup?.options ?? [];
+  const productsWithoutImage = braceletProducts.filter((product) => !product.imageUrl).length;
 
   return (
     <section className="space-y-8 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-stone-200/70">
       <header className="border-b border-stone-100 pb-4">
-        <h2 className="text-lg font-semibold text-stone-900">กำไลหินและจี้</h2>
-        <p className="mt-1 text-sm text-stone-500">
-          รูปกำไลดึงจากหน้าสินค้าอัตโนมัติ — กำไลหินทุกชนิดราคา {formatPrice(BRACELET_STONE_PRICE)} · จี้เลเซอร์{" "}
-          {formatPrice(666)} · จี้ฝังพลอย+เลเซอร์ {formatPrice(999)}
-        </p>
+        <h2 className="text-lg font-semibold text-stone-900">กำไลหิน</h2>
+        <p className="mt-1 text-sm text-stone-500">รายการกำไลดึงจากสินค้าจิวเวลรี่ — แก้ชื่อและรูปที่หน้าสินค้า</p>
       </header>
 
-      {error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      ) : null}
-      {success ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          {success}
-        </div>
-      ) : null}
+      <AdminNoticeStack
+        error={error}
+        success={success}
+        onDismissError={() => setError(null)}
+        onDismissSuccess={() => setSuccess(null)}
+      />
 
       <div className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h3 className="text-base font-semibold text-stone-900">กำไลหิน</h3>
-            <p className="mt-1 text-sm text-stone-500">
+          <p className="text-sm text-stone-500">
               {braceletCategoryName
                 ? `แสดงสินค้าจากหมวด "${braceletCategoryName}" — แก้รูปและชื่อที่หน้าสินค้า`
                 : "แสดงสินค้าจากหมวดกำไล — แก้รูปและชื่อที่หน้าสินค้า"}
-            </p>
-          </div>
+          </p>
           <Link
             href={manageProductsHref}
             className="rounded-lg border border-stone-200 px-4 py-2 text-sm font-medium text-stone-700 no-underline transition hover:bg-stone-50"
@@ -219,67 +67,81 @@ export function WorkshopBraceletPricingForm({
           </Link>
         </div>
 
-        {visibleBraceletProducts.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {visibleBraceletProducts.map((product) => (
-              <div
-                key={product.id}
-                className="flex flex-col items-center gap-3 rounded-2xl border border-stone-200 bg-stone-50 p-4 text-center"
-              >
-                <div className={getBraceletImageFrameClass("stone")}>
-                  <img
-                    src={product.imageUrl}
-                    alt={product.title}
-                    className={getBraceletImageClass("stone")}
-                  />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-stone-900">{product.title}</p>
-                  <p className="mt-1 text-sm font-medium text-stone-700">
-                    {formatPrice(product.price ?? BRACELET_STONE_PRICE)}
-                  </p>
-                </div>
-                <Link
-                  href={`/admin/jewelry/products/${product.id}`}
-                  className="text-xs font-medium text-stone-600 no-underline hover:text-stone-900"
-                >
-                  แก้ไขสินค้า
-                </Link>
-              </div>
-            ))}
+        {braceletProducts.length > 0 ? (
+          <div className="overflow-hidden rounded-xl border border-stone-200">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[640px] text-left text-sm">
+                <thead className="border-b border-stone-200 bg-stone-50 text-stone-600">
+                  <tr>
+                    <th className="px-4 py-3 font-medium">รูป</th>
+                    <th className="px-4 py-3 font-medium">ชื่อสินค้า</th>
+                    <th className="px-4 py-3 font-medium">หมวดหมู่</th>
+                    <th className="px-4 py-3 font-medium">ราคา</th>
+                    <th className="px-4 py-3 font-medium text-right">จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100 bg-white">
+                  {braceletProducts.map((product) => (
+                    <tr key={product.id} className="hover:bg-stone-50/80">
+                      <td className="px-4 py-3">
+                        {product.imageUrl ? (
+                          <img
+                            src={product.imageUrl}
+                            alt={product.title}
+                            className="h-14 w-14 rounded-lg object-cover ring-1 ring-stone-200"
+                          />
+                        ) : (
+                          <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-amber-50 text-[10px] font-medium text-amber-700 ring-1 ring-amber-200">
+                            ไม่มีรูป
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 font-medium text-stone-900">{product.title}</td>
+                      <td className="px-4 py-3">
+                        <span className="inline-flex rounded-full bg-stone-100 px-2.5 py-0.5 text-xs font-medium text-stone-700">
+                          {product.categoryName}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 font-medium text-stone-800">
+                        {formatPrice(product.price ?? BRACELET_STONE_PRICE)}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Link
+                          href={`/admin/jewelry/products/${product.id}`}
+                          className="text-sm font-medium text-stone-700 no-underline hover:text-stone-900 hover:underline"
+                        >
+                          แก้ไข
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : (
-          <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm text-amber-900">
-            ยังไม่มีสินค้ากำไลที่มีรูป — เพิ่มสินค้าและอัปโหลดรูปที่หน้าสินค้าจิวเวลรี่
-          </div>
+          <AdminNotice
+            variant="warning"
+            message="ยังไม่มีสินค้ากำไล — เพิ่มสินค้าและอัปโหลดรูปที่หน้าสินค้าจิวเวลรี่"
+          />
         )}
+
+        {productsWithoutImage > 0 ? (
+          <p className="text-xs text-amber-700">
+            มี {productsWithoutImage} รายการที่ยังไม่มีรูป — จะไม่แสดงบนหน้าเวิร์คชอปจนกว่าจะอัปโหลดรูป
+          </p>
+        ) : null}
       </div>
 
-      {pendantGroup ? (
-        <div className="space-y-4 border-t border-stone-100 pt-6">
-          <h3 className="text-base font-semibold text-stone-900">จี้</h3>
-          <p className="text-sm text-stone-500">อัปโหลดรูปตัวอย่างจี้สำหรับเวิร์คชอป</p>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {pendantGroup.options.map((option) => (
-              <OptionUploadField
-                key={option.id}
-                optionId={option.id}
-                label={option.label}
-                price={option.price}
-                imageUrl={previews[option.id] ?? option.imageUrl}
-                workshopId={workshopId}
-                variant="pendant"
-                onPreview={(key, url) => setPreviews((current) => ({ ...current, [key]: url }))}
-                onError={setError}
-                onSuccess={(message) => {
-                  setSuccess(message);
-                  setError(null);
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      ) : null}
+      <WorkshopPendantsTable
+          workshopId={workshopId}
+          pendants={pendants}
+          onError={setError}
+          onSuccess={(message) => {
+            setSuccess(message);
+            setError(null);
+          }}
+        />
     </section>
   );
 }

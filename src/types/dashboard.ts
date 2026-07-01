@@ -9,11 +9,18 @@ export type DashboardMonthlyPoint = {
   count: number;
 };
 
+export type DashboardVisitPoint = {
+  day: string;
+  visitors: number;
+  pageViews: number;
+};
+
 export type DashboardCharts = {
   contentBySection: DashboardChartPoint[];
   activeVsInactive: DashboardChartPoint[];
   productsByCategory: DashboardChartPoint[];
   contentByMonth: DashboardMonthlyPoint[];
+  visitorsByDay: DashboardVisitPoint[];
 };
 
 export type DashboardStats = {
@@ -29,5 +36,7 @@ export type DashboardStats = {
   totalWorkshops: number;
   activeWorkshops: number;
   totalTranslations: number;
+  visitorsToday: number;
+  pageViewsToday: number;
   charts: DashboardCharts;
 };

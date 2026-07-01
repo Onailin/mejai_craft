@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState, useTransition, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AlertCircle, CheckCircle2, Save } from "lucide-react";
+import { Save } from "lucide-react";
+import { AdminNotice, AdminNoticeStack } from "@/components/admin/AdminNotice";
 import { GemDeleteButton } from "@/components/admin/GemDeleteButton";
 import {
   createJewelryProductViaApi,
@@ -177,39 +178,37 @@ export function JewelryProductForm({
         {deleteAction && <GemDeleteButton deleteAction={deleteAction} label="ลบสินค้า" />}
       </div>
 
-      {error && (
-        <div className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
-          <div>
-            <p className="font-semibold">บันทึกไม่สำเร็จ</p>
-            <p className="mt-1">{error}</p>
-          </div>
-        </div>
-      )}
-
-      {successMessage && (
-        <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0" />
-          <div>
-            <p className="font-semibold">บันทึกสำเร็จ</p>
-            <p className="mt-1">{successMessage}</p>
-          </div>
-        </div>
-      )}
+      <AdminNoticeStack
+        error={error}
+        success={successMessage}
+        onDismissError={() => setError(null)}
+        onDismissSuccess={() => setSuccessMessage(null)}
+        errorTitle="บันทึกไม่สำเร็จ"
+        successTitle="บันทึกสำเร็จ"
+        successAutoDismissMs={900}
+        className="space-y-3"
+      />
 
       {hasLocalOnlyImages ? (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
-          รูปเดิมบางรูปเก็บบนเครื่อง dev เท่านั้น — production จะเปิดไม่ได้ กรุณาเลือกรูปใหม่แล้วบันทึกอีกครั้ง
-        </div>
+        <AdminNotice
+          variant="warning"
+          title="รูปเก็บบนเครื่อง dev"
+          message="รูปเดิมบางรูปเก็บบนเครื่อง dev เท่านั้น — production จะเปิดไม่ได้ กรุณาเลือกรูปใหม่แล้วบันทึกอีกครั้ง"
+        />
       ) : null}
 
       {categories.length === 0 && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          ยังไม่มีหมวดหมู่สินค้า —{" "}
-          <Link href="/admin/jewelry/categories" className="font-medium underline">
-            สร้างหมวดหมู่ก่อน
-          </Link>
-        </div>
+        <AdminNotice
+          variant="warning"
+          message={
+            <>
+              ยังไม่มีหมวดหมู่สินค้า —{" "}
+              <Link href="/admin/jewelry/categories" className="font-medium underline">
+                สร้างหมวดหมู่ก่อน
+              </Link>
+            </>
+          }
+        />
       )}
 
       <form

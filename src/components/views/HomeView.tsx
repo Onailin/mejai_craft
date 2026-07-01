@@ -9,6 +9,7 @@ type HomeViewProps = {
   page: PageContent;
   initialGems: GemView[];
   initialLuckyStones: LuckyStoneView[];
+  bannerImage?: string;
 };
 
 function toGemView(gem: {
@@ -51,7 +52,7 @@ function toLuckyStoneView(stone: {
   };
 }
 
-export function HomeView({ page, initialGems, initialLuckyStones }: HomeViewProps) {
+export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }: HomeViewProps) {
   const { t, i18n } = useTranslation();
   const [selectedHardness, setSelectedHardness] = useState(9);
   const [gemShowcase, setGemShowcase] = useState(initialGems);
@@ -82,7 +83,7 @@ export function HomeView({ page, initialGems, initialLuckyStones }: HomeViewProp
 
   return (
     <>
-      <HomeBanner page={page} />
+      <HomeBanner page={page} bannerImage={bannerImage} />
 
       <section className="mx-auto mt-20 max-w-4xl px-6 text-center sm:mt-28">
         <h2 className="text-3xl font-bold tracking-wide text-stone-800 sm:text-4xl">

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition, type ChangeEvent, type DragEvent } from "react";
 import { ImagePlus, Loader2, Pencil, X } from "lucide-react";
+import { AdminNotice } from "@/components/admin/AdminNotice";
 import { updateBirthstoneViaApi } from "@/lib/upload-birthstone-client";
 import { BIRTHSTONE_DAY_OPTIONS } from "@/lib/birthstone-days";
 
@@ -222,15 +223,20 @@ export function BirthstoneEditForm({
           </label>
 
           {initialImageUrl?.startsWith("/uploads/") ? (
-            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
-              รูปนี้เก็บบนเครื่อง dev เท่านั้น — production จะเปิดไม่ได้ กรุณาอัปโหลดรูปใหม่หลังตั้งค่า Supabase Storage
-            </div>
+            <AdminNotice
+              variant="warning"
+              title="รูปเก็บบนเครื่อง dev"
+              message="รูปนี้เก็บบนเครื่อง dev เท่านั้น — production จะเปิดไม่ได้ กรุณาอัปโหลดรูปใหม่หลังตั้งค่า Supabase Storage"
+            />
           ) : null}
 
           {error ? (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
+            <AdminNotice
+              variant="error"
+              title="บันทึกไม่สำเร็จ"
+              message={error}
+              onDismiss={() => setError(null)}
+            />
           ) : (
             <div className="rounded-xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm leading-relaxed text-stone-600">
               อัปโหลดรูปใหม่เฉพาะเมื่อต้องการเปลี่ยนรูป

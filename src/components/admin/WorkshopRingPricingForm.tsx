@@ -2,7 +2,8 @@
 
 import { useActionState, useCallback, useEffect, useState, type ChangeEvent, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
-import { deleteWorkshopAddonImage, deleteWorkshopRingSampleImage, type WorkshopRingPricingState } from "@/actions/admin";
+import { deleteWorkshopAddonImage, deleteWorkshopRingSampleImage } from "@/actions/workshop-images";
+import type { WorkshopRingPricingState } from "@/types/workshop-admin";
 import { uploadWorkshopImage } from "@/lib/upload-workshop-image-client";
 import {
   WORKSHOP_ADDON_OPTIONS,
@@ -20,6 +21,7 @@ import {
   type WorkshopRingSampleType,
 } from "@/lib/workshop-ring-pricing";
 import type { WorkshopAddon, WorkshopRingPrice, WorkshopRingSampleImage } from "@prisma/client";
+import { AdminNoticeStack } from "@/components/admin/AdminNotice";
 
 const inputClass =
   "w-full min-w-[88px] rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm outline-none focus:border-stone-500 focus:ring-2 focus:ring-stone-200";
@@ -459,22 +461,22 @@ export function WorkshopRingPricingForm({
     setUploadError(null);
   }
 
+  const noticeError = state.error ?? uploadError;
+  const noticeSuccess =
+    uploadSuccess ??
+    (state.ok ? (state.message ?? "บันทึกราคาเรียบร้อยแล้ว") : null);
+
   return (
     <form action={formAction} className="space-y-6">
-      {state.error ? (
-        <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{state.error}</div>
-      ) : null}
-      {uploadError ? (
-        <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800">{uploadError}</div>
-      ) : null}
-      {uploadSuccess ? (
-        <div className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{uploadSuccess}</div>
-      ) : null}
-      {state.ok ? (
-        <div className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-          {state.message ?? "บันทึกราคาเรียบร้อยแล้ว"}
-        </div>
-      ) : null}
+      <AdminNoticeStack
+        error={noticeError}
+        success={noticeSuccess}
+        onDismissError={() => {
+          setUploadError(null);
+        }}
+        onDismissSuccess={() => setUploadSuccess(null)}
+        successTitle="บันทึกสำเร็จ"
+      />
 
       {WORKSHOP_RING_REFERENCE_GROUPS.map((group) => (
         <FormSection key={group.title} title={group.title} description={group.description}>

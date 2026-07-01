@@ -2,7 +2,8 @@
 
 import { useActionState, useEffect } from "react";
 import { useFormStatus } from "react-dom";
-import type { WorkshopFormState } from "@/actions/admin";
+import type { WorkshopFormState } from "@/types/workshop-admin";
+import { AdminNoticeStack } from "@/components/admin/AdminNotice";
 
 type WorkshopGeneralFormProps = {
   workshopId: string;
@@ -50,14 +51,12 @@ export function WorkshopGeneralForm({
     >
       <h2 className="text-lg font-medium text-stone-800 md:col-span-2">ข้อมูลทั่วไป</h2>
 
-      {state.error ? (
-        <div className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-800 md:col-span-2">{state.error}</div>
-      ) : null}
-      {state.success ? (
-        <div className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-800 md:col-span-2">
-          {state.message ?? "บันทึกข้อมูลเวิร์คชอปเรียบร้อยแล้ว"}
-        </div>
-      ) : null}
+      <AdminNoticeStack
+        error={state.error}
+        success={state.success ? (state.message ?? "บันทึกข้อมูลเวิร์คชอปเรียบร้อยแล้ว") : null}
+        successTitle="บันทึกสำเร็จ"
+        className="md:col-span-2"
+      />
 
       <label className="space-y-1 md:col-span-2">
         <span className="text-sm text-stone-600">ชื่อเวิร์คชอป</span>

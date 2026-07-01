@@ -142,7 +142,7 @@ export function JewelryView({
           ) : displayMode === "IMAGE_ONLY" ? (
             <ImageOnlyGrid products={selectedCategory.products} categoryKey={selectedCategory.slug} />
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: "40px 32px", paddingBottom: 64 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: "48px 36px", paddingBottom: 80 }}>
               {selectedCategory.products.map((product, i) => (
                 <Link
                   key={product.id}

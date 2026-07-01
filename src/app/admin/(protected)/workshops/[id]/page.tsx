@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { saveWorkshopRingPricing, updateWorkshopFormAction } from "@/actions/admin";
-import { WorkshopBannerImagesForm } from "@/components/admin/WorkshopBannerImagesForm";
 import { WorkshopBraceletPricingForm } from "@/components/admin/WorkshopBraceletPricingForm";
 import { WorkshopFeaturedImagesForm } from "@/components/admin/WorkshopFeaturedImagesForm";
 import { WorkshopGeneralForm } from "@/components/admin/WorkshopGeneralForm";
@@ -47,6 +46,11 @@ export default async function AdminWorkshopDetailPage({
 
   const showRingPricing = isRingWorkshop(workshop.slug, workshop.category?.slug);
   const showBraceletPricing = isBraceletWorkshop(workshop.slug, workshop.category?.slug);
+  const workshopTypeLabel = showRingPricing
+    ? "เวิร์คชอปแหวน"
+    : showBraceletPricing
+      ? "เวิร์คชอปกำไล"
+      : "เวิร์คชอปทั่วไป";
 
   if (showBraceletPricing) {
     await ensureBraceletWorkshopOptions(workshop.id);
@@ -89,15 +93,23 @@ export default async function AdminWorkshopDetailPage({
         <p className="text-sm text-stone-500">
           {workshop.category?.name ?? "ไม่มีหมวด"} · {workshop.slug}
         </p>
+        <span className="mt-2 inline-flex rounded-full bg-stone-100 px-3 py-1 text-xs font-medium text-stone-700">
+          {workshopTypeLabel}
+        </span>
       </div>
 
-      <WorkshopBannerImagesForm
-        workshopId={workshop.id}
-        images={workshop.bannerImages.map((image) => ({
-          id: image.id,
-          imageUrl: image.imageUrl,
-        }))}
-      />
+      <div className="rounded-2xl border border-sky-100 bg-sky-50 px-5 py-4 text-sm text-sky-950">
+        <p className="font-medium">จัดการตามประเภทเวิร์คชอป</p>
+        <ul className="mt-2 list-inside list-disc space-y-1 text-sky-900/90">
+          <li>แบนเนอร์หน้าเว็บ → เมนู <strong>แบนเนอร์</strong></li>
+          <li>รูปปกรายการ / ตัวอย่างงาน → รูปตัวอย่างงานด้านล่าง</li>
+          {showRingPricing ? <li>แหวน → กรอกราคา ขนาด สีชุบ และตัวเลือกเพิ่ม</li> : null}
+          {showBraceletPricing ? <li>กำไล → กรอกตัวเลือกหินและลิงก์สินค้าจิวเวลรี่</li> : null}
+          {!showRingPricing && !showBraceletPricing ? (
+            <li>ทั่วไป → กรอกข้อความและรูปตัวอย่างงาน</li>
+          ) : null}
+        </ul>
+      </div>
 
       <WorkshopFeaturedImagesForm workshopId={workshop.id} images={workshop.featuredImages} />
 

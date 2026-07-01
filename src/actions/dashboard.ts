@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireEditorOrAdmin } from "@/lib/auth-helpers";
 import { CHART_PALETTE, STATUS_COLORS } from "@/lib/dashboard-chart-colors";
+import { getVisitorsChartData } from "@/lib/site-analytics";
 import type {
   DashboardChartPoint,
   DashboardCharts,
@@ -160,11 +161,14 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     count: monthCountMap.get(bucket.key) ?? 0,
   }));
 
+  const { visitorsByDay, visitorsToday, pageViewsToday } = await getVisitorsChartData(14);
+
   const charts: DashboardCharts = {
     contentBySection,
     activeVsInactive,
     productsByCategory,
     contentByMonth,
+    visitorsByDay,
   };
 
   return {
@@ -180,6 +184,8 @@ export async function getDashboardStats(): Promise<DashboardStats> {
     totalWorkshops,
     activeWorkshops,
     totalTranslations,
+    visitorsToday,
+    pageViewsToday,
     charts,
   };
 }

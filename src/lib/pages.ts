@@ -1,5 +1,16 @@
 import type { PageContent } from "@/types";
 
+/** รูปสไลด์เริ่มต้นหน้า /workshop */
+export const DEFAULT_WORKSHOP_PAGE_BANNERS = [
+  "/images/banner/banner.jpg",
+  "/images/banner/banner5.jpg",
+  "/images/banner/banner7.jpg",
+  "/images/banner/banner8.jpg",
+  "/images/banner/banner14.jpg",
+  "/images/banner/banner19.jpg",
+  "/images/banner/banner20.jpg",
+] as const;
+
 export const pages: PageContent[] = [
   {
     id: "home",
@@ -66,15 +77,13 @@ export const pages: PageContent[] = [
     eyebrow: "Hands-on Experience",
     description:
       "ข้อมูลเวิร์คชอปสำหรับลูกค้าที่อยากออกแบบ เลือกวัสดุ และเรียนรู้ขั้นตอนทำชิ้นงานของตัวเอง",
-    cards: [
-      {
-        title: "Workshop at Mejai Crafts",
-        subtitle: "Hands-on Experience",
-        description: "เลือกเวิร์คชอปและดูรายละเอียดก่อนจอง",
-        image: "/images/banner/banner19.jpg",
-        accent: "Workshop",
-      },
-    ],
+    cards: DEFAULT_WORKSHOP_PAGE_BANNERS.map((image, index) => ({
+      title: "Workshop at Mejai Crafts",
+      subtitle: "Hands-on Experience",
+      description: "เลือกเวิร์คชอปและดูรายละเอียดก่อนจอง",
+      image,
+      accent: index === 0 ? "Workshop" : `Workshop ${index + 1}`,
+    })),
   },
 ];
 
