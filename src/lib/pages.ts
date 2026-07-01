@@ -57,7 +57,7 @@ export const pages: PageContent[] = [
         title: "Contact Mejai Crafts",
         subtitle: "Studio Contact",
         description: "รายละเอียดการติดต่อ Mejai Crafts",
-        image: "/images/banner/shop1.jpg",
+        image: "/images/banner/album2.jpg",
         accent: "Contact",
       },
     ],
