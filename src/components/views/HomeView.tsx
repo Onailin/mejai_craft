@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { useState } from "react";
 import { HomeBanner } from "@/components/HomeBanner";
+import { t } from "@/lib/copy";
 import type { GemView, LuckyStoneView, PageContent } from "@/types";
 
 type HomeViewProps = {
@@ -12,72 +12,10 @@ type HomeViewProps = {
   bannerImage?: string;
 };
 
-function toGemView(gem: {
-  id: string;
-  name: string;
-  origin: string | null;
-  color: string | null;
-  detail: string | null;
-  hardnessMin: unknown;
-  hardnessMax: unknown;
-  hardnessDisplay: string | null;
-  imageUrl: string;
-}): GemView {
-  return {
-    id: gem.id,
-    name: gem.name,
-    origin: gem.origin ?? "",
-    color: gem.color ?? "",
-    detail: gem.detail ?? "",
-    hardnessMin: Number(gem.hardnessMin ?? 0),
-    hardnessMax: Number(gem.hardnessMax ?? 0),
-    hardnessDisplay: gem.hardnessDisplay ?? "",
-    image: gem.imageUrl,
-  };
-}
-
-function toLuckyStoneView(stone: {
-  id: string;
-  name: string;
-  meaning: string | null;
-  description: string | null;
-  imageUrl: string;
-}): LuckyStoneView {
-  return {
-    id: stone.id,
-    name: stone.name,
-    meaning: stone.meaning ?? "",
-    desc: stone.description ?? "",
-    image: stone.imageUrl,
-  };
-}
-
 export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }: HomeViewProps) {
-  const { t, i18n } = useTranslation();
   const [selectedHardness, setSelectedHardness] = useState(9);
-  const [gemShowcase, setGemShowcase] = useState(initialGems);
-  const [luckyStones, setLuckyStones] = useState(initialLuckyStones);
 
-  useEffect(() => {
-    const locale = i18n.resolvedLanguage ?? "th";
-    if (locale === "th") {
-      setGemShowcase(initialGems);
-      setLuckyStones(initialLuckyStones);
-      return;
-    }
-
-    fetch(`/api/content?type=gems&locale=${locale}`)
-      .then((r) => r.json())
-      .then((gems) => setGemShowcase(gems.map(toGemView)))
-      .catch(() => setGemShowcase(initialGems));
-
-    fetch(`/api/content?type=lucky-stones&locale=${locale}`)
-      .then((r) => r.json())
-      .then((stones) => setLuckyStones(stones.map(toLuckyStoneView)))
-      .catch(() => setLuckyStones(initialLuckyStones));
-  }, [i18n.resolvedLanguage, initialGems, initialLuckyStones]);
-
-  const activeGems = gemShowcase.filter(
+  const activeGems = initialGems.filter(
     (gem) => selectedHardness >= gem.hardnessMin && selectedHardness <= gem.hardnessMax
   );
 
@@ -86,7 +24,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
       <HomeBanner page={page} bannerImage={bannerImage} />
 
       <section className="mx-auto mt-20 max-w-4xl px-6 text-center sm:mt-28">
-        <h2 className="text-3xl font-bold tracking-wide text-stone-800 sm:text-4xl">
+        <h2 className="font-serif text-3xl font-light tracking-wide text-stone-800 sm:text-4xl">
           {t("home.brand_title")}
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-stone-500">
@@ -108,7 +46,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
               <p className="text-[10px] uppercase tracking-[0.4em] text-stone-400">
                 {t("home.interactive_label")}
               </p>
-              <h2 className="text-2xl font-bold leading-[1.12] tracking-wide text-stone-800 sm:text-3xl sm:leading-tight">
+              <h2 className="font-serif text-2xl font-light leading-[1.12] tracking-wide text-stone-800 sm:text-3xl sm:leading-tight">
                 {t("home.interactive_title")}
               </h2>
             </div>
@@ -135,7 +73,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
                       onClick={() => setSelectedHardness(num)}
                       className={`transition-all duration-300 ${
                         selectedHardness === num
-                          ? "font-bold scale-125 text-stone-800"
+                          ? "font-semibold scale-125 text-stone-800"
                           : "hover:text-stone-600"
                       }`}
                     >
@@ -144,6 +82,42 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
                   ))}
                 </div>
               </div>
+            </div>
+
+            <div className="mx-auto grid max-w-3xl gap-5 pt-2 text-left sm:grid-cols-2 sm:gap-6">
+              <article
+                className={`border-l-2 py-3 pl-5 transition-all duration-500 ${
+                  selectedHardness >= 7.5
+                    ? "border-stone-800 bg-stone-100/60 shadow-sm"
+                    : "border-stone-200 opacity-40"
+                }`}
+              >
+                <h4 className="flex items-center gap-2 text-sm font-medium text-stone-700">
+                  <span>{t("home.hard_gem_title")}</span>
+                  {selectedHardness >= 7.5 ? (
+                    <span className="h-1.5 w-1.5 rounded-full bg-stone-800" />
+                  ) : null}
+                </h4>
+                <p className="mt-1 text-xs text-stone-500">{t("home.hard_gem_desc")}</p>
+                <p className="mt-2 text-[11px] text-stone-400">{t("home.hard_gem_examples")}</p>
+              </article>
+
+              <article
+                className={`border-l-2 py-3 pl-5 transition-all duration-500 ${
+                  selectedHardness < 7.5
+                    ? "border-stone-800 bg-stone-100/60 shadow-sm"
+                    : "border-stone-200 opacity-40"
+                }`}
+              >
+                <h4 className="flex items-center gap-2 text-sm font-medium text-stone-700">
+                  <span>{t("home.soft_gem_title")}</span>
+                  {selectedHardness < 7.5 ? (
+                    <span className="h-1.5 w-1.5 rounded-full bg-stone-800" />
+                  ) : null}
+                </h4>
+                <p className="mt-1 text-xs text-stone-500">{t("home.soft_gem_desc")}</p>
+                <p className="mt-2 text-[11px] text-stone-400">{t("home.soft_gem_examples")}</p>
+              </article>
             </div>
           </div>
 
@@ -160,7 +134,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
                         <span className="inline-block bg-stone-800 px-1.5 py-0.5 text-[7px] uppercase tracking-[0.14em] text-white sm:px-2 sm:text-[9px] sm:tracking-widest">
                           {gem.hardnessDisplay}
                         </span>
-                        <h3 className="mt-1 text-[22px] font-bold leading-[1.08] text-stone-800 sm:mt-2 sm:text-4xl">
+                        <h3 className="mt-1 font-serif text-[22px] font-light leading-[1.08] text-stone-800 sm:mt-2 sm:text-4xl">
                           {gem.name}
                         </h3>
                         <p className="mt-1 text-[11px] leading-relaxed text-stone-500 sm:mt-2 sm:text-sm">
@@ -171,13 +145,13 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
                             <p className="text-[7px] uppercase tracking-[0.12em] text-stone-400 sm:text-[9px] sm:tracking-wider">
                               {t("home.origin")}
                             </p>
-                            <p className="text-[10px] font-medium text-stone-700 sm:text-xs">{gem.origin}</p>
+                            <p className="text-[10px] text-stone-700 sm:text-xs">{gem.origin}</p>
                           </div>
                           <div>
                             <p className="text-[7px] uppercase tracking-[0.12em] text-stone-400 sm:text-[9px] sm:tracking-wider">
                               {t("home.color")}
                             </p>
-                            <p className="text-[10px] font-medium text-stone-700 sm:text-xs">{gem.color}</p>
+                            <p className="text-[10px] text-stone-700 sm:text-xs">{gem.color}</p>
                           </div>
                         </div>
                       </div>
@@ -187,7 +161,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center text-stone-400">
-                <span className="text-xl font-medium italic">
+                <span className="font-serif text-xl font-light italic">
                   {t("home.no_gem_title", { hardness: selectedHardness })}
                 </span>
                 <p className="mt-1 max-w-xs text-xs">{t("home.no_gem_desc")}</p>
@@ -202,16 +176,16 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
           <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
             {t("home.collection_label")}
           </p>
-          <h2 className="mt-2 text-3xl font-bold text-stone-800 sm:text-4xl">
+          <h2 className="mt-2 font-serif text-3xl font-light text-stone-800 sm:text-4xl">
             {t("home.collection_title")}
           </h2>
         </header>
 
-        {gemShowcase.length === 0 ? (
+        {initialGems.length === 0 ? (
           <p className="text-sm text-stone-500">ยังไม่มีข้อมูลอัญมณี</p>
         ) : (
           <div className="-mx-2 flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-8 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
-            {gemShowcase.map((gem) => (
+            {initialGems.map((gem) => (
               <article key={gem.id} className="group w-[78%] shrink-0 snap-start cursor-pointer sm:w-auto sm:shrink">
                 <div className="aspect-[4/3] overflow-hidden bg-stone-100">
                   <img
@@ -222,7 +196,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
                 </div>
                 <div className="mt-4 space-y-2">
                   <div className="flex items-baseline justify-between">
-                    <h3 className="text-lg font-bold text-stone-800">{gem.name}</h3>
+                    <h3 className="font-serif text-lg text-stone-800">{gem.name}</h3>
                     <span className="text-xs text-stone-400">{gem.hardnessDisplay}</span>
                   </div>
                   <p className="text-xs text-stone-400">
@@ -243,16 +217,16 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
           <p className="text-[10px] uppercase tracking-[0.35em] text-stone-400">
             {t("home.lucky_label")}
           </p>
-          <h2 className="mt-2 text-3xl font-bold text-stone-800 sm:text-4xl">
+          <h2 className="mt-2 font-serif text-3xl font-light text-stone-800 sm:text-4xl">
             {t("home.lucky_title")}
           </h2>
         </header>
 
-        {luckyStones.length === 0 ? (
+        {initialLuckyStones.length === 0 ? (
           <p className="text-sm text-stone-500">ยังไม่มีข้อมูลหินนำโชค</p>
         ) : (
           <div className="-mx-2 flex snap-x snap-mandatory gap-5 overflow-x-auto px-2 pb-2">
-            {luckyStones.map((stone) => (
+            {initialLuckyStones.map((stone) => (
               <article
                 key={stone.id}
                 className="group w-[78%] shrink-0 snap-start cursor-pointer sm:w-[48%] lg:w-[32%] xl:w-[24%]"
@@ -268,7 +242,7 @@ export function HomeView({ page, initialGems, initialLuckyStones, bannerImage }:
                   <p className="text-[10px] uppercase tracking-[0.25em] text-stone-400">
                     {stone.meaning}
                   </p>
-                  <h3 className="text-lg font-bold text-stone-800">{stone.name}</h3>
+                  <h3 className="font-serif text-lg text-stone-800">{stone.name}</h3>
                   <p className="text-sm leading-relaxed text-stone-500">{stone.desc}</p>
                 </div>
               </article>

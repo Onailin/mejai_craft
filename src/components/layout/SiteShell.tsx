@@ -2,23 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslation } from "react-i18next";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { BrandLogo } from "@/components/brand/BrandLogo";
 import { AdminAuthButton } from "@/components/layout/AdminAuthButton";
+import { t } from "@/lib/copy";
 
 const navPages = [
-  { id: "jewelry", href: "/jewelry", labelKey: "nav_jewelry" },
-  { id: "workshop", href: "/workshop", labelKey: "nav_workshop" },
-  { id: "birthstones", href: "/birthstones", labelKey: "nav_birthstones" },
-  { id: "about", href: "/about", labelKey: "nav_about" },
-  { id: "contact", href: "/contact", labelKey: "nav_contact" },
+  { id: "jewelry", href: "/jewelry", label: t("nav_jewelry") },
+  { id: "workshop", href: "/workshop", label: t("nav_workshop") },
+  { id: "birthstones", href: "/birthstones", label: t("nav_birthstones") },
+  { id: "about", href: "/about", label: t("nav_about") },
+  { id: "contact", href: "/contact", label: t("nav_contact") },
 ] as const;
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { t } = useTranslation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -71,7 +70,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                         : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                     }`}
                   >
-                    {t(page.labelKey)}
+                    {page.label}
                   </Link>
                 );
               })}
@@ -129,7 +128,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
                       : "font-medium text-white hover:bg-white/10"
                   }`}
                 >
-                  {t(page.labelKey)}
+                  {page.label}
                 </Link>
               );
             })}

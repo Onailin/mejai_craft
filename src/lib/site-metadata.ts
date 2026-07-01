@@ -16,8 +16,11 @@ export const rootSiteMetadata: Metadata = {
   },
   description: SITE_DESCRIPTION,
   icons: {
-    icon: [{ url: SITE_ICON_PATH, type: "image/png" }],
-    apple: [{ url: SITE_ICON_PATH, type: "image/png" }],
+    icon: [
+      { url: SITE_ICON_PATH, sizes: "232x417", type: "image/png" },
+      { url: SITE_ICON_PATH, sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: SITE_ICON_PATH, sizes: "180x180", type: "image/png" }],
     shortcut: SITE_ICON_PATH,
   },
   openGraph: {
@@ -29,16 +32,18 @@ export const rootSiteMetadata: Metadata = {
     description: SITE_DESCRIPTION,
     images: [
       {
-        url: SITE_ICON_PATH,
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
         alt: SITE_BRAND_NAME,
       },
     ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: defaultTitle,
     description: SITE_DESCRIPTION,
-    images: [SITE_ICON_PATH],
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,

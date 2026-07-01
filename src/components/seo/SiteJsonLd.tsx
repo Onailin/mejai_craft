@@ -6,7 +6,13 @@ export function SiteJsonLd() {
     "@type": "Organization",
     name: SITE_BRAND_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}${SITE_ICON_PATH}`,
+    logo: {
+      "@type": "ImageObject",
+      url: `${SITE_URL}${SITE_ICON_PATH}`,
+      width: 232,
+      height: 417,
+    },
+    image: `${SITE_URL}${SITE_ICON_PATH}`,
     description: SITE_DESCRIPTION,
     sameAs: ["https://www.facebook.com/mejaicrafts"],
   };

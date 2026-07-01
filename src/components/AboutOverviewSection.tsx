@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import type { PageContent } from "@/types";
+import { t } from "@/lib/copy";
 
 type Slide = {
   id: string;
@@ -17,7 +17,6 @@ export function AboutOverviewSection({
   page: PageContent;
   slides: Slide[];
 }) {
-  const { t } = useTranslation();
   const [current, setCurrent] = useState(0);
 
   if (slides.length === 0) {
@@ -26,10 +25,10 @@ export function AboutOverviewSection({
         <header className="mx-auto max-w-3xl text-center">
           <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{page.eyebrow}</p>
           <h1 className="mt-3 text-4xl font-bold text-stone-800 sm:text-5xl">
-            {t("about.title", { defaultValue: page.title })}
+            {t("about.title")}
           </h1>
           <p className="mt-6 whitespace-pre-line text-sm leading-7 text-stone-600 sm:text-base">
-            {t("about.intro", { defaultValue: page.description })}
+            {t("about.intro")}
           </p>
         </header>
       </section>
@@ -44,10 +43,10 @@ export function AboutOverviewSection({
       <header className="mx-auto mb-10 max-w-3xl text-center">
         <p className="text-xs uppercase tracking-[0.3em] text-stone-400">{page.eyebrow}</p>
         <h1 className="mt-3 text-4xl font-bold text-stone-800 sm:text-5xl">
-          {t("about.title", { defaultValue: page.title })}
+          {t("about.title")}
         </h1>
         <p className="mt-6 whitespace-pre-line text-sm leading-7 text-stone-600 sm:text-base">
-          {t("about.intro", { defaultValue: page.description })}
+          {t("about.intro")}
         </p>
       </header>
 

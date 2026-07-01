@@ -1,9 +1,7 @@
-"use client";
-
 import type { PageContent } from "@/types";
-import { useTranslation } from "react-i18next";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { SITE_FACEBOOK_URL, SITE_LINE_URL } from "@/lib/brand";
+import { t } from "@/lib/copy";
 
 function LineIcon({ className }: { className?: string }) {
   return (
@@ -29,14 +27,17 @@ export function AboutSection({
   settings?: {
     phone?: string;
     facebook_url?: string;
+    line_url?: string;
     maps_url?: string;
     address?: string;
+    brand_tagline?: string;
     studio_image_url?: string;
   };
 }) {
-  const { t } = useTranslation();
   const phone = settings?.phone ?? "0888491111";
   const facebookUrl = settings?.facebook_url ?? SITE_FACEBOOK_URL;
+  const lineUrl = settings?.line_url ?? SITE_LINE_URL;
+  const tagline = settings?.brand_tagline?.trim() || t("about.tagline");
   const address = settings?.address ?? t("about.address_detail");
   const studioImageUrl = settings?.studio_image_url || page.cards[0]?.image || "";
 
@@ -372,7 +373,7 @@ export function AboutSection({
             </div>
             <div className="social-actions">
               <a
-                href={SITE_LINE_URL}
+                href={lineUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="social-btn social-btn-line"
@@ -391,7 +392,7 @@ export function AboutSection({
               </a>
             </div>
           </div>
-          <p className="biz-tagline">{t("about.tagline")}</p>
+          <p className="biz-tagline">{tagline}</p>
 
           <hr className="biz-hr" />
 

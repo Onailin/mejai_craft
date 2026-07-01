@@ -1,20 +1,21 @@
-"use client";
-
+import Image from "next/image";
 import type { PageContent } from "@/types";
-import { useTranslation } from "react-i18next";
+import { t } from "@/lib/copy";
 
 export function HomeBanner({ page, bannerImage }: { page: PageContent; bannerImage?: string }) {
-  const { t } = useTranslation();
   const heroCard = page.cards[0];
   const imageSrc = bannerImage || heroCard?.image;
 
   return (
     <section className="relative min-h-[calc(100svh-4rem)] overflow-hidden bg-gray-100">
       {imageSrc ? (
-        <img
-          className="absolute inset-0 h-full w-full object-cover"
+        <Image
+          className="object-cover"
           src={imageSrc}
-          alt={heroCard.title}
+          alt={heroCard?.title ?? page.title}
+          fill
+          priority
+          sizes="100vw"
         />
       ) : (
         <div className="absolute inset-0 bg-gradient-to-br from-stone-100 via-white to-stone-200" />
@@ -23,10 +24,10 @@ export function HomeBanner({ page, bannerImage }: { page: PageContent; bannerIma
       <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-white/10" />
       <div className="relative mx-auto flex min-h-[calc(100svh-4rem)] max-w-7xl flex-col justify-center px-5 py-16 sm:px-8 lg:px-12">
         <div className="max-w-2xl">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.32em] text-gray-500">
+          <p className="mb-4 text-xs font-medium uppercase tracking-[0.32em] text-gray-500">
             {page.eyebrow}
           </p>
-          <h1 className="text-5xl font-bold leading-tight text-luxury-ink sm:text-6xl lg:text-7xl">
+          <h1 className="font-sans text-5xl font-semibold leading-tight text-luxury-ink sm:text-6xl lg:text-7xl">
             {page.title}
           </h1>
           <p className="mt-6 max-w-xl text-base leading-8 text-luxury-muted sm:text-lg">

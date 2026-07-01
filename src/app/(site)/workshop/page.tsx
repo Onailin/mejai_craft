@@ -3,7 +3,7 @@ import { getWorkshopPageBannerImages } from "@/lib/page-banners";
 import { loadBraceletJewelryProducts, loadWorkshopCatalog } from "@/lib/load-content";
 import { WorkshopView } from "@/components/views/WorkshopView";
 
-export const revalidate = 0;
+export const revalidate = 60;
 
 export default async function WorkshopPage() {
   const page = getPage("workshop");

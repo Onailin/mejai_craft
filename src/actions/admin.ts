@@ -517,22 +517,47 @@ export async function saveWorkshopRingPricing(
   }
 }
 
-export async function updateSiteSettings(formData: FormData) {
-  await requireAdmin();
-  const entries = Array.from(formData.entries());
+export type SiteSettingsFormState = {
+  ok?: boolean;
+  error?: string;
+  message?: string;
+};
 
-  for (const [key, value] of entries) {
-    if (typeof value !== "string") continue;
-    await prisma.siteSetting.upsert({
-      where: { key },
-      update: { value },
-      create: { key, value },
-    });
+export async function updateSiteSettings(
+  _prev: SiteSettingsFormState,
+  formData: FormData,
+): Promise<SiteSettingsFormState> {
+  try {
+    await requireAdmin();
+    const allowedKeys = new Set([
+      "phone",
+      "address",
+      "maps_url",
+      "facebook_url",
+      "line_url",
+      "brand_name",
+      "brand_tagline",
+      "qrcode_url",
+      "studio_image_url",
+    ]);
+
+    for (const [key, value] of Array.from(formData.entries())) {
+      if (!allowedKeys.has(key) || typeof value !== "string") continue;
+      await prisma.siteSetting.upsert({
+        where: { key },
+        update: { value },
+        create: { key, value },
+      });
+    }
+
+    revalidatePath("/about");
+    revalidatePath("/contact");
+    revalidatePath("/jewelry");
+    revalidatePath("/admin/settings");
+    return { ok: true, message: "บันทึกการตั้งค่าเรียบร้อยแล้ว" };
+  } catch (error) {
+    return { ok: false, error: formatActionError(error) };
   }
-
-  revalidatePath("/about");
-  revalidatePath("/contact");
-  revalidatePath("/admin/settings");
 }
 
 export async function updateTranslation(

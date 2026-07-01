@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useTranslation } from "react-i18next";
+import { t } from "@/lib/copy";
 import { ProductCard } from "@/components/ProductCard";
 import { isDisplayableImageUrl, pickProductCoverImage } from "@/lib/image-urls";
 import type { JewelryCategoryView, JewelryProductView } from "@/types";
@@ -43,25 +43,10 @@ export function JewelryView({
   initialCategories: JewelryCategoryView[];
   bannerSlides?: string[];
 }) {
-  const { t, i18n } = useTranslation();
-  const [categories, setCategories] = useState(initialCategories);
   const [activeCategory, setActiveCategory] = useState(initialCategories[0]?.slug ?? "");
   const [activeRingImage, setActiveRingImage] = useState(0);
   const [activeBanner, setActiveBanner] = useState(0);
-
-  useEffect(() => {
-    const locale = i18n.resolvedLanguage ?? "th";
-    if (locale === "th") {
-      setCategories(initialCategories);
-      return;
-    }
-    fetch(`/api/content?type=jewelry&locale=${locale}`)
-      .then((r) => r.json())
-      .then((data) => {
-        if (Array.isArray(data)) setCategories(data);
-      })
-      .catch(() => setCategories(initialCategories));
-  }, [i18n.resolvedLanguage, initialCategories]);
+  const categories = initialCategories;
 
   useEffect(() => {
     setActiveRingImage(0);
@@ -137,7 +122,6 @@ export function JewelryView({
               images={showcaseImages}
               activeIndex={activeRingImage}
               onSelectImage={setActiveRingImage}
-              t={t}
             />
           ) : displayMode === "IMAGE_ONLY" ? (
             <ImageOnlyGrid products={selectedCategory.products} categoryKey={selectedCategory.slug} />
@@ -190,13 +174,11 @@ function RingShowcase({
   images,
   activeIndex,
   onSelectImage,
-  t,
 }: {
   productId: string;
   images: Array<{ image: string; title: string; subtitle: string; description: string; accent: string }>;
   activeIndex: number;
   onSelectImage: (index: number) => void;
-  t: (k: string, o?: Record<string, unknown>) => string;
 }) {
   const selected = images[activeIndex] ?? images[0];
   const thumbnailRefs = useRef<Array<HTMLButtonElement | null>>([]);

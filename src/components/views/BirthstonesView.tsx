@@ -1,34 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { isDisplayableImageUrl } from "@/lib/image-urls";
+import { t } from "@/lib/copy";
 import type { BirthstoneView } from "@/types";
-
-function toBirthstoneView(stone: {
-  id: string;
-  day?: string | null;
-  month?: string | null;
-  gemName: string;
-  gemNameEn?: string | null;
-  color?: string | null;
-  origin?: string | null;
-  hardness?: string | null;
-  detail?: string | null;
-  image?: string | null;
-}): BirthstoneView {
-  return {
-    id: stone.id,
-    day: stone.day ?? stone.month ?? "",
-    gemName: stone.gemName,
-    gemNameEn: stone.gemNameEn ?? "",
-    color: stone.color ?? "",
-    origin: stone.origin ?? "",
-    hardness: stone.hardness ?? "",
-    detail: stone.detail ?? "",
-    image: stone.image ?? "",
-  };
-}
 
 function MetaItem({ label, value }: { label: string; value: string }) {
   return (
@@ -40,7 +14,6 @@ function MetaItem({ label, value }: { label: string; value: string }) {
 }
 
 function BirthstoneCard({ stone }: { stone: BirthstoneView }) {
-  const { t } = useTranslation();
   const displayGem = stone.gemName && stone.gemName !== stone.day ? stone.gemName : null;
 
   return (
@@ -87,27 +60,7 @@ function BirthstoneCard({ stone }: { stone: BirthstoneView }) {
 }
 
 export function BirthstonesView({ initialBirthstones }: { initialBirthstones: BirthstoneView[] }) {
-  const { t, i18n } = useTranslation();
-  const [birthstones, setBirthstones] = useState(initialBirthstones);
-
-  useEffect(() => {
-    const locale = i18n.resolvedLanguage ?? "th";
-    if (locale === "th") {
-      setBirthstones(initialBirthstones);
-      return;
-    }
-
-    fetch(`/api/content?type=birthstones&locale=${locale}`)
-      .then((response) => response.json())
-      .then((stones) => {
-        if (Array.isArray(stones)) {
-          setBirthstones(stones.map(toBirthstoneView));
-        }
-      })
-      .catch(() => setBirthstones(initialBirthstones));
-  }, [i18n.resolvedLanguage, initialBirthstones]);
-
-  const visibleBirthstones = birthstones.filter((stone) => isDisplayableImageUrl(stone.image));
+  const visibleBirthstones = initialBirthstones.filter((stone) => isDisplayableImageUrl(stone.image));
 
   return (
     <div className="mx-auto max-w-5xl px-5 pb-20 pt-4 sm:px-8 lg:px-10">

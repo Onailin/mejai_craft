@@ -139,9 +139,14 @@ export function isRingWorkshop(slug: string, categorySlug?: string | null) {
   return slug === "silver-ring" || categorySlug === "silver-ring";
 }
 
-/** รูปตัวอย่างแหวนบนหน้าเวิร์คชอป — ใหญ่พอดีมือถือ */
-export const RING_SAMPLE_IMAGE_CLASS =
-  "mx-auto w-full max-w-[min(88vw,300px)] h-auto max-h-[min(72vw,280px)] object-contain sm:max-h-56 sm:max-w-[220px]";
+/** กรอบรูปแหวนบนหน้าเวิร์คชอป — ขนาดเท่ากันทุกรายการ (มือถือ 2 คอลัมน์) */
+export const RING_WORKSHOP_IMAGE_FRAME_CLASS =
+  "mx-auto flex aspect-square w-full items-center justify-center rounded-2xl bg-stone-50/80 p-3 transition group-hover:bg-stone-50 sm:p-4";
 
-export const RING_PLATING_SAMPLE_IMAGE_CLASS =
-  "mx-auto w-full max-w-[min(72vw,220px)] h-auto max-h-[min(60vw,220px)] object-contain sm:max-h-48 sm:max-w-[180px]";
+export const RING_WORKSHOP_IMAGE_CLASS = "h-full w-full object-contain";
+
+/** @deprecated ใช้ RING_WORKSHOP_IMAGE_* แทน */
+export const RING_SAMPLE_IMAGE_CLASS = RING_WORKSHOP_IMAGE_CLASS;
+
+/** @deprecated ใช้ RING_WORKSHOP_IMAGE_* แทน */
+export const RING_PLATING_SAMPLE_IMAGE_CLASS = RING_WORKSHOP_IMAGE_CLASS;

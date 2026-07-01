@@ -1,6 +1,6 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mejaicrafts.com";
 export const SITE_LOGO_PATH = "/logo/Logo_Mejai.png";
-/** Favicon, Google search icon, Open Graph — ใช้โลโก้สี่เหลี่ยมแยกจาก navbar */
+/** Favicon, Google search icon, Open Graph */
 export const SITE_ICON_PATH = "/logo/logo.png";
 export const SITE_BRAND_NAME = "Mejai Crafts";
 export const SITE_DESCRIPTION =

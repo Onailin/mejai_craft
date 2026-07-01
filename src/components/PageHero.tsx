@@ -1,9 +1,7 @@
 import type { PageContent } from "@/types";
-import { useTranslation } from "react-i18next";
+import { t } from "@/lib/copy";
 
 export function PageHero({ page }: { page: PageContent }) {
-  const { t } = useTranslation();
-
   return (
     <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
       <div className="max-w-3xl">
@@ -34,17 +32,17 @@ export function PageHero({ page }: { page: PageContent }) {
 
       <div className="relative hidden min-h-[390px] lg:block">
         {page.cards[0]?.image ? (
-        <div className="relative ml-auto max-w-md overflow-hidden rounded-3xl border border-gray-200 bg-white p-3 shadow-sm">
-          <img
-            className="h-[370px] w-full rounded-2xl object-cover"
-            src={page.cards[0].image}
-            alt={page.cards[0].title}
-          />
-          <div className="absolute bottom-7 left-7 right-7 rounded-2xl border border-white/70 bg-white/85 p-5 backdrop-blur-md">
-            <p className="font-sans text-2xl text-luxury-ink">{page.cards[0].title}</p>
-            <p className="mt-2 text-sm leading-6 text-luxury-muted">{page.cards[0].description}</p>
+          <div className="relative ml-auto max-w-md overflow-hidden rounded-3xl border border-gray-200 bg-white p-3 shadow-sm">
+            <img
+              className="h-[370px] w-full rounded-2xl object-cover"
+              src={page.cards[0].image}
+              alt={page.cards[0].title}
+            />
+            <div className="absolute bottom-7 left-7 right-7 rounded-2xl border border-white/70 bg-white/85 p-5 backdrop-blur-md">
+              <p className="font-sans text-2xl text-luxury-ink">{page.cards[0].title}</p>
+              <p className="mt-2 text-sm leading-6 text-luxury-muted">{page.cards[0].description}</p>
+            </div>
           </div>
-        </div>
         ) : null}
       </div>
     </section>

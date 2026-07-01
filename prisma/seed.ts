@@ -27,6 +27,7 @@ async function main() {
     { key: "phone", value: "0888491111" },
     { key: "maps_url", value: "https://maps.google.com" },
     { key: "facebook_url", value: "https://www.facebook.com/mejaicrafts" },
+    { key: "line_url", value: "https://lin.ee/obE2pn2B" },
     {
       key: "address",
       value: "85 87 ถนน สุขาภิบาล ตำบลวัดใหม่ อำเภอเมืองจันทบุรี จันทบุรี 22000",
